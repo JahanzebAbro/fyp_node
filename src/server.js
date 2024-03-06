@@ -13,9 +13,11 @@ app.use(express.urlencoded({extended: true}));
 app.use(expressLayouts);
 app.use(logger); 
 
-app.get('/', (req,res) => {
-    res.render("index", {name: "Zuko"});
-})
+
+// Index paths
+const indexRouter = require("./routes/index");
+app.use("/", indexRouter);
+
 
 // User paths
 const userRouter = require("./routes/users");
@@ -28,4 +30,4 @@ function logger(req, res, next){
     next();
 }
 
-app.listen(3000);
+app.listen(process.env.PORT || 3000);
