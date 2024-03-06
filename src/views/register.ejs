@@ -1,28 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h2>Register</h2>
-    <form action="/users" method="post">
 
-        <label for="email">Email:</label><br>
-        <input type="email" id="email" name="user_email" required><br>
+<h2>Register</h2>
+<form action="/users" method="post">
 
-        <label for="pwd">Password:</label><br>
-        <input type="password" id="pwd" name="pwd" required><br>
+    <label for="email">Email:</label><br>
+    <input type="email" id="email" name="user_email" required><br>
 
-        <p>Are you a...?</p>
-        <input type="radio" id="select_seeker" name="user_type" value="seeker" required>
-        <label for="select_seeker">Jobseeker</label><br>
-        <input type="radio" id="select_employer" name="user_type" value="employer" required>
-        <label for="select_employer">Employer</label><br><br>
+    <label for="pwd">Password:</label><br>
+    <input type="password" id="pwd" name="pwd" required><br>
 
-        <button type="submit">Continue</button>
+    <p>Are you a...?</p>
+    <input type="radio" id="select_seeker" name="user_type" value="seeker" required>
+    <label for="select_seeker">Jobseeker</label><br>
+    <input type="radio" id="select_employer" name="user_type" value="employer" required>
+    <label for="select_employer">Employer</label><br><br>
 
-    </form>
-</body>
-</html>
+    <button type="submit">Continue</button>
+
+</form>

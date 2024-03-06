@@ -8,7 +8,7 @@ router.get("/", (req, res) => {
 })
 
 router.post("/", (req, res) => {
-    res.send("Create User");
+    res.redirect("users/1");
 })
 
 
@@ -31,9 +31,10 @@ router
     .delete((req, res) => {
         res.send(`Delete User ID ${req.params.id}`);
     });
+
     
 // Whenever router sees the param id it runs this
-// middleware code (stuff between req. and res.)
+// middleware code (action between req. and res.)
 
 const users = [{name: "Bilbo"}, {name: "Keisha"}];
 router.param("id", (req, res, next, id) => {
