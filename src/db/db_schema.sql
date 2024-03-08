@@ -1,0 +1,10 @@
+CREATE DATABASE IF NOT EXISTS fyp_recruit;
+
+CREATE TABLE IF NOT EXISTS seeker
+(
+    seeker_id SERIAL PRIMARY KEY,
+    email VARCHAR(319) NOT NULL UNIQUE,
+    pwd VARCHAR(100) NOT NULL,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL
+);
