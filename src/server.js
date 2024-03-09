@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const expressLayouts = require('express-ejs-layouts');
-const pool = require(__dirname + "/db/db_config");
+const bodyParser = require('body-parser');
 
 // View engine setup
 app.set('views', __dirname + '/views');
@@ -10,9 +10,9 @@ app.set('layout', 'layouts/layout');
 
 // App configuration
 app.use(express.static(__dirname + '/public')); 
-app.use(express.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({extended: false}));
 app.use(expressLayouts);
-app.use(express.json());
+app.use(bodyParser.json());
 app.use(logger); 
 
 
