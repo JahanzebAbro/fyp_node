@@ -3,9 +3,9 @@
 CREATE TYPE user_type_enum AS ENUM ('seeker', 'employer');
 
 CREATE TABLE IF NOT EXISTS users(
-    id SERIAL PRIMARY KEY,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    password VARCHAR(100) NOT NULL,
+    id BIGSERIAL PRIMARY KEY,
+    email VARCHAR(319) UNIQUE NOT NULL,
+    password VARCHAR(50) NOT NULL,
     user_type user_type_enum NOT NULL
     -- created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP    
 );
