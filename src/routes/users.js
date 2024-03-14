@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-// const pool = require(__dirname + "/db/db_config");
+// const pool = require("../config/db/db_config");
 
 
 // ROUTES

@@ -6,7 +6,11 @@ const express = require('express');
 const app = express();
 const expressLayouts = require('express-ejs-layouts');
 const bodyParser = require('body-parser');
+const pool = require("./config/db/db_config");
 const session = require('express-session');
+const pgSession = require('connect-pg-simple')(session);
+const initializePassport = require('./config/passport_config');
+var passport = require('passport');
 const flash = require('express-flash');
 
 // View engine setup
@@ -21,15 +25,34 @@ app.use(expressLayouts);
 app.use(bodyParser.json());
 app.use(logger); 
 
+
+// Session Config
 app.use(session({
+    store: new pgSession({
+        pool: pool,
+        tableName: 'session',
+        createTableIfMissing: true
+    }),
+    
     secret: process.env.SESSION_SECRET,
-    // store: sessionStore,
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
+    cookie:{
+        maxAge: 1000 * 60 * 60 * 1, // Expires in one hour TEMPORARY
+        sameSite: true
+    }
 }));
 
-app.use(flash());
+app.use(initializePassport(passport));
+app.use(passport.session());
 
+app.use((req, res, next) =>{
+    console.log(req.session);
+    console.log(req.user);
+    next();
+})
+
+app.use(flash());
 
 // Index paths
 const indexRouter = require("./routes/index");
@@ -41,6 +64,11 @@ const userRouter = require("./routes/users");
 app.use("/users", userRouter);
 
 app.use(errorHandler);
+
+
+
+
+
 
 // Custom middleware functions
 function logger(req, res, next){

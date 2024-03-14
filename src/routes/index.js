@@ -1,7 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const pool = require("../db/db_config");
-const bcrypt = require('bcrypt');
+const pool = require("../config/db/db_config");
+const User = require('../models/userModel');
+const hashPassword = require('../public/scripts/password_utils').hashPassword;
+var passport = require('passport');
+
 
 
 
@@ -12,30 +15,15 @@ router.get("/", (req, res) => {
 
 // LOGIN USER
 router.get("/login", (req, res) => {
-    // req.flash('success', 'Login successful!');
     res.render("login");
 });
 
-router.post("/login", async (req, res) => {
-    try {
-        const { email, pwd } = req.body;
-    
-        query = 'SELECT * FROM users WHERE email = ($1)';
-        params = [email]; 
-            
-        const result = await pool.query(query, params);
-        console.log(result.rows[0]);
-
-        res.render("dashboard", { 
-        id: result.rows[0].id, 
-        type: result.rows[0].user_type
-        });
-    }
-    catch (err){
-        console.error(err.message);
-    }
-
-});
+router.post("/login/password", passport.authenticate('local', {
+    successReturnToOrRedirect: '/dashboard',
+    failureRedirect: '/login',
+    failureMessage: true
+  })
+);
 
 
 //  REGISTER USER
@@ -63,12 +51,10 @@ router.post("/register", async (req, res) => {
     }else{
         // Form has passed
 
-        const hashed = await hashPassword(pwd);
-
-        query = 'SELECT * FROM users WHERE email = $1';
+        query = `SELECT * FROM users WHERE email = ($1)`;
         params = [email];
 
-        pool.query(query, params, (err, results) => {
+        pool.query(query, params, async (err, results) => {
             if(err){
                 throw err;
             }
@@ -78,13 +64,15 @@ router.post("/register", async (req, res) => {
                 res.render("register", { errors });
             }
             else{
-                query = 'INSERT INTO users(email, password, user_type) VALUES ($1, $2, $3)';
-                params = [email, hashed, user_type];
 
-                pool.query(query, params, (err, results) =>{
+                const hashed = await hashPassword(pwd);
+
+                let userId = await User.create(pool, email, hashed, user_type);
+                
+                if (userId != null){
                     req.flash("sucess_reg", "You are registered now!");
                     res.redirect("login");
-                });
+                }
             }
         })
 
@@ -93,10 +81,4 @@ router.post("/register", async (req, res) => {
 });
 
 
-
-// Hash password
-async function hashPassword(password) {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    return hashedPassword;
-}
 module.exports = router;
