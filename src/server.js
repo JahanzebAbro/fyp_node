@@ -39,12 +39,13 @@ app.use(session({
     saveUninitialized: false,
     cookie:{
         maxAge: 1000 * 60 * 60 * 1, // Expires in one hour TEMPORARY
-        sameSite: true
     }
 }));
 
-app.use(initializePassport(passport));
-app.use(passport.session());
+initializePassport(passport);
+
+app.use(passport.initialize());
+app.use(passport.session()); // Handles user serialization and deserialization
 
 app.use((req, res, next) =>{
     console.log(req.session);
@@ -54,14 +55,20 @@ app.use((req, res, next) =>{
 
 app.use(flash());
 
+// Middleware to prevent cache from loading pages that are restricted for non-auth users.
+app.use(function(req, res, next) {
+    res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+    next();
+});
+
 // Index paths
 const indexRouter = require("./routes/index");
 app.use("/", indexRouter);
 
 
 // User paths
-const userRouter = require("./routes/users");
-app.use("/users", userRouter);
+const userRouter = require("./routes/user");
+app.use("/user", userRouter);
 
 app.use(errorHandler);
 

@@ -36,7 +36,7 @@ class User {
         try{
 
             const query = 
-            `SELECT id, email, password, user_type FROM users WHERE email = ($1);`;
+            `SELECT id, email, password, user_type FROM users WHERE id = ($1);`;
             
             const params =
             [id];

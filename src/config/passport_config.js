@@ -23,10 +23,9 @@ function initializePassport(passport) {
 
             // 2. Check if password matches in database. 
             if (await bcrypt.compare(password, user.password)) {
-
-                return done(null, user)
+                return cb(null, user)
             } else {
-                return done(null, false, {message: 'Incorrect password!'})
+                return cb(null, false, {message: 'Incorrect password!'})
             }
 
 
@@ -50,8 +49,13 @@ function initializePassport(passport) {
     });
 
     passport.deserializeUser(async (id, cb) => {
-        let user = await User.getById(pool, id)
-        return cb(null, user);
+        try {
+            let user = await User.getById(pool, id)
+            return cb(null, user);
+        }
+        catch(err){
+            return cb(err)
+        }
     });
 
 }

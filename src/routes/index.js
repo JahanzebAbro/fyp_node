@@ -15,20 +15,22 @@ router.get("/", (req, res) => {
 
 // LOGIN USER
 router.get("/login", (req, res) => {
-    res.render("login");
+    res.render("index/login");
 });
 
-router.post("/login/password", passport.authenticate('local', {
-    successReturnToOrRedirect: '/dashboard',
+router.post("/login", passport.authenticate('local', {
+    successReturnToOrRedirect: '/user/dashboard',
     failureRedirect: '/login',
     failureMessage: true
   })
 );
 
 
+
+
 //  REGISTER USER
 router.get("/register", (req, res) => {
-    res.render("register");
+    res.render("index/register");
 });
 
 router.post("/register", async (req, res) => {
@@ -47,7 +49,7 @@ router.post("/register", async (req, res) => {
     }
 
     if (errors.length > 0){
-        res.render("register", { errors });
+        res.render("index/register", { errors });
     }else{
         // Form has passed
 
@@ -61,7 +63,7 @@ router.post("/register", async (req, res) => {
 
             if(results.rows.length > 0){
                 errors.push({message: "Email already registered!"});
-                res.render("register", { errors });
+                res.render("index/register", { errors });
             }
             else{
 
@@ -71,7 +73,7 @@ router.post("/register", async (req, res) => {
                 
                 if (userId != null){
                     req.flash("sucess_reg", "You are registered now!");
-                    res.redirect("login");
+                    res.redirect("/login");
                 }
             }
         })
