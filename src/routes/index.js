@@ -3,6 +3,7 @@ const router = express.Router();
 const pool = require("../config/db/db_config");
 const User = require('../models/userModel');
 const hashPassword = require('../public/scripts/password_utils').hashPassword;
+const newPasswordAuth = require('../public/scripts/password_utils').newPasswordAuth;
 var passport = require('passport');
 
 
@@ -30,7 +31,11 @@ router.post("/login", passport.authenticate('local', {
 
 //  REGISTER USER
 router.get("/register", (req, res) => {
-    res.render("index/register");
+
+    // Grabbing previous form submission if exists
+    const form_data = req.session.form_data || {};
+
+    res.render("index/register", { form_data});
 });
 
 router.post("/register", async (req, res) => {
@@ -38,48 +43,31 @@ router.post("/register", async (req, res) => {
     const { email, pwd, cf_pwd, user_type } = req.body;
     console.log('Received:', email, pwd, cf_pwd, user_type);
 
-    let errors = [];
+    // Saving inputs for resubmission
+    req.session.form_data = { email: email, user_type: user_type};
+    const form_data =  req.session.form_data; 
 
-    if (pwd.length < 6){
-        errors.push({message: "Password should be at least 6 characters!"});
+    // Password checks
+    password_err = newPasswordAuth(pwd, cf_pwd);
+    if(password_err){
+        req.flash("reg_auth", password_err);
+        return res.render("index/register", { form_data});
     }
 
-    if (pwd != cf_pwd){
-        errors.push({message: "Passwords do not match!"});
-    }
+    
+    // Form has passed password checks
 
-    if (errors.length > 0){
-        res.render("index/register", { errors });
+    const hashed = await hashPassword(pwd);
+    result = await User.create(pool, email, hashed, user_type);
+
+    if(result){
+        req.flash("sucess_reg", "You are registered now!");
+        res.redirect("/login");
     }else{
-        // Form has passed
-
-        query = `SELECT * FROM users WHERE email = ($1)`;
-        params = [email];
-
-        pool.query(query, params, async (err, results) => {
-            if(err){
-                throw err;
-            }
-
-            if(results.rows.length > 0){
-                errors.push({message: "Email already registered!"});
-                res.render("index/register", { errors });
-            }
-            else{
-
-                const hashed = await hashPassword(pwd);
-
-                let userId = await User.create(pool, email, hashed, user_type);
-                
-                if (userId != null){
-                    req.flash("sucess_reg", "You are registered now!");
-                    res.redirect("/login");
-                }
-            }
-        })
-
-
-    }
+        req.flash("reg_auth", "Email already exists!");
+        return res.render("index/register", { form_data});  
+    }   
+        
 });
 
 

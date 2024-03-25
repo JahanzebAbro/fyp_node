@@ -11,16 +11,28 @@ class User {
     // Create User, password must be hashed before.
     static async create(pool, email, password, user_type) {
         try {
-            const query = 
-            `INSERT INTO users(email, password, user_type) VALUES ($1, $2, $3) RETURNING id`;
-            
-            const params = 
-            [email, password, user_type];
-        
-            let query_result = await pool.query(query, params);
 
-            return await query_result.rows[0].id;
-        }
+            const email_query = `SELECT * FROM users WHERE email = ($1)`;
+            const email_params = [email];
+
+            let is_email_existing = await pool.query(email_query, email_params);
+            
+            if(await is_email_existing.rows.length > 0){
+                // email exists
+                return null
+            }
+            else{
+                const query = 
+                `INSERT INTO users(email, password, user_type) VALUES ($1, $2, $3) RETURNING id`;
+                
+                const params = 
+                [email, password, user_type];
+            
+                let query_result = await pool.query(query, params);
+
+                return await query_result.rows[0].id; 
+            }              
+        }   
         catch(err){
             // console.log('Query problem');
             throw err;

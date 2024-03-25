@@ -13,25 +13,30 @@
 <form action="/register" method="post">
 
     <label for="email">Email:</label><br>
-    <input type="email" id="email" name="email" required><br>
+    <input type="email" id="email" name="email" value="<%= form_data.email || '' %>" required><br>
 
     <label for="pwd">Password:</label><br>
-    <input type="password" id="pwd" name="pwd" required><br>
+    <input type="password" id="pwd" name="pwd" required>
+    <input type="checkbox" onclick="togglePasswordVisibility()">Show Password<br>
 
     <label for="cf_pwd">Confirm Password:</label><br>
     <input type="password" id="cf_pwd" name="cf_pwd" required><br>
 
     <p>Are you a...?</p>
-    <input type="radio" id="select_seeker" name="user_type" value="seeker" required>
+    <input type="radio" id="select_seeker" name="user_type" value="seeker" <% if (form_data.user_type === 'seeker') { %> checked <% } %> required>
     <label for="select_seeker">Jobseeker</label><br>
-    <input type="radio" id="select_employer" name="user_type" value="employer" required>
+    <input type="radio" id="select_employer" name="user_type" value="employer" <% if (form_data.user_type === 'employer') { %> checked <% } %>required>
     <label for="select_employer">Employer</label><br><br>
 
     <button type="submit">Continue</button>
 
 </form>
 
+<script src="scripts/password_utils.js"></script>
 
-<% if(typeof errors != 'undefined'){ %>
-<%= errors[0].message %>
+
+<% if(messages.reg_auth) {%>
+<pre><%= messages.reg_auth %><pre>
 <% } %>
+
+
