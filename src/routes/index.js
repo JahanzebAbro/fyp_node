@@ -4,25 +4,29 @@ const pool = require("../config/db/db_config");
 const User = require('../models/userModel');
 const hashPassword = require('../public/scripts/password_utils').hashPassword;
 const newPasswordAuth = require('../public/scripts/password_utils').newPasswordAuth;
+const isAuthReq = require('../public/scripts/auth_middleware').isAuthReq;
 var passport = require('passport');
 
 
 
-
+// HOME
 router.get("/", (req, res) => {
     res.render("index");
 });
 
 
 // LOGIN USER
-router.get("/login", (req, res) => {
+router.get("/login", isAuthReq, (req, res) => {
     res.render("index/login");
 });
+
+
+
 
 router.post("/login", passport.authenticate('local', {
     successReturnToOrRedirect: '/user/dashboard',
     failureRedirect: '/login',
-    failureMessage: true
+    failureFlash: true
   })
 );
 
@@ -30,13 +34,16 @@ router.post("/login", passport.authenticate('local', {
 
 
 //  REGISTER USER
-router.get("/register", (req, res) => {
+router.get("/register", isAuthReq, (req, res) => {
 
     // Grabbing previous form submission if exists
     const form_data = req.session.form_data || {};
 
     res.render("index/register", { form_data});
 });
+
+
+
 
 router.post("/register", async (req, res) => {
 
@@ -65,7 +72,7 @@ router.post("/register", async (req, res) => {
         res.redirect("/login");
     }else{
         req.flash("reg_auth", "Email already exists!");
-        return res.render("index/register", { form_data});  
+        return res.render("index/register", { form_data });  
     }   
         
 });

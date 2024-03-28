@@ -13,6 +13,8 @@
 <% } %>
 
 
+
+
 <form action="/login" method="post">
 
     <label for="email">Email:</label><br>
@@ -25,5 +27,9 @@
     <button type="submit">Login</button>
 
 </form>
+
+<% if(messages.error) {%>
+<%= messages.error %>
+<% } %>
 
 <script src="scripts/password_utils.js"></script>

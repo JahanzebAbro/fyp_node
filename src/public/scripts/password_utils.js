@@ -36,16 +36,16 @@ function newPasswordAuth(pwd, cf_pwd){
             regex_err += "- At least one special character.\n";
         }
     
-        if (pwd.length < 8 || pwd.length > 16) {
-            regex_err += "- Password length should be between 8 and 16 characters.\n";
+        if (pwd.length < 8 || pwd.length > 32) {
+            regex_err += "- Password length should be between 8 and 32 characters.\n";
         }
     
         return regex_err;
     }
-    else{
-
-        return null;
-    }
+    
+    // All checks cleared
+    return null;
+    
     
 }
 

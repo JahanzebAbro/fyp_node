@@ -1,18 +1,18 @@
 const express = require("express");
 const router = express.Router();
 const pool = require("../config/db/db_config");
-const isAuthReq = require('../public/scripts/auth_middleware').isAuthReq;
+const isNotAuthReq = require('../public/scripts/auth_middleware').isNotAuthReq;
 
 
-router.get("/dashboard", isAuthReq, (req, res) => {
+router.get("/dashboard", isNotAuthReq, (req, res) => {
     res.render("user/dashboard");
 });
 
-router.get("/profile", isAuthReq, (req, res) => {
+router.get("/profile", isNotAuthReq, (req, res) => {
     res.render("user/profile");
 });
 
-router.get("/logout",isAuthReq, (req, res) => {
+router.get("/logout",isNotAuthReq, (req, res) => {
     // Clear the session
     req.logout(function(err) {
         if (err) { 
