@@ -2,18 +2,28 @@ Profile Page<br>
 
 <br><button type="button" class="builder_btn">Setup Profile</button>
 
+<!-- Gotta fix:
+-Name restrictions
+-Bio limit
+-Country
+-Postcode
+-Contact number
+-Industry-->
 
-<form action="/profile/builder" method="POST " class="builder_form" style="display: none;">
+
+<form action="/profile/builder" method="POST " id="seeker_builder_form" class="builder_form" style="display: none;">
 
     PERSONAL<br><br>
     <label for="f_name">First Name:</label><br>
-    <input type="text" id="f_name" name="f_name" required><br>
+    <input type="text" id="f_name" name="f_name" maxlength="50" required><br>
+    <span class="name_size_err" id="f_name_err" style="color: red;"></span><br>
 
     <label for="l_name">Last Name:</label><br>
-    <input type="text" id="l_name" name="l_name" required><br>
+    <input type="text" id="l_name" name="l_name" maxlength="50" required><br>
+    <span class="name_size_err" id="l_name_err" style="color: red;"></span><br>
 
     <label for="d_o_b">Date of Birth:</label><br>
-    <input type="date" id="d_o_b" name="d_o_b"><br>
+    <input type="date" id="seeker_d_o_b" name="d_o_b"><br>
 
     <label for="bio">Bio:</label><br>
     <textarea id="bio" name="bio" rows="4" cols="50">Let others know more about YOU with a short description of what you're all about!
