@@ -1,0 +1,82 @@
+<!-- Gotta fix:
+-Industry-->
+
+
+<form action="/profile/builder" method="POST" id="seeker_builder_form" class="builder_form">
+
+    PERSONAL<br><br>
+    <label for="f_name">First Name*:</label><br>
+    <input type="text" id="f_name" name="f_name" maxlength="50"><br>
+    <span  id="f_name_err" style="color: red;"></span><br>
+
+    <label for="l_name">Last Name*:</label><br>
+    <input type="text" id="l_name" name="l_name" maxlength="50"><br>
+    <span  id="l_name_err" style="color: red;"></span><br>
+
+    <label for="d_o_b">Date of Birth:</label><br>
+    <input type="date" id="d_o_b" name="d_o_b"><br>
+
+    <label for="bio">Bio:</label><br>
+    <textarea id="bio" name="bio" rows="4" cols="50" maxlength="800">Let others know more about YOU with a short description of what you're all about!
+    </textarea><br><br>
+
+
+    
+
+    LOCATION<br><br>
+    <label for="country">Country:</label><br>
+    <select id="country" name="country">
+        <option value="">None</option>
+            <% Object.entries(country_list).forEach(([country_code, country]) => { %>
+                <option value="<%= country_code %>"><%= country %></option>
+            <% }); %>                       
+    </select><br>
+
+    <label for="postcode">Postcode:</label><br>
+    <input type="text" id="postcode" name="postcode"><br>
+    <span  id="postcode_err" style="color: red;"></span><br><br>
+
+
+
+    CONTACT<br><br>
+    <label for="ct_phone">Contact Number:</label><br>
+    <input type="tel" id="ct_phone" name="ct_phone"><br>
+    <span  id="ct_phone_err" style="color: red;"></span><br>
+
+
+    <label for="ct_email">Contact Email:</label><br>
+    <input type="email" id="ct_email" name="ct_email"><br><br>
+
+
+    PREFERENCES<br><br>
+    <label for="industry">Industry:</label><br>
+<select id="industry" name="industry">
+    <option value="">None</option>
+    <option value="IT">Information Technology</option>
+    <option value="MED">Medicine</option>
+    <option value="ECMM">Ecommerce</option>
+    <option value="CAR">Car Dealership</option>
+    <option value="FIN">Finance</option>
+    <option value="EDU">Education</option>
+    <option value="MAN">Manufacturing</option>
+    <option value="TRA">Transportation</option>
+    <option value="HOS">Hospitality</option>
+    <option value="ART">Art and Design</option>
+    <option value="ENT">Entertainment</option>
+    <option value="AGR">Agriculture</option>
+    <option value="CON">Construction</option>
+    <option value="PHA">Pharmaceuticals</option>
+    <option value="TEL">Telecommunications</option>
+    <option value="RST">Restaurant</option>
+    <option value="COS">Cosmetics</option>
+    <option value="FIT">Fitness</option>
+    <option value="TRV">Travel</option>
+    <option value="ADV">Advertising</option>
+</select><br><br>
+
+
+    <button type="submit" value="Submit">Save Changes</button>
+    
+</form>
+
+<script src="/scripts/user_profile.js"></script>

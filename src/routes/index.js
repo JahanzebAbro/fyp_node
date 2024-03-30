@@ -2,9 +2,8 @@ const express = require("express");
 const router = express.Router();
 const pool = require("../config/db/db_config");
 const User = require('../models/userModel');
-const hashPassword = require('../public/scripts/password_utils').hashPassword;
-const newPasswordAuth = require('../public/scripts/password_utils').newPasswordAuth;
-const isAuthReq = require('../public/scripts/auth_middleware').isAuthReq;
+const { hashPassword, newPasswordAuth, isAuthReq } = require('../utils');
+// const isAuthReq = require('../public/scripts/auth_middleware').isAuthReq;
 var passport = require('passport');
 
 

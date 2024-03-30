@@ -1,7 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const pool = require("../config/db/db_config");
-const isNotAuthReq = require('../public/scripts/auth_middleware').isNotAuthReq;
+const { isNotAuthReq } = require('../utils');
+const countries = require('country-list');
+// const isNotAuthReq = require('../public/scripts/auth_middleware').isNotAuthReq;
 
 
 router.get("/dashboard", isNotAuthReq, (req, res) => {
@@ -11,6 +13,11 @@ router.get("/dashboard", isNotAuthReq, (req, res) => {
 router.get("/profile", isNotAuthReq, (req, res) => {
     res.render("user/profile");
 });
+
+router.get("/profile/builder", isNotAuthReq, (req, res) => {
+    country_list = countries.getCodeList();
+    res.render("user/seeker_builder", { country_list });
+})
 
 router.get("/logout",isNotAuthReq, (req, res) => {
     // Clear the session
