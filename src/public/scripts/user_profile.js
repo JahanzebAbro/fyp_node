@@ -13,6 +13,7 @@ const phone_regex =
 
 const f_name_err = $('#f_name_err');
 const l_name_err = $('#l_name_err');
+const d_o_b_err = $('#d_o_b_err');
 const postcode_err = $('#postcode_err');
 const ct_phone_err = $('#ct_phone_err');
 
@@ -82,23 +83,25 @@ $(document).ready(function(){
 
     $("#seeker_builder_form").submit(function(e){
         
+
         let first_name = $('#f_name').val();
         let last_name = $('#l_name').val();
+        let d_o_b = $('#d_o_b').val();
         let postcode = $('#postcode').val();
         let ct_phone = $('#ct_phone').val();
 
-        validateName(e, first_name, f_name_err); // Check first name
-        validateName(e, last_name, l_name_err); // Check last name
+        validateName(e, first_name, f_name_err); 
+        validateName(e, last_name, l_name_err);
+        validateDOB(e, d_o_b, d_o_b_err) 
 
         validateCountry();
-        validatePostcode(e, postcode, postcode_err);
+        validatePostcode(e, postcode, postcode_err); 
         validatePhone(e, ct_phone, ct_phone_err);
 
-
+          
 
 
     });
-
 
 });
 
@@ -132,17 +135,18 @@ function validateName(event, name, err_box){
 
 }
 
+function validateDOB(event, d_o_b, err_box){
+    if(d_o_b == '' || d_o_b == null){
+        err_box.text("You must enter a date of birth.");
+        event.preventDefault(); // Prevent form submission
+        return false;
+    }
+}
 
 
-
-
-function validateCountry(){
-
+function validateCountry(e){
+   
 };
-
-
-
-
 
 function validatePostcode(event, postcode, err_box){
     
@@ -163,8 +167,6 @@ function validatePostcode(event, postcode, err_box){
 }
 
 
-
-
 function validatePhone(event, phone, err_box){
 
     if(phone == '' || phone == null){
@@ -182,3 +184,41 @@ function validatePhone(event, phone, err_box){
         return true;        
     }   
 }
+
+
+// Check and replace empty values with null
+function nullEmptyFields(){
+    // Since first, last name, d_o_b are mandatory they won't be checked.
+    console.log("Nulling");
+    if ($('#bio').val().trim() === '') { $('#bio').val(null); }
+    if ($('#country').val().trim() === '') { $('#country').val(null); }
+    if ($('#postcode').val().trim() === '') { $('#postcode').val(null); }
+    if ($('#ct_phone').val().trim() === '') { $('#ct_phone').val(null); }
+    if ($('#ct_email').val().trim() === '') { $('#ct_email').val(null); }
+    if ($('#industry').val().trim() === '') { $('#industry').val(null); }
+
+    console.log(typeof $('#bio').val)
+};
+
+// function trimAllFields(){
+//     let firstName = $('#f_name').val().trim();
+//     let lastName = $('#l_name').val().trim();
+//     let dob = $('#d_o_b').val().trim();
+//     let bio = $('#bio').val().trim();
+//     let country = $('#country').val().trim();
+//     let postcode = $('#postcode').val().trim();
+//     let ctPhone = $('#ct_phone').val().trim();
+//     let ctEmail = $('#ct_email').val().trim();
+//     let industry = $('#industry').val().trim();
+    
+//     // Set the trimmed values back to the fields
+//     $('#f_name').val(firstName);
+//     $('#l_name').val(lastName);
+//     $('#d_o_b').val(dob);
+//     $('#bio').val(bio);
+//     $('#country').val(country);
+//     $('#postcode').val(postcode);
+//     $('#ct_phone').val(ctPhone);
+//     $('#ct_email').val(ctEmail);
+//     $('#industry').val(industry);
+// };
