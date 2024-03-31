@@ -3,6 +3,7 @@ const router = express.Router();
 const pool = require("../config/db/db_config");
 const Seeker = require('../models/seekerModel');
 const { isNotAuthReq } = require('../utils');
+const { isProfileBuilt } = require('../utils');
 const countries = require('country-list');
 // const isNotAuthReq = require('../public/scripts/auth_middleware').isNotAuthReq;
 
@@ -12,14 +13,28 @@ router.get("/dashboard", isNotAuthReq, (req, res) => {
     res.render("user/dashboard");
 });
 
+
+
+
 // ------------USER PROFILE PAGE
-router.get("/profile", isNotAuthReq, (req, res) => {
+router.get("/profile", isNotAuthReq, isProfileBuilt, async (req, res) => {
+    // const seeker = await Seeker.getById(pool, req.user.id);
     res.render("user/profile");
 });
 
 
+
+
+
 // ------------USER BUILDER FORM
-router.get("/profile/builder", isNotAuthReq, (req, res) => {
+router.get("/profile/builder", isNotAuthReq, async (req, res) => {
+
+    // If a seeker profile exists, redirect the user away from the builder page
+    const seeker = await Seeker.getById(pool, req.user.id);
+    if (seeker) {
+        return res.redirect('/user/profile'); 
+    }                       
+
     country_list = countries.getCodeList();
     res.render("user/seeker_builder", { country_list });
 });
@@ -40,10 +55,18 @@ router.post("/profile/builder", isNotAuthReq, async (req, res) => {
     
     
     const user_id = req.user.id;
-    result = await Seeker.create(pool, user_id, f_name, l_name, d_o_b, bio, country, postcode, ct_phone, ct_email, industry);
-
-    res.send("RECIEVED");
+    let result = await Seeker.create(pool, user_id, f_name, l_name, d_o_b, bio, country, postcode, ct_phone, ct_email, industry);
+    
+    if(result){
+        res.redirect("/user/profile");
+    }else{
+        req.flash("build_msg", "Something went wrong! We couldn't complete your profile. Try again later!");
+        res.redirect("/user/profile");  
+    }
 });
+
+
+
 
 
 

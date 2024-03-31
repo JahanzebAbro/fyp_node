@@ -1,4 +1,6 @@
 const bcrypt = require('bcrypt');
+const pool = require('./config/db/db_config'); 
+const Seeker = require('./models/seekerModel');
 
 // ------------------Password Utilities
 
@@ -79,5 +81,14 @@ exports.isAuthReq = function (req, res, next){
     next();
     
 }
-    
-    
+
+// Want to make this function check for both employer and seeker.
+exports.isProfileBuilt = async function (req, res, next) {
+    if (req.isAuthenticated()) {
+        const seeker = await Seeker.getById(pool, req.user.id);
+        res.locals.profile = seeker ? seeker : false;
+    } else {
+        res.locals.profile = false;
+    }
+    next();
+}

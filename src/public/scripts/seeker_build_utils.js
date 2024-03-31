@@ -199,26 +199,3 @@ function nullEmptyFields(){
 
     console.log(typeof $('#bio').val)
 };
-
-// function trimAllFields(){
-//     let firstName = $('#f_name').val().trim();
-//     let lastName = $('#l_name').val().trim();
-//     let dob = $('#d_o_b').val().trim();
-//     let bio = $('#bio').val().trim();
-//     let country = $('#country').val().trim();
-//     let postcode = $('#postcode').val().trim();
-//     let ctPhone = $('#ct_phone').val().trim();
-//     let ctEmail = $('#ct_email').val().trim();
-//     let industry = $('#industry').val().trim();
-    
-//     // Set the trimmed values back to the fields
-//     $('#f_name').val(firstName);
-//     $('#l_name').val(lastName);
-//     $('#d_o_b').val(dob);
-//     $('#bio').val(bio);
-//     $('#country').val(country);
-//     $('#postcode').val(postcode);
-//     $('#ct_phone').val(ctPhone);
-//     $('#ct_email').val(ctEmail);
-//     $('#industry').val(industry);
-// };

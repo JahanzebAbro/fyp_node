@@ -1,7 +1,30 @@
 Profile Page<br>
 
-<br><a href="/user/profile/builder"><button type="button" class="builder_btn">Setup Profile</button>
+<!-- If something went wrong with builder form -->
+<% if(messages.build_msg) {%>
+    <%= messages.build_msg %>
+<% } %>
+
+<!-- Only displays buttons if user hasn't made a profile before -->
+<% if (!locals.profile) { %>
+    <a href="/user/profile/builder"><button type="button" class="builder_btn">Setup Profile</button></a>
+<% } %>
 
 
 
+<% if (locals.profile) { %>
+    <div class="seeker-details">
+        <p class="f_name"><strong>First Name:</strong> <%= profile.f_name ? profile.f_name : 'None' %></p>
+        <p class="l_name"><strong>Last Name:</strong> <%= profile.l_name ? profile.l_name : 'None' %></p>
+        <p class="dob"><strong>Date of Birth:</strong> <%= profile.d_o_b ? profile.d_o_b : 'None' %></p>
+        <p class="bio"><strong>Bio:</strong> <%= profile.bio ? profile.bio : 'None' %></p>
+        <p class="country"><strong>Country:</strong> <%= profile.country ? profile.country : 'None' %></p>
+        <p class="postcode"><strong>Postcode:</strong> <%= profile.postcode ? profile.postcode : 'None' %></p>
+        <p class="phone"><strong>Phone:</strong> <%= profile.ct_phone ? profile.ct_phone : 'None' %></p>
+        <p class="email"><strong>Email:</strong> <%= profile.ct_email ? profile.ct_email : 'None' %></p>
+        <p class="industry"><strong>Industry:</strong> <%= profile.industry ? profile.industry : 'None' %></p>
+    </div>
+<% } %>
 
+
+<script src="/scripts/seeker_build_utils.js"></script>
