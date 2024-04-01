@@ -1,3 +1,5 @@
+import { findMaxAndMinDOB } from './general_utils.js';
+
 // Reference: https://a-tokyo.medium.com/first-and-last-name-validation-for-forms-and-databases-d3edf29ad29d
 const name_regex = 
 /^[a-zA-Z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u01FF]+([ \-']{0,1}[a-zA-Z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u01FF]+){0,2}[.]{0,1}$/;
@@ -32,15 +34,7 @@ $(document).ready(function(){
 
 
     let date_picker = $('#d_o_b');
-    let curr_date = new Date();
-    
-    // Setting max date to 18 years and min date to 100 years ago from today.
-    let max_date = new Date(curr_date.getFullYear() - 18, curr_date.getMonth(), curr_date.getDate());
-    let min_date = new Date(curr_date.getFullYear() - 100, curr_date.getMonth(), curr_date.getDate());
-    
-    //splits the ISO string at the 'T' character, separating the date part from the time part.
-    max_date = max_date.toISOString().split('T')[0]; 
-    min_date = min_date.toISOString().split('T')[0]; 
+    const { max_date, min_date } = findMaxAndMinDOB();
     
     
     date_picker.attr('max', max_date);

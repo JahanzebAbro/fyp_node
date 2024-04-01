@@ -39,7 +39,7 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie:{
-        maxAge: 1000 * 60 * 60 * 1, // Expires in one hour TEMPORARY
+        maxAge: 1000 * 60 * 60 * 2, // Expires in two hours 
     }
 }));
 

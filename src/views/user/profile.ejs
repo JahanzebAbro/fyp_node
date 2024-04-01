@@ -29,12 +29,27 @@ Profile Page<br>
             </p>
         <% } %>
 
-        <p class="f_name"><strong>First Name:</strong> <%= profile.f_name ? profile.f_name : 'None' %></p>
-        <p class="l_name"><strong>Last Name:</strong> <%= profile.l_name ? profile.l_name : 'None' %></p>
-        <p class="gender"><strong>Gender:</strong> <%= profile.gender ? profile.gender : 'None' %></p>
-        <p class="dob"><strong>Date of Birth:</strong> <%= profile.d_o_b ? profile.d_o_b : 'None' %></p>
-        <p class="bio"><strong>Bio:</strong> <%= profile.bio ? profile.bio : 'None' %></p>
+
+
+        <p class="f_name"><strong>First Name:</strong> 
+            <span id="f_name_val"><%= profile.f_name ? profile.f_name : 'None' %></span>
+        </p>
+        <p class="l_name"><strong>Last Name:</strong>
+            <span id="l_name_val"><%= profile.l_name ? profile.l_name : 'None' %></span>
+        </p>
+        <p class="gender"><strong>Gender:</strong> 
+            <span id="gender_val"><%= profile.gender ? profile.gender : 'None' %></span>
+        </p>
+        <p class="dob"><strong>Date of Birth:</strong>
+            <span id="d_o_b_val"><%= profile.d_o_b ? profile.d_o_b : 'None' %></span>
+        </p>
+        <p class="bio"><strong>Bio:</strong>
+            <span id="bio_val"><%= profile.bio ? profile.bio : 'None' %></span>
+        </p>
+
         
+
+
         <!-- EXTERNAL LINK FOR CV -->
         <% if (profile.cv) { %>
             <p class="cv">
@@ -45,15 +60,35 @@ Profile Page<br>
             <p class="cv"><strong>CV:</strong> None</p>
         <% } %>
 
-        <p class="address"><strong>Address:</strong> <%= profile.address ? profile.address : 'None' %></p>
-        <p class="postcode"><strong>Postcode:</strong> <%= profile.postcode ? profile.postcode : 'None' %></p>
-        <p class="phone"><strong>Phone:</strong> <%= profile.ct_phone ? profile.ct_phone : 'None' %></p>
-        <p class="email"><strong>Email:</strong> <%= profile.ct_email ? profile.ct_email : 'None' %></p>
-        <p class="industry"><strong>Industry:</strong> <%= profile.industry ? profile.industry_name : 'None' %></p>
-        <p class="work_status"><strong>Work Status: </strong> <%= profile.work_status ? 'Ready to Work' : 'Not Ready to Work' %></p>
+
+
+        <p class="address"><strong>Address:</strong>
+            <span id="address_val"><%= profile.address ? profile.address : 'None' %></span>
+        </p>
+        <p class="postcode"><strong>Postcode:</strong>
+            <span id="postcode_val"><%= profile.postcode ? profile.postcode : 'None' %></span>
+        </p>
+        <p class="ct_phone"><strong>Phone:</strong>
+            <span id="ct_phone_val"><%= profile.ct_phone ? profile.ct_phone : 'None' %></span>
+        </p>
+        <p class="ct_email"><strong>Email:</strong>
+            <span id="ct_email_val"><%= profile.ct_email ? profile.ct_email : 'None' %></span>
+        </p>
+        <p class="industry"><strong>Industry:</strong>
+            <span id="industry_val"><%= profile.industry ? profile.industry_name : 'None' %></span>
+        </p>
+        <p class="work_status"><strong>Work Status: </strong>
+            <span id="work_status_val"><%= profile.work_status ? 'Ready to Work' : 'Not Ready to Work' %>
+        </span></p>
 
     </div>
+
+    <!-- Edit features -->
+    <button id="edit-profile-btn" type="button">Edit Profile</button>
+    <button id="save-edit-btn" type="button" style="display: none;">Save Changes</button>
+    <button id="cancel-edit-btn" type="button" style="display: none;">Cancel</button>
+
+
 <% } %>
 
-
-<script src="/scripts/profile_utils.js"></script>
+<script type="module" src="/scripts/profile_utils.js"></script>
