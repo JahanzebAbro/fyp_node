@@ -20,6 +20,7 @@ app.set('layout', 'layouts/layout');
 
 // Initliaze configs
 app.use(express.static(__dirname + '/public')); 
+app.use('/uploads', express.static('uploads'));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(expressLayouts);
 app.use(bodyParser.json());

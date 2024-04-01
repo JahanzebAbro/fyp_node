@@ -1,6 +1,6 @@
 
 
-<form action="/user/profile/builder" method="POST" id="seeker_builder_form" class="builder_form">
+<form action="/user/profile/builder" method="POST" id="seeker_builder_form" class="builder_form" enctype="multipart/form-data">
 
     PERSONAL<br><br>
     <label for="f_name">First Name*:</label><br>
@@ -11,6 +11,14 @@
     <input type="text" id="l_name" name="l_name" maxlength="50"><br>
     <span  id="l_name_err" style="color: red;"></span><br>
 
+    <label for="gender">Gender:</label><br>
+    <select id="gender" name="gender">
+        <option value="">Select a gender</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+        <option value="Other">Other</option>
+    </select><br><br>
+
     <label for="d_o_b">Date of Birth*:</label><br>
     <input type="date" id="d_o_b" name="d_o_b"><br>
     <span  id="d_o_b_err" style="color: red;"></span><br>
@@ -19,17 +27,21 @@
     <textarea id="bio" name="bio" rows="4" cols="50" maxlength="800" 
     placeholder="Let others know more about YOU with a short description of what you're all about!"></textarea><br><br>
 
+    <label for="cv">Upload Your CV (pdf):</label><br>
+    <input type="file" id="cv" name="cv" accept=".pdf"><br>
+    <span id="cv_err" style="color: red;"></span><br><br>
 
+    <label for="profile_pic">Choose a profile picture:</label><br>
+    <input type="file" id="profile_pic" name="profile_pic" accept="image/png, image/jpeg, image/jpg"><br>
+    <span id="pic_err" style="color: red;"></span><br><br>
     
 
     LOCATION<br><br>
-    <label for="country">Country:</label><br>
-    <select id="country" name="country">
-        <option value="">None</option>
-            <% Object.entries(country_list).forEach(([country_code, country]) => { %>
-                <option value="<%= country_code %>"><%= country %></option>
-            <% }); %>                       
-    </select><br>
+
+    <label for="address">Address:</label><br>
+    <input type="text" id="address" name="address"><br>
+    <span  id="address_err" style="color: red;"></span><br>
+
 
     <label for="postcode">Postcode:</label><br>
     <input type="text" id="postcode" name="postcode"><br>
@@ -49,29 +61,38 @@
 
     PREFERENCES<br><br>
     <label for="industry">Industry:</label><br>
-<select id="industry" name="industry">
-    <option value="">None</option>
-    <option value="IT">Information Technology</option>
-    <option value="MED">Medicine</option>
-    <option value="ECMM">Ecommerce</option>
-    <option value="CAR">Car Dealership</option>
-    <option value="FIN">Finance</option>
-    <option value="EDU">Education</option>
-    <option value="MAN">Manufacturing</option>
-    <option value="TRA">Transportation</option>
-    <option value="HOS">Hospitality</option>
-    <option value="ART">Art and Design</option>
-    <option value="ENT">Entertainment</option>
-    <option value="AGR">Agriculture</option>
-    <option value="CON">Construction</option>
-    <option value="PHA">Pharmaceuticals</option>
-    <option value="TEL">Telecommunications</option>
-    <option value="RST">Restaurant</option>
-    <option value="COS">Cosmetics</option>
-    <option value="FIT">Fitness</option>
-    <option value="TRV">Travel</option>
-    <option value="ADV">Advertising</option>
-</select><br><br>
+    <select id="industry" name="industry">
+        <option value="">None</option>
+        <option value="IT">Information Technology</option>
+        <option value="MED">Medicine</option>
+        <option value="ECMM">Ecommerce</option>
+        <option value="CAR">Car Dealership</option>
+        <option value="FIN">Finance</option>
+        <option value="EDU">Education</option>
+        <option value="MAN">Manufacturing</option>
+        <option value="TRA">Transportation</option>
+        <option value="HOS">Hospitality</option>
+        <option value="ART">Art and Design</option>
+        <option value="ENT">Entertainment</option>
+        <option value="AGR">Agriculture</option>
+        <option value="CON">Construction</option>
+        <option value="PHA">Pharmaceuticals</option>
+        <option value="TEL">Telecommunications</option>
+        <option value="RST">Restaurant</option>
+        <option value="COS">Cosmetics</option>
+        <option value="FIT">Fitness</option>
+        <option value="TRV">Travel</option>
+        <option value="ADV">Advertising</option>
+    </select><br><br>
+    
+    <p>Work Status:</p>
+    <div id="work_state">
+        <input type="radio" id="ready_to_work" name="work_status" value="true" checked>
+        <label for="ready_to_work">Ready to Work</label><br>
+        <input type="radio" id="not_ready_to_work" name="work_status" value="false">
+        <label for="not_ready_to_work">Not Ready to Work</label><br>
+    </div><br>
+
 
 
     <button type="submit" value="Submit">Save Changes</button>

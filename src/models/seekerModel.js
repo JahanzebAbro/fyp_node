@@ -1,20 +1,55 @@
 class Seeker {
 
-    constructor(user_id, f_name, l_name, d_o_b, bio, country, postcode, ct_phone, ct_email, industry) {
+    // 1. user_id 
+    // 2. f_name
+    // 3. l_name
+    // 4. gender
+    // 5. d_o_b 
+    // 6. bio 
+    // 7. cv 
+    // 8. profile_pic 
+    // 9. address 
+    // 10. postcode
+    // 11. ct_phone
+    // 12. ct_email
+    // 13. industry 
+    // 14. work_status 
+
+
+    constructor(user_id, f_name, l_name, gender, d_o_b, bio, cv, profile_pic, address, postcode, ct_phone, ct_email, industry, work_status) {
         this.user_id = user_id;
         this.f_name = f_name;
         this.l_name = l_name;
+        this.gender = gender;
         this.d_o_b = d_o_b;
         this.bio = bio;
-        this.country = country;
+        this.cv = cv;
+        this.profile_pic = profile_pic;
+        this.address = address;
         this.postcode = postcode;
         this.ct_phone = ct_phone;
         this.ct_email = ct_email;
         this.industry = industry;
+        this.work_status = work_status;
     }
 
     // Create details for a seeker with user_id as foreign key.
-    static async create(pool, user_id, f_name, l_name, d_o_b, bio, country, postcode, ct_phone, ct_email, industry){
+    static async create(
+        pool, 
+        user_id, 
+        f_name, 
+        l_name,
+        gender, 
+        d_o_b, 
+        bio, 
+        cv, 
+        profile_pic, 
+        address, 
+        postcode, 
+        ct_phone, 
+        ct_email, 
+        industry, 
+        work_status){
         try {
 
             const user_query = `SELECT * FROM seekers WHERE user_id = ($1)`;
@@ -29,11 +64,11 @@ class Seeker {
             else{
 
             const query = `
-                INSERT INTO seekers(user_id, f_name, l_name, d_o_b, bio, country, postcode, ct_phone, ct_email, industry)
-                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+                INSERT INTO seekers(user_id, f_name, l_name, gender, d_o_b, bio, cv_file, profile_pic_file, address, postcode, ct_phone, ct_email, industry, work_status)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
                 RETURNING user_id`;
 
-            const params = [user_id, f_name, l_name, d_o_b, bio, country, postcode, ct_phone, ct_email, industry];
+            const params = [user_id, f_name, l_name, gender, d_o_b, bio, cv, profile_pic, address, postcode, ct_phone, ct_email, industry, work_status];
             const result = await pool.query(query, params);
 
             return result.rows[0].user_id;
@@ -51,7 +86,7 @@ class Seeker {
     static async getById(pool, id){
         try{
             const query = `
-                SELECT user_id, f_name, l_name, d_o_b, bio, country, postcode, ct_phone, ct_email, industry 
+                SELECT user_id, f_name, l_name, gender, d_o_b, bio, cv_file, profile_pic_file, address, postcode, ct_phone, ct_email, industry, work_status 
                 FROM seekers 
                 WHERE user_id = $1;
             `;
@@ -75,18 +110,25 @@ class Seeker {
                 
                 seeker.d_o_b = `${day}/${month}/${year}`;
 
+                // Aligning variable names.
+                seeker.profile_pic = seeker.profile_pic_file;
+                seeker.cv = seeker.cv_file;
 
                 return new Seeker(
                     seeker.user_id,
                     seeker.f_name,
                     seeker.l_name,
+                    seeker.gender,
                     seeker.d_o_b,
                     seeker.bio,
-                    seeker.country,
+                    seeker.cv,
+                    seeker.profile_pic,
+                    seeker.address,
                     seeker.postcode,
                     seeker.ct_phone,
                     seeker.ct_email,
-                    seeker.industry
+                    seeker.industry,
+                    seeker.work_status
                 );
             } else {
                 return null;

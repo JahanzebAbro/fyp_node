@@ -11,30 +11,27 @@ const postcode_regex =
 const phone_regex = 
 /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
 
+const address_regex = /^[a-zA-Z0-9\s,.'-]{3,150}$/; 
+
+
+// ERROR BOXES
 const f_name_err = $('#f_name_err');
 const l_name_err = $('#l_name_err');
 const d_o_b_err = $('#d_o_b_err');
+const address_err = $('#address_err');
 const postcode_err = $('#postcode_err');
 const ct_phone_err = $('#ct_phone_err');
-
-
-
-// $(document).ready(function(){
-
-//     // ------------------Toggle builder form
-//     $('.builder_btn').click(function(){
-//         $('.builder_btn').hide();
-//         $('.builder_form').show();
-//     });
-// });
+const cv_err = $('#cv_err');
+const pic_err = $('#pic_err');
 
 
 
 
+// ------------------Date of birth range setter
 $(document).ready(function(){
 
-    // ------------------Date of birth range setter
-    
+
+    let date_picker = $('#d_o_b');
     let curr_date = new Date();
     
     // Setting max date to 18 years and min date to 100 years ago from today.
@@ -46,10 +43,12 @@ $(document).ready(function(){
     min_date = min_date.toISOString().split('T')[0]; 
     
     
-    $('input[name="d_o_b"]').attr('max', max_date);
-    $('input[name="d_o_b"]').attr('min', min_date);
+    date_picker.attr('max', max_date);
+    date_picker.attr('min', min_date);
 
 });
+
+
 
 
 // Max char limit for name reached
@@ -87,19 +86,22 @@ $(document).ready(function(){
         let first_name = $('#f_name').val();
         let last_name = $('#l_name').val();
         let d_o_b = $('#d_o_b').val();
+        let cv = $('#cv');
+        let pic = $('#profile_pic');
+        let address = $('#address').val();
         let postcode = $('#postcode').val();
         let ct_phone = $('#ct_phone').val();
 
         validateName(e, first_name, f_name_err); 
         validateName(e, last_name, l_name_err);
-        validateDOB(e, d_o_b, d_o_b_err) 
-
-        validateCountry();
+        validateDOB(e, d_o_b, d_o_b_err); 
+        validateCV(e, cv, cv_err);
+        validatePic(e, pic, pic_err);
+        validateAddress(e, address, address_err);
         validatePostcode(e, postcode, postcode_err); 
         validatePhone(e, ct_phone, ct_phone_err);
 
           
-
 
     });
 
@@ -135,6 +137,7 @@ function validateName(event, name, err_box){
 
 }
 
+
 function validateDOB(event, d_o_b, err_box){
     if(d_o_b == '' || d_o_b == null){
         err_box.text("You must enter a date of birth.");
@@ -144,9 +147,29 @@ function validateDOB(event, d_o_b, err_box){
 }
 
 
-function validateCountry(e){
-   
-};
+function validateAddress(event, address, err_box){
+
+    // Only check if address is given
+    if (address.trim() !== '') {
+        
+        if (address.length > 150) {
+            err_box.text('Address cannot exceed 150 characters.'); 
+            event.preventDefault(); 
+            return false; 
+        }
+
+        if (!address_regex.test(address)) {
+            err_box.text('Please enter a valid address.'); 
+            event.preventDefault(); 
+            return false; 
+        }
+    }
+    else{
+        err_box.text('');
+        return true;
+    }
+}
+
 
 function validatePostcode(event, postcode, err_box){
     
@@ -186,16 +209,37 @@ function validatePhone(event, phone, err_box){
 }
 
 
-// Check and replace empty values with null
-function nullEmptyFields(){
-    // Since first, last name, d_o_b are mandatory they won't be checked.
-    console.log("Nulling");
-    if ($('#bio').val().trim() === '') { $('#bio').val(null); }
-    if ($('#country').val().trim() === '') { $('#country').val(null); }
-    if ($('#postcode').val().trim() === '') { $('#postcode').val(null); }
-    if ($('#ct_phone').val().trim() === '') { $('#ct_phone').val(null); }
-    if ($('#ct_email').val().trim() === '') { $('#ct_email').val(null); }
-    if ($('#industry').val().trim() === '') { $('#industry').val(null); }
+function validatePic(event, image, err_box){
+    
+        let image_file = image.get(0).files[0];
+        const max_size = 2 * 1024 * 1024; // 2MB in bytes
 
-    console.log(typeof $('#bio').val)
-};
+        if (image_file && image_file.size > max_size) {
+
+            err_box.text('Image is too large. Please upload an image smaller than 2MB.');
+            event.preventDefault();
+            return false;
+        } else {
+            err_box.text('');
+            return true;
+        }
+    
+}
+
+
+function validateCV(event, cv, err_box){
+    
+    let cv_file = cv.get(0).files[0];
+    const max_size = 2 * 1024 * 1024; // 2MB in bytes
+
+    if (cv_file && cv_file.size > max_size) {
+
+        err_box.text('CV file is too large. Please upload a file smaller than 2MB.');
+        event.preventDefault();
+        return false;
+    } else {
+        err_box.text('');
+        return true;
+    }
+
+}

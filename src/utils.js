@@ -82,13 +82,55 @@ exports.isAuthReq = function (req, res, next){
     
 }
 
+// Return name string for a sting code of an industry.
+exports.findIndustryName = function(code){
+    const industries = {
+        "": "None", 
+        "IT": "Information Technology",
+        "MED": "Medicine",
+        "ECMM": "Ecommerce",
+        "CAR": "Car Dealership",
+        "FIN": "Finance",
+        "EDU": "Education",
+        "MAN": "Manufacturing",
+        "TRA": "Transportation",
+        "HOS": "Hospitality",
+        "ART": "Art and Design",
+        "ENT": "Entertainment",
+        "AGR": "Agriculture",
+        "CON": "Construction",
+        "PHA": "Pharmaceuticals",
+        "TEL": "Telecommunications",
+        "RST": "Restaurant",
+        "COS": "Cosmetics",
+        "FIT": "Fitness",
+        "TRV": "Travel",
+        "ADV": "Advertising"
+    };
+
+    const industry = industries[code] || "Industry not found";
+
+    return industry;
+}
+
+
 // Want to make this function check for both employer and seeker.
 exports.isProfileBuilt = async function (req, res, next) {
     if (req.isAuthenticated()) {
+
         const seeker = await Seeker.getById(pool, req.user.id);
+
+        // Add an industry name field for display purposes
+        if (seeker && seeker.industry) {
+            seeker.industry_name = exports.findIndustryName(seeker.industry);
+        }
+
+
         res.locals.profile = seeker ? seeker : false;
     } else {
         res.locals.profile = false;
     }
     next();
 }
+
+

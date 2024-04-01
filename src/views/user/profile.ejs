@@ -14,17 +14,46 @@ Profile Page<br>
 
 <% if (locals.profile) { %>
     <div class="seeker-details">
+
+
+        <!-- DISPLAYING PROFILE PICTURE -->
+        <% if (profile.profile_pic) { %>
+            <p class="profile_pic">
+                <strong>Profile Picture:</strong><br>
+                <img src="/uploads/<%= profile.profile_pic %>" alt="Profile Picture" style="max-width: 200px; height: auto;">
+            </p>
+        <% } else { %>
+            <p class="profile_pic">
+                <strong>Profile Picture:</strong><br>
+                <img src="/img/no_profile_pic.png" alt="No Profile Picture" style="max-width: 200px; height: auto;">
+            </p>
+        <% } %>
+
         <p class="f_name"><strong>First Name:</strong> <%= profile.f_name ? profile.f_name : 'None' %></p>
         <p class="l_name"><strong>Last Name:</strong> <%= profile.l_name ? profile.l_name : 'None' %></p>
+        <p class="gender"><strong>Gender:</strong> <%= profile.gender ? profile.gender : 'None' %></p>
         <p class="dob"><strong>Date of Birth:</strong> <%= profile.d_o_b ? profile.d_o_b : 'None' %></p>
         <p class="bio"><strong>Bio:</strong> <%= profile.bio ? profile.bio : 'None' %></p>
-        <p class="country"><strong>Country:</strong> <%= profile.country ? profile.country : 'None' %></p>
+        
+        <!-- EXTERNAL LINK FOR CV -->
+        <% if (profile.cv) { %>
+            <p class="cv">
+                <strong>CV:</strong>
+                <a href="/uploads/<%= profile.cv %>" target="_blank" rel="noopener noreferrer">View CV</a>
+            </p>
+        <% } else { %>
+            <p class="cv"><strong>CV:</strong> None</p>
+        <% } %>
+
+        <p class="address"><strong>Address:</strong> <%= profile.address ? profile.address : 'None' %></p>
         <p class="postcode"><strong>Postcode:</strong> <%= profile.postcode ? profile.postcode : 'None' %></p>
         <p class="phone"><strong>Phone:</strong> <%= profile.ct_phone ? profile.ct_phone : 'None' %></p>
         <p class="email"><strong>Email:</strong> <%= profile.ct_email ? profile.ct_email : 'None' %></p>
-        <p class="industry"><strong>Industry:</strong> <%= profile.industry ? profile.industry : 'None' %></p>
+        <p class="industry"><strong>Industry:</strong> <%= profile.industry ? profile.industry_name : 'None' %></p>
+        <p class="work_status"><strong>Work Status: </strong> <%= profile.work_status ? 'Ready to Work' : 'Not Ready to Work' %></p>
+
     </div>
 <% } %>
 
 
-<script src="/scripts/seeker_build_utils.js"></script>
+<script src="/scripts/profile_utils.js"></script>
