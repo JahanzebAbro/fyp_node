@@ -46,3 +46,33 @@ export function findIndustryCode(industry_name){
 
     return "Industry Code not found";
 }
+
+export function findIndustryName(code){
+    const industries = {
+        "": "None", 
+        "IT": "Information Technology",
+        "MED": "Medicine",
+        "ECMM": "Ecommerce",
+        "CAR": "Car Dealership",
+        "FIN": "Finance",
+        "EDU": "Education",
+        "MAN": "Manufacturing",
+        "TRA": "Transportation",
+        "HOS": "Hospitality",
+        "ART": "Art and Design",
+        "ENT": "Entertainment",
+        "AGR": "Agriculture",
+        "CON": "Construction",
+        "PHA": "Pharmaceuticals",
+        "TEL": "Telecommunications",
+        "RST": "Restaurant",
+        "COS": "Cosmetics",
+        "FIT": "Fitness",
+        "TRV": "Travel",
+        "ADV": "Advertising"
+    };
+
+    const industry = industries[code] || "Industry not found";
+
+    return industry;
+}

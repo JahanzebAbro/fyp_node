@@ -75,7 +75,6 @@ class Seeker {
             }  
         }   
         catch(err){
-            // console.log('Query problem');
             throw err;
         }
     
@@ -135,12 +134,51 @@ class Seeker {
             }
         }
         catch(err){
-            // console.log('Query problem');
             throw err;
         }
 
     }
 
+    // Update seeker rows partially with a fields object containing name and value for the entry.
+    static async update(pool, user_id, fields){
+        try{
+            
+            const set_columns = [];
+            const params = [];
+
+            Object.entries(fields).forEach(([column, value], index) => {
+                set_columns.push(`${column} = $${index + 1}`); // SQL params index start at 1
+                params.push(value);
+            });
+            
+            params.push(user_id);
+
+            // Check if there is anything to update.
+            if (set_columns.length === 0) {
+                return 'Nothing to update';
+            }
+
+            const query = `
+                UPDATE seekers
+                SET ${set_columns.join(', ')}
+                WHERE user_id = $${set_columns.length + 1}
+                RETURNING *;`; // Returns updated row
+
+            
+            const result = await pool.query(query, params);
+
+            if (result.rows.length > 0) {
+                return result.rows[0].user_id;
+            } else {
+                return null; 
+            }
+
+
+        }
+        catch(err){
+            throw err;
+        }
+    }
 
 }
 

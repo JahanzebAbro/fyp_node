@@ -38,7 +38,20 @@ router.get("/profile", isNotAuthReq, isProfileBuilt, async (req, res) => {
 });
 
 
+router.post('/update-profile', isNotAuthReq, async (req, res) => {
+    try {
 
+        const updates = req.body; 
+
+        const result = await Seeker.update(pool, req.user.id, updates);
+        // Respond with success message or the updated seeker data
+        res.json({ success: true, message: 'Profile updated successfully', seeker: result });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'An error occurred' });
+    }
+});
 
 
 // ------------USER BUILDER FORM
