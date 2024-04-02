@@ -1,7 +1,7 @@
 import { findMaxAndMinDOB, findIndustryCode, findIndustryName } from './general_utils.js';
 
-
 // Storing values for edit mode
+let profile_pic_old_path = $('#profile_pic_val').attr('src');
 let f_name_old_val = $('#f_name_val').text().trim();
 let l_name_old_val = $('#l_name_val').text().trim();
 let gender_old_val = $('#gender_val').text().trim();
@@ -13,6 +13,41 @@ let ct_phone_old_val = $('#ct_phone_val').text().trim();
 let ct_email_old_val = $('#ct_email_val').text().trim();
 let industry_old_val = $('#industry_val').text().trim();
 let work_status_old_val = $('#work_status_val').text().trim();
+
+let profile_pic_new = ''; // To help display changes of images in after edit mode
+let is_pic_cleared = false;
+
+$(document).ready(function(){
+    
+    // When user click file browse for new image will trigger
+    // ------------Reference: CHATGPT(grimoire)
+    $('.profile_pic_container').on('click', '.pic_edit_overlay, .edit_pic_icon', function(e) {
+
+        e.stopPropagation(); // Prevent the click from bubbling up to the container
+        $(this).closest('.profile_pic_container').find('input[name="profile_pic"]').click();
+    });
+    
+    // Handle new image input
+    $(document).on('change', 'input[name="profile_pic"]', function() {
+
+        if (this.files && this.files[0]) {
+
+            let reader = new FileReader(); // File handler for input type file.
+            
+            reader.onload = function(e) {
+                $('#profile_pic_val').attr('src', e.target.result); // Update display with new file
+            };
+
+            reader.readAsDataURL(this.files[0]); // Reads file and then performs onload function
+            is_pic_cleared = false;
+        }
+    //------------ End of Reference
+
+    });
+
+
+});
+   
 
 
 // EDIT BUTTON
@@ -27,26 +62,49 @@ $(document).ready(function(){
 $(document).ready(function(){
     $('#save-edit-btn').click(function() {
 
-    
-        const profile = {
-            f_name: $('input[name="f_name"]').val(),
-            l_name: $('input[name="l_name"]').val(),
-            gender: $('select[name="gender"]').val(),
-            d_o_b: $('input[name="d_o_b"]').val().trim(),
-            bio: $('textarea[name="bio"]').val(),
-            address: $('input[name="address"]').val(),
-            postcode: $('input[name="postcode"]').val(),
-            ct_phone: $('input[name="ct_phone"]').val(),
-            ct_email: $('input[name="ct_email"]').val(),
-            industry: $('select[name="industry"]').val(),
-            work_status: $('input[name="work_status"]:checked').val() === "true"
-        };
+        let form = new FormData();
+
+        // Append the text inputs to the formData
+        form.append('f_name', $('input[name="f_name"]').val());
+        form.append('l_name', $('input[name="l_name"]').val());
+        form.append('gender', $('select[name="gender"]').val());
+        form.append('d_o_b', $('input[name="d_o_b"]').val().trim());
+        form.append('bio', $('textarea[name="bio"]').val());
+        form.append('address', $('input[name="address"]').val());
+        form.append('postcode', $('input[name="postcode"]').val());
+        form.append('ct_phone', $('input[name="ct_phone"]').val());
+        form.append('ct_email', $('input[name="ct_email"]').val());
+        form.append('industry', $('select[name="industry"]').val());
+        form.append('work_status', $('input[name="work_status"]:checked').val() === "true");  
+
+        
+
+        // Profile Picture Handler
+        const pic_input = $('input[name="profile_pic"]')[0];
+        if (pic_input.files && pic_input.files[0]) { // if user has selected a new pic
+            form.append('profile_pic_file', pic_input.files[0]);
+            profile_pic_new = pic_input.files[0].name; // Stores new image for display after edit mode.
+        }
+        else if(is_pic_cleared) // if user has cleared out his old pic
+        {
+            form.append('profile_pic_file', '');
+        }
+        else{
+            form.append('profile_pic_file', profile_pic_old_path.split('/').pop());
+        }
+        
+        
+        for (let [key, value] of form.entries()) {
+            console.log(key, value);
+        }
     
         // Sending to endpoint to update database.
         $.ajax({
             url: '/user/update-profile', 
             type: 'POST',
-            data: profile,
+            data: form,
+            processData: false, 
+            contentType: false,
             success: function(response) {
                 if(response.success) {
                     console.log(response.message);
@@ -71,7 +129,14 @@ $(document).ready(function(){
     });
 });
 
-
+// CLEAR PHOTO BUTTON
+$(document).ready(function(){
+    $('#clear-pic-btn').click(function() {
+        is_pic_cleared = true;
+        $('#profile_pic_val').attr('src', '/img/no_profile_pic.png'); // Default picture
+        profile_pic_new = ''; 
+    });
+});
 
 function toggleEditMode(isEditMode, isSaved=false){
 
@@ -79,6 +144,16 @@ function toggleEditMode(isEditMode, isSaved=false){
     if(isEditMode){
 
         // -----------UPDATE FORM
+        
+        // PROFILE PICTURE
+        $('.profile_pic_container').html(`
+                        <img id="profile_pic_val" src="${profile_pic_old_path}" alt="Profile Picture">
+                        <input type="file" name="profile_pic" accept="image/png, image/jpeg, image/jpg" style="display:none;">
+                        <div class="pic_edit_overlay" >
+                            <img class="edit_pic_icon" src="/img/edit_pic_icon.png" alt="Click to browse">
+                        </div>`);
+        
+
         // FIRST NAME
         $('#f_name_val').html(`<input type="text" name="f_name" maxlength="50" value="${f_name_old_val}">`);
 
@@ -157,11 +232,13 @@ function toggleEditMode(isEditMode, isSaved=false){
                                         Not Ready to Work
                                     </label>`);
 
-
+                                                                          
+                                    
 
         // Button displays
         $('#edit-profile-btn').hide();
         $('#save-edit-btn').show();
+        $('#clear-pic-btn').show();
         $('#cancel-edit-btn').show();
 
 
@@ -174,9 +251,20 @@ function toggleEditMode(isEditMode, isSaved=false){
             // VALIDATE
 
 
-            // AJAX - UPDATE DATABASE
+            
 
             // CONFIGURE AND DISPLAY NEW VALUES
+            
+            if(profile_pic_new !== ''){ // if there has NOT been a new pic input
+                profile_pic_old_path = '/uploads/' + profile_pic_new;   
+            }
+            else if(is_pic_cleared){
+                profile_pic_old_path = '/img/no_profile_pic.png';
+            }
+            
+            
+            $('.profile_pic_container').html(`<img id="profile_pic_val" src="${profile_pic_old_path}" alt="Profile Picture">`);
+
             f_name_old_val = $('input[name="f_name"]').val();
             $('#f_name_val').text(f_name_old_val || 'None');
 
@@ -186,8 +274,10 @@ function toggleEditMode(isEditMode, isSaved=false){
             gender_old_val = $('select[name="gender"]').val();
             $('#gender_val').text(gender_old_val || 'None');
 
-            const parts =  $('input[name="d_o_b"]').val().trim().split('-'); // split into yyyy, mm, dd
-            d_o_b_old_val = `${parts[2]}/${parts[1]}/${parts[0]}`;
+            if($('input[name="d_o_b"]').val()){ // Check if value was given
+                const parts =  $('input[name="d_o_b"]').val().trim().split('-'); // split into yyyy, mm, dd
+                d_o_b_old_val = `${parts[2]}/${parts[1]}/${parts[0]}`;
+            }
             $('#d_o_b_val').text(d_o_b_old_val || 'None');
             
             bio_old_val = $('textarea[name="bio"]').val();
@@ -215,6 +305,7 @@ function toggleEditMode(isEditMode, isSaved=false){
         else{
 
             // Convert input fields back to text with old values.
+            $('.profile_pic_container').html(`<img id="profile_pic_val" src="${profile_pic_old_path}" alt="Profile Picture">`);
             $('#f_name_val').text(f_name_old_val);
             $('#l_name_val').text(l_name_old_val);
             $('#gender_val').text(gender_old_val);
@@ -227,12 +318,12 @@ function toggleEditMode(isEditMode, isSaved=false){
             $('#industry_val').text(industry_old_val);
             $('#work_status_val').text(work_status_old_val);
 
-            
 
         }
 
         $('#edit-profile-btn').show();
         $('#save-edit-btn').hide();
+        $('#clear-pic-btn').hide();
         $('#cancel-edit-btn').hide();   
         
 

@@ -2,8 +2,10 @@ const express = require("express");
 const router = express.Router();
 const pool = require("../config/db/db_config");
 const Seeker = require('../models/seekerModel');
+const fs = require('fs');
 const { isNotAuthReq } = require('../utils');
 const { isProfileBuilt } = require('../utils');
+const { deleteUpload } = require('../utils');
 
 
 const multer  = require('multer');
@@ -14,15 +16,17 @@ const storage = multer.diskStorage({
         cb(null, 'uploads');
     },
     filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        const ext = path.extname(file.originalname); // Extract the extension
-        cb(null, file.fieldname + '-' + uniqueSuffix + ext); 
+        // const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        // const ext = path.extname(file.originalname); // Extract the extension
+        // cb(null, file.fieldname + '-' + uniqueSuffix + ext); 
+        cb(null, file.originalname);
     }
 });
   
 const upload = multer({ storage: storage })
-// const upload = multer({ dest: 'uploads/' });
+
 const seekerUpload = upload.fields([{ name: 'cv', maxCount: 1 }, { name: 'profile_pic', maxCount: 1 }]);
+const seekerEditUpload = upload.fields([{ name: 'profile_pic_file', maxCount: 1}]);
 
 // ------------DASHBOARD
 router.get("/dashboard", isNotAuthReq, (req, res) => {
@@ -38,12 +42,38 @@ router.get("/profile", isNotAuthReq, isProfileBuilt, async (req, res) => {
 });
 
 
-router.post('/update-profile', isNotAuthReq, async (req, res) => {
+router.post('/update-profile', isNotAuthReq, upload.single('profile_pic_file'), async (req, res) => {
     try {
 
         const updates = req.body; 
+        const old_seeker = await Seeker.getById(pool, req.user.id); // To delete old file paths
+       
+        let result = '';
 
-        const result = await Seeker.update(pool, req.user.id, updates);
+        
+        if(req.file){ // If a new file was inputted
+
+            // delete old one if exists and not equal to the new one
+            if (old_seeker.profile_pic && old_seeker.profile_pic !== req.file.filename ) { 
+                deleteUpload(path.join('uploads/' , old_seeker.profile_pic));
+            } 
+
+            // Append profile_pic name to updates
+            updates.profile_pic_file = req.file.filename;
+        }
+        else{ // No file was inputted so string with old file or null was sent.
+
+            // Delete if string is not equal to an existing file
+            if (old_seeker.profile_pic && old_seeker.profile_pic !== req.profile_pic_file ) { 
+                deleteUpload(path.join('uploads/' , old_seeker.profile_pic));
+            } 
+        }
+
+        // Making sure null gets sent for no_profile_pic
+        updates.profile_pic_file = updates.profile_pic_file !== 'no_profile_pic.png' ? updates.profile_pic_file : '';
+        
+        result = await Seeker.update(pool, req.user.id, updates);
+        
         // Respond with success message or the updated seeker data
         res.json({ success: true, message: 'Profile updated successfully', seeker: result });
 
@@ -52,6 +82,10 @@ router.post('/update-profile', isNotAuthReq, async (req, res) => {
         res.status(500).json({ success: false, message: 'An error occurred' });
     }
 });
+
+
+
+
 
 
 // ------------USER BUILDER FORM

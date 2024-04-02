@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const pool = require('./config/db/db_config'); 
 const Seeker = require('./models/seekerModel');
-
+const fs = require('fs');
 // ------------------Password Utilities
 
 // Encrypt password
@@ -134,3 +134,12 @@ exports.isProfileBuilt = async function (req, res, next) {
 }
 
 
+exports.deleteUpload = function(file_path) {
+    fs.unlink(file_path, (err) => {
+        if (err) {
+            console.error('Failed to delete old file:', err);
+        } else {
+            console.log('Old file deleted.');
+        }
+    });
+}

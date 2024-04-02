@@ -17,18 +17,18 @@ Profile Page<br>
 
 
         <!-- DISPLAYING PROFILE PICTURE -->
+        <strong>Profile Picture:</strong><br>
         <% if (profile.profile_pic) { %>
-            <p class="profile_pic">
-                <strong>Profile Picture:</strong><br>
-                <img src="/uploads/<%= profile.profile_pic %>" alt="Profile Picture" style="max-width: 200px; height: auto;">
-            </p>
+            <div class="profile_pic_container">
+                <img id="profile_pic_val" src="/uploads/<%= profile.profile_pic %>" alt="Profile Picture">
+            </div>
         <% } else { %>
-            <p class="profile_pic">
-                <strong>Profile Picture:</strong><br>
-                <img src="/img/no_profile_pic.png" alt="No Profile Picture" style="max-width: 200px; height: auto;">
-            </p>
+            <div class="profile_pic_container">
+                <img id="profile_pic_val" src="/img/no_profile_pic.png" alt="Profile Picture">
+            </div>
         <% } %>
-
+        
+        <button id="clear-pic-btn" type="button" style="display: none;">Clear Photo</button>
 
 
         <p class="f_name"><strong>First Name:</strong> 
@@ -54,7 +54,7 @@ Profile Page<br>
         <% if (profile.cv) { %>
             <p class="cv">
                 <strong>CV:</strong>
-                <a href="/uploads/<%= profile.cv %>" target="_blank" rel="noopener noreferrer">View CV</a>
+                <a href="/uploads/<%= profile.cv %>" target="_blank" rel="noopener noreferrer"><%= profile.cv %></a>
             </p>
         <% } else { %>
             <p class="cv"><strong>CV:</strong> None</p>
@@ -87,6 +87,8 @@ Profile Page<br>
     <button id="edit-profile-btn" type="button">Edit Profile</button>
     <button id="save-edit-btn" type="button" style="display: none;">Save Changes</button>
     <button id="cancel-edit-btn" type="button" style="display: none;">Cancel</button>
+    
+   
 
 
 <% } %>
