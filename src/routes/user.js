@@ -26,7 +26,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage })
 
 const seekerUpload = upload.fields([{ name: 'cv', maxCount: 1 }, { name: 'profile_pic', maxCount: 1 }]);
-const seekerEditUpload = upload.fields([{ name: 'profile_pic_file', maxCount: 1}]);
+const seekerEditUpload = upload.fields([{ name: 'cv_file', maxCount: 1 }, { name: 'profile_pic_file', maxCount: 1}]);
 
 // ------------DASHBOARD
 router.get("/dashboard", isNotAuthReq, (req, res) => {
@@ -42,7 +42,7 @@ router.get("/profile", isNotAuthReq, isProfileBuilt, async (req, res) => {
 });
 
 
-router.post('/update-profile', isNotAuthReq, upload.single('profile_pic_file'), async (req, res) => {
+router.post('/update-profile', isNotAuthReq, seekerEditUpload, async (req, res) => {
     try {
 
         const updates = req.body; 
@@ -50,27 +50,42 @@ router.post('/update-profile', isNotAuthReq, upload.single('profile_pic_file'), 
        
         let result = '';
 
-        
-        if(req.file){ // If a new file was inputted
+        // Handling Profile picture update
+        if(req.files['profile_pic_file'] && req.files['profile_pic_file'][0]){ // If a new file was inputted
 
             // delete old one if exists and not equal to the new one
-            if (old_seeker.profile_pic && old_seeker.profile_pic !== req.file.filename ) { 
+            const pic_new_name = req.files['profile_pic_file'][0].filename
+            if (old_seeker.profile_pic && old_seeker.profile_pic !== pic_new_name ) { 
                 deleteUpload(path.join('uploads/' , old_seeker.profile_pic));
             } 
 
             // Append profile_pic name to updates
-            updates.profile_pic_file = req.file.filename;
+            updates.profile_pic_file = pic_new_name;
         }
         else{ // No file was inputted so string with old file or null was sent.
 
             // Delete if string is not equal to an existing file
-            if (old_seeker.profile_pic && old_seeker.profile_pic !== req.profile_pic_file ) { 
+            if (old_seeker.profile_pic && old_seeker.profile_pic !== req.body.profile_pic_file ) {
                 deleteUpload(path.join('uploads/' , old_seeker.profile_pic));
             } 
+
+            // Making sure null gets sent for no_profile_pic
+            updates.profile_pic_file = updates.profile_pic_file !== 'no_profile_pic.png' ? updates.profile_pic_file : '';
         }
 
-        // Making sure null gets sent for no_profile_pic
-        updates.profile_pic_file = updates.profile_pic_file !== 'no_profile_pic.png' ? updates.profile_pic_file : '';
+
+        // Handling CV file update
+        if (req.files['cv_file'] && req.files['cv_file'][0]) {
+            
+            let cv_new_name = req.files['cv_file'][0].filename;
+            // If new file uploaded is same as old one, don't delete
+            if (old_seeker.cv && old_seeker.cv !== cv_new_name) {
+                deleteUpload(path.join('uploads/', old_seeker.cv));
+            }
+            updates.cv_file = cv_new_name; // Adjust this line to match your database column for CV
+        }
+
+
         
         result = await Seeker.update(pool, req.user.id, updates);
         

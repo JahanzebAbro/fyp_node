@@ -54,7 +54,9 @@ Profile Page<br>
         <% if (profile.cv) { %>
             <p class="cv">
                 <strong>CV:</strong>
-                <a href="/uploads/<%= profile.cv %>" target="_blank" rel="noopener noreferrer"><%= profile.cv %></a>
+                <span id="cv_val">
+                    <a href="/uploads/<%= profile.cv %>" target="_blank" rel="noopener noreferrer"><%= profile.cv %></a>
+                </span>
             </p>
         <% } else { %>
             <p class="cv"><strong>CV:</strong> None</p>

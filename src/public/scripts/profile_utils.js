@@ -7,6 +7,7 @@ let l_name_old_val = $('#l_name_val').text().trim();
 let gender_old_val = $('#gender_val').text().trim();
 let d_o_b_old_val = $('#d_o_b_val').text().trim();
 let bio_old_val = $('#bio_val').text().trim();
+let cv_old_val = $('#cv_val a').text().trim();
 let address_old_val = $('#address_val').text().trim();
 let postcode_old_val = $('#postcode_val').text().trim();
 let ct_phone_old_val = $('#ct_phone_val').text().trim();
@@ -79,7 +80,7 @@ $(document).ready(function(){
 
         
 
-        // Profile Picture Handler
+        // Profile Picture File Handler
         const pic_input = $('input[name="profile_pic"]')[0];
         if (pic_input.files && pic_input.files[0]) { // if user has selected a new pic
             form.append('profile_pic_file', pic_input.files[0]);
@@ -92,6 +93,17 @@ $(document).ready(function(){
         else{
             form.append('profile_pic_file', profile_pic_old_path.split('/').pop());
         }
+
+
+        // CV File Handler
+        const cv_input = $('input[name="cv"]')[0];
+        if (cv_input.files && cv_input.files[0]) { // if user has selected a new cv
+            form.append('cv_file', cv_input.files[0]);
+            cv_old_val = cv_input.files[0].name;
+        }
+        // else{ 
+        //     form.append('cv_file', cv_old_val); //Not cleared nor new selected so leaving old one.
+        // }
         
         
         for (let [key, value] of form.entries()) {
@@ -181,6 +193,15 @@ function toggleEditMode(isEditMode, isSaved=false){
         $('#bio_val').html(`<br><textarea name="bio" rows="4" cols="50" maxlength="800" 
             placeholder="Let others know more about YOU with a short description of what you're all about!">${bio_old_val}</textarea>`);
 
+
+        // CV
+        $('.cv').html(`
+                <strong>Current CV: </strong>
+                <a href="/uploads/${cv_old_val}" target="_blank" rel="noopener noreferrer">${cv_old_val}</a>
+                <button type="buttton" class="clear_btn" name="clear_cv">x</button>
+                <br><br>
+                <strong>Select New CV: </strong>
+                <input type="file" name="cv" accept=".pdf"></input>`);
 
         // ADDRESS
         $('#address_val').html(`<input type="text" name="address" value="${address_old_val}">`);
@@ -282,6 +303,12 @@ function toggleEditMode(isEditMode, isSaved=false){
             
             bio_old_val = $('textarea[name="bio"]').val();
             $('#bio_val').text(bio_old_val || 'None');
+
+            $('.cv').html(`
+                            <strong>CV:</strong>
+                            <span id="cv_val">
+                                <a href="/uploads/${cv_old_val}" target="_blank" rel="noopener noreferrer">${cv_old_val}</a>
+                            </span>`);
             
             address_old_val = $('input[name="address"]').val();
             $('#address_val').text(address_old_val || 'None');
@@ -311,6 +338,11 @@ function toggleEditMode(isEditMode, isSaved=false){
             $('#gender_val').text(gender_old_val);
             $('#d_o_b_val').text(d_o_b_old_val);
             $('#bio_val').text(bio_old_val);
+            $('.cv').html(`
+                            <strong>CV:</strong>
+                            <span id="cv_val">
+                                <a href="/uploads/${cv_old_val}" target="_blank" rel="noopener noreferrer">${cv_old_val}</a>
+                            </span>`);
             $('#address_val').text(address_old_val);
             $('#postcode_val').text(postcode_old_val);
             $('#ct_phone_val').text(ct_phone_old_val);

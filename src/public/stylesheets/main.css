@@ -41,6 +41,11 @@ h1 {
 }
 
 .edit_pic_icon {
-    width: 20%; /* Example size, adjust as needed */
+    width: 20%; 
     height: auto;
+}
+
+.clear_btn{ /*Used for cv clear*/
+    margin-left: 0.5em; 
+    color: red;
 }
