@@ -68,9 +68,6 @@ router.post('/update-profile', isNotAuthReq, seekerEditUpload, async (req, res) 
             if (old_seeker.profile_pic && old_seeker.profile_pic !== req.body.profile_pic_file ) {
                 deleteUpload(path.join('uploads/' , old_seeker.profile_pic));
             } 
-
-            // Making sure null gets sent for no_profile_pic
-            updates.profile_pic_file = updates.profile_pic_file !== 'no_profile_pic.png' ? updates.profile_pic_file : '';
         }
 
 

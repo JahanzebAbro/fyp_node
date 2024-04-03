@@ -15,6 +15,16 @@ let ct_email_old_val = $('#ct_email_val').text().trim();
 let industry_old_val = $('#industry_val').text().trim();
 let work_status_old_val = $('#work_status_val').text().trim();
 
+// Setting all fields with 'None' to null.
+gender_old_val = emptyFieldToNullString($('#gender_val').text().trim());
+bio_old_val = emptyFieldToNullString($('#bio_val').text().trim());
+cv_old_val = emptyFieldToNullString($('#cv_val a').text().trim());
+address_old_val = emptyFieldToNullString($('#address_val').text().trim());
+postcode_old_val = emptyFieldToNullString($('#postcode_val').text().trim());
+ct_phone_old_val = emptyFieldToNullString($('#ct_phone_val').text().trim());
+ct_email_old_val = emptyFieldToNullString($('#ct_email_val').text().trim());
+
+
 let profile_pic_new = ''; // To help display changes of images in after edit mode
 let is_pic_cleared = false;
 
@@ -90,8 +100,11 @@ $(document).ready(function(){
         {
             form.append('profile_pic_file', '');
         }
-        else{
-            form.append('profile_pic_file', profile_pic_old_path.split('/').pop());
+        else{ // Has not cleared nor picked a new one so using old val.
+            
+            let old_pic = profile_pic_old_path.split('/').pop()
+            old_pic = old_pic !== 'no_profile_pic.png' ? old_pic : ''; // Null gets sent for no_profile_pic
+            form.append('profile_pic_file', old_pic);
         }
 
 
@@ -101,11 +114,9 @@ $(document).ready(function(){
             form.append('cv_file', cv_input.files[0]);
             cv_old_val = cv_input.files[0].name;
         }
-        // else{ 
-        //     form.append('cv_file', cv_old_val); //Not cleared nor new selected so leaving old one.
-        // }
         
         
+        console.log('---------------------------');
         for (let [key, value] of form.entries()) {
             console.log(key, value);
         }
@@ -195,13 +206,23 @@ function toggleEditMode(isEditMode, isSaved=false){
 
 
         // CV
-        $('.cv').html(`
-                <strong>Current CV: </strong>
-                <a href="/uploads/${cv_old_val}" target="_blank" rel="noopener noreferrer">${cv_old_val}</a>
-                <button type="buttton" class="clear_btn" name="clear_cv">x</button>
-                <br><br>
-                <strong>Select New CV: </strong>
-                <input type="file" name="cv" accept=".pdf"></input>`);
+
+        if(cv_old_val){
+            $('.cv').html(`
+                    <strong>Current CV: </strong>
+                    <a href="/uploads/${cv_old_val}" target="_blank" rel="noopener noreferrer">${cv_old_val}</a>
+                    <button type="buttton" class="clear_btn" name="clear_cv">x</button>
+                    <br><br>
+                    <strong>Select New CV: </strong>
+                    <input type="file" name="cv" accept=".pdf"></input>`);
+        }
+        else{
+            $('.cv').html(`
+                    
+                    <p><strong>Current CV: </strong>None</p>
+                    <strong>Select New CV: </strong>
+                    <input type="file" name="cv" accept=".pdf"></input>`);
+        }
 
         // ADDRESS
         $('#address_val').html(`<input type="text" name="address" value="${address_old_val}">`);
@@ -239,7 +260,7 @@ function toggleEditMode(isEditMode, isSaved=false){
                                         <option value="TRV">Travel</option>
                                         <option value="ADV">Advertising</option>
                                     </select>`);
-        $('select[name="industry"]').val(findIndustryCode(industry_old_val)); // Pre-selecting option based on old value.
+        $('select[name="industry"]').val(findIndustryCode(industry_old_val) || ''); // Pre-selecting option based on old value.
         
         // WORK STATUS
         $('#work_status_val').html(`<label>
@@ -304,12 +325,22 @@ function toggleEditMode(isEditMode, isSaved=false){
             bio_old_val = $('textarea[name="bio"]').val();
             $('#bio_val').text(bio_old_val || 'None');
 
-            $('.cv').html(`
+            if(cv_old_val){
+                $('.cv').html(`
                             <strong>CV:</strong>
                             <span id="cv_val">
                                 <a href="/uploads/${cv_old_val}" target="_blank" rel="noopener noreferrer">${cv_old_val}</a>
                             </span>`);
-            
+
+            }
+            else{
+                $('.cv').html(`
+                <strong>CV:</strong>
+                <span id="cv_val">
+                    <a>None</a>
+                </span>`);
+            }
+
             address_old_val = $('input[name="address"]').val();
             $('#address_val').text(address_old_val || 'None');
 
@@ -331,23 +362,33 @@ function toggleEditMode(isEditMode, isSaved=false){
         }
         else{
 
-            // Convert input fields back to text with old values.
+
+            // Convert input fields back to text with old values or 'None' if they had no value.
             $('.profile_pic_container').html(`<img id="profile_pic_val" src="${profile_pic_old_path}" alt="Profile Picture">`);
-            $('#f_name_val').text(f_name_old_val);
-            $('#l_name_val').text(l_name_old_val);
-            $('#gender_val').text(gender_old_val);
-            $('#d_o_b_val').text(d_o_b_old_val);
-            $('#bio_val').text(bio_old_val);
-            $('.cv').html(`
+            $('#f_name_val').text(f_name_old_val || 'None');
+            $('#l_name_val').text(l_name_old_val || 'None');
+            $('#gender_val').text(gender_old_val || 'None');
+            $('#d_o_b_val').text(d_o_b_old_val || 'None');
+            $('#bio_val').text(bio_old_val || 'None');
+            if(cv_old_val){
+                $('.cv').html(`
+                                <strong>CV:</strong>
+                                <span id="cv_val">
+                                    <a href="/uploads/${cv_old_val}" target="_blank" rel="noopener noreferrer">${cv_old_val}</a>
+                                </span>`);
+            }
+            else{
+                $('.cv').html(`
                             <strong>CV:</strong>
                             <span id="cv_val">
-                                <a href="/uploads/${cv_old_val}" target="_blank" rel="noopener noreferrer">${cv_old_val}</a>
+                                <a>None</a>
                             </span>`);
-            $('#address_val').text(address_old_val);
-            $('#postcode_val').text(postcode_old_val);
-            $('#ct_phone_val').text(ct_phone_old_val);
-            $('#ct_email_val').text(ct_email_old_val);
-            $('#industry_val').text(industry_old_val);
+            }
+            $('#address_val').text(address_old_val || 'None');
+            $('#postcode_val').text(postcode_old_val || 'None');
+            $('#ct_phone_val').text(ct_phone_old_val || 'None');
+            $('#ct_email_val').text(ct_email_old_val || 'None');
+            $('#industry_val').text(industry_old_val || 'None');
             $('#work_status_val').text(work_status_old_val);
 
 
@@ -367,3 +408,6 @@ function toggleEditMode(isEditMode, isSaved=false){
 
 
 
+function emptyFieldToNullString(value) {
+  return value === 'None' ? '' : value;
+}
