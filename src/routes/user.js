@@ -70,6 +70,7 @@ router.post('/update-profile', isNotAuthReq, seekerEditUpload, async (req, res) 
             } 
         }
 
+        // ==============================
 
         // Handling CV file update
         if (req.files['cv_file'] && req.files['cv_file'][0]) {
@@ -82,6 +83,11 @@ router.post('/update-profile', isNotAuthReq, seekerEditUpload, async (req, res) 
             updates.cv_file = cv_new_name; // Adjust this line to match your database column for CV
         }
 
+        // If new cv request is empty. Which means user wants to clear.
+        if (req.body.cv_file && req.body.cv_file.trim() === 'clear'){
+            deleteUpload(path.join('uploads/', old_seeker.cv));
+            updates.cv_file = '';
+        }
 
         
         result = await Seeker.update(pool, req.user.id, updates);

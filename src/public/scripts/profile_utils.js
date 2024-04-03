@@ -27,7 +27,10 @@ ct_email_old_val = emptyFieldToNullString($('#ct_email_val').text().trim());
 
 let profile_pic_new = ''; // To help display changes of images in after edit mode
 let is_pic_cleared = false;
+let is_cv_cleared = false;
 
+
+// PROFILE PIC FILE BROWSE
 $(document).ready(function(){
     
     // When user click file browse for new image will trigger
@@ -58,7 +61,9 @@ $(document).ready(function(){
 
 
 });
-   
+
+
+
 
 
 // EDIT BUTTON
@@ -114,6 +119,11 @@ $(document).ready(function(){
             form.append('cv_file', cv_input.files[0]);
             cv_old_val = cv_input.files[0].name;
         }
+        else if(is_cv_cleared)
+        {
+            form.append('cv_file', 'clear');
+            cv_old_val = '';
+        }
         
         
         console.log('---------------------------');
@@ -145,12 +155,14 @@ $(document).ready(function(){
 });
 
 
+
 // CANCEL EDIT BUTTON
 $(document).ready(function(){
     $('#cancel-edit-btn').click(function() {
         toggleEditMode(false);
     });
 });
+
 
 // CLEAR PHOTO BUTTON
 $(document).ready(function(){
@@ -160,6 +172,17 @@ $(document).ready(function(){
         profile_pic_new = ''; 
     });
 });
+
+
+// CLEAR CV BUTTON
+$(document).ready(function(){
+    $(document).on('click', '#clear-cv-btn', function() {
+        is_cv_cleared = true; 
+        $('#cv_val').html(`<a>None</a>`); 
+        $(this).hide(); // hide the clear button
+    });
+});
+
 
 function toggleEditMode(isEditMode, isSaved=false){
 
@@ -210,8 +233,10 @@ function toggleEditMode(isEditMode, isSaved=false){
         if(cv_old_val){
             $('.cv').html(`
                     <strong>Current CV: </strong>
-                    <a href="/uploads/${cv_old_val}" target="_blank" rel="noopener noreferrer">${cv_old_val}</a>
-                    <button type="buttton" class="clear_btn" name="clear_cv">x</button>
+                    <span id="cv_val">
+                        <a href="/uploads/${cv_old_val}" target="_blank" rel="noopener noreferrer">${cv_old_val}</a>
+                    </span>
+                    <button type="buttton" id="clear-cv-btn" class="clear_btn" name="clear_cv">x</button>
                     <br><br>
                     <strong>Select New CV: </strong>
                     <input type="file" name="cv" accept=".pdf"></input>`);
@@ -219,7 +244,11 @@ function toggleEditMode(isEditMode, isSaved=false){
         else{
             $('.cv').html(`
                     
-                    <p><strong>Current CV: </strong>None</p>
+                    <strong>Current CV: </strong>
+                    <span id="cv_val">
+                        <a>None</a>
+                    </span>
+                    <br><br>
                     <strong>Select New CV: </strong>
                     <input type="file" name="cv" accept=".pdf"></input>`);
         }
