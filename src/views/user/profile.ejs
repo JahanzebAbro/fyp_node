@@ -28,23 +28,28 @@ Profile Page<br>
             </div>
         <% } %>
         
-        <button id="clear-pic-btn" type="button" style="display: none;">Clear Photo</button>
+        <button id="clear-pic-btn" type="button" style="display: none;">Clear Photo</button><br>
+        <span  id="pic_err" style="color: red;"></span>
 
 
         <p class="f_name"><strong>First Name:</strong> 
-            <span id="f_name_val"><%= profile.f_name ? profile.f_name : 'None' %></span>
+            <span id="f_name_val"><%= profile.f_name ? profile.f_name : 'None' %></span><br>
+            <span  id="f_name_err" style="color: red;"></span>
         </p>
         <p class="l_name"><strong>Last Name:</strong>
-            <span id="l_name_val"><%= profile.l_name ? profile.l_name : 'None' %></span>
+            <span id="l_name_val"><%= profile.l_name ? profile.l_name : 'None' %></span><br>
+            <span  id="l_name_err" style="color: red;"></span>
         </p>
         <p class="gender"><strong>Gender:</strong> 
             <span id="gender_val"><%= profile.gender ? profile.gender : 'None' %></span>
         </p>
         <p class="dob"><strong>Date of Birth:</strong>
-            <span id="d_o_b_val"><%= profile.d_o_b ? profile.d_o_b : 'None' %></span>
+            <span id="d_o_b_val"><%= profile.d_o_b ? profile.d_o_b : 'None' %></span><br>
+            <span  id="d_o_b_err" style="color: red;"></span>
         </p>
         <p class="bio"><strong>Bio:</strong>
-            <span id="bio_val"><%= profile.bio ? profile.bio : 'None' %></span>
+            <span id="bio_val"><%= profile.bio ? profile.bio : 'None' %></span><br>
+            <span  id="bio_err" style="color: red;"></span>
         </p>
 
         
@@ -61,20 +66,25 @@ Profile Page<br>
         <% } else { %>
             <p class="cv"><strong>CV:</strong> None</p>
         <% } %>
+        <span  id="cv_err" style="color: red;"></span>
 
 
-        
+
         <p class="address"><strong>Address:</strong>
-            <span id="address_val"><%= profile.address ? profile.address : 'None' %></span>
+            <span id="address_val"><%= profile.address ? profile.address : 'None' %></span><br>
+            <span  id="address_err" style="color: red;"></span>
         </p>
         <p class="postcode"><strong>Postcode:</strong>
-            <span id="postcode_val"><%= profile.postcode ? profile.postcode : 'None' %></span>
+            <span id="postcode_val"><%= profile.postcode ? profile.postcode : 'None' %></span><br>
+            <span  id="postcode_err" style="color: red;"></span>
         </p>
         <p class="ct_phone"><strong>Phone:</strong>
-            <span id="ct_phone_val"><%= profile.ct_phone ? profile.ct_phone : 'None' %></span>
+            <span id="ct_phone_val"><%= profile.ct_phone ? profile.ct_phone : 'None' %></span><br>
+            <span  id="ct_phone_err" style="color: red;"></span>
         </p>
         <p class="ct_email"><strong>Email:</strong>
-            <span id="ct_email_val"><%= profile.ct_email ? profile.ct_email : 'None' %></span>
+            <span id="ct_email_val"><%= profile.ct_email ? profile.ct_email : 'None' %></span><br>
+            <span  id="ct_email_err" style="color: red;"></span>
         </p>
         <p class="industry"><strong>Industry:</strong>
             <span id="industry_val"><%= profile.industry ? profile.industry_name : 'None' %></span>

@@ -1,4 +1,13 @@
 import { findMaxAndMinDOB, findIndustryCode, findIndustryName } from './general_utils.js';
+import { validateName, 
+    validateDOB,
+    validateBio,
+    validateCV,
+    validatePic,
+    validateAddress,
+    validatePostcode, 
+    validatePhone,
+    validateEmail} from './general_utils.js';
 
 // Storing values for edit mode
 let profile_pic_old_path = $('#profile_pic_val').attr('src');
@@ -46,14 +55,18 @@ $(document).ready(function(){
 
         if (this.files && this.files[0]) {
 
-            let reader = new FileReader(); // File handler for input type file.
-            
-            reader.onload = function(e) {
-                $('#profile_pic_val').attr('src', e.target.result); // Update display with new file
-            };
+            const is_valid_pic = validatePic($('input[name="profile_pic"]'), $('#pic_err'));
 
-            reader.readAsDataURL(this.files[0]); // Reads file and then performs onload function
-            is_pic_cleared = false;
+            if(is_valid_pic){
+                let reader = new FileReader(); // File handler for input type file.
+                
+                reader.onload = function(e) {
+                    $('#profile_pic_val').attr('src', e.target.result); // Update display with new file
+                };
+
+                reader.readAsDataURL(this.files[0]); // Reads file and then performs onload function
+                is_pic_cleared = false;
+            }
         }
     //------------ End of Reference
 
@@ -78,77 +91,96 @@ $(document).ready(function(){
 $(document).ready(function(){
     $('#save-edit-btn').click(function() {
 
-        let form = new FormData();
+        // VALIDATE
+        let is_error = validateFields();
 
-        // Append the text inputs to the formData
-        form.append('f_name', $('input[name="f_name"]').val());
-        form.append('l_name', $('input[name="l_name"]').val());
-        form.append('gender', $('select[name="gender"]').val());
-        form.append('d_o_b', $('input[name="d_o_b"]').val().trim());
-        form.append('bio', $('textarea[name="bio"]').val());
-        form.append('address', $('input[name="address"]').val());
-        form.append('postcode', $('input[name="postcode"]').val());
-        form.append('ct_phone', $('input[name="ct_phone"]').val());
-        form.append('ct_email', $('input[name="ct_email"]').val());
-        form.append('industry', $('select[name="industry"]').val());
-        form.append('work_status', $('input[name="work_status"]:checked').val() === "true");  
+        if(!is_error){
 
-        
+            let form = new FormData();
 
-        // Profile Picture File Handler
-        const pic_input = $('input[name="profile_pic"]')[0];
-        if (pic_input.files && pic_input.files[0]) { // if user has selected a new pic
-            form.append('profile_pic_file', pic_input.files[0]);
-            profile_pic_new = pic_input.files[0].name; // Stores new image for display after edit mode.
-        }
-        else if(is_pic_cleared) // if user has cleared out his old pic
-        {
-            form.append('profile_pic_file', '');
-        }
-        else{ // Has not cleared nor picked a new one so using old val.
+            // Append the text inputs to the formData
+            form.append('f_name', $('input[name="f_name"]').val());
+            form.append('l_name', $('input[name="l_name"]').val());
+            form.append('gender', $('select[name="gender"]').val());
+            form.append('d_o_b', $('input[name="d_o_b"]').val());
+            form.append('bio', $('textarea[name="bio"]').val());
+            form.append('address', $('input[name="address"]').val());
+            form.append('postcode', $('input[name="postcode"]').val());
+            form.append('ct_phone', $('input[name="ct_phone"]').val());
+            form.append('ct_email', $('input[name="ct_email"]').val());
+            form.append('industry', $('select[name="industry"]').val());
+            form.append('work_status', $('input[name="work_status"]:checked').val() === "true");  
+
             
-            let old_pic = profile_pic_old_path.split('/').pop()
-            old_pic = old_pic !== 'no_profile_pic.png' ? old_pic : ''; // Null gets sent for no_profile_pic
-            form.append('profile_pic_file', old_pic);
-        }
 
+            // Profile Picture File Handler
+            const pic_input = $('input[name="profile_pic"]')[0];
 
-        // CV File Handler
-        const cv_input = $('input[name="cv"]')[0];
-        if (cv_input.files && cv_input.files[0]) { // if user has selected a new cv
-            form.append('cv_file', cv_input.files[0]);
-            cv_old_val = cv_input.files[0].name;
-        }
-        else if(is_cv_cleared)
-        {
-            form.append('cv_file', 'clear');
-            cv_old_val = '';
-        }
-        
-        
-        console.log('---------------------------');
-        for (let [key, value] of form.entries()) {
-            console.log(key, value);
-        }
-    
-        // Sending to endpoint to update database.
-        $.ajax({
-            url: '/user/update-profile', 
-            type: 'POST',
-            data: form,
-            processData: false, 
-            contentType: false,
-            success: function(response) {
-                if(response.success) {
-                    console.log(response.message);
-                    toggleEditMode(false, true); // Turn off edit mode and fix input values into display
-                } else {
-                    console.log(response.message);
+            if (pic_input.files && pic_input.files[0]) { // if user has selected a new pic
+
+                const is_valid_pic = validatePic($('input[name="profile_pic"]'), $('#pic_err'));
+                $('#pic_err').text(''); // Hide after edit mode.
+
+                if(is_valid_pic){
+                    form.append('profile_pic_file', pic_input.files[0]);
+                    profile_pic_new = pic_input.files[0].name; // Stores new image for display after edit mode.
                 }
-            },
-            error: function(xhr, status, err) {
+                else{
+                    // send old pic since new is invalid.
+                    let old_pic = profile_pic_old_path.split('/').pop()
+                    old_pic = old_pic !== 'no_profile_pic.png' ? old_pic : ''; // Null gets sent for no_profile_pic
+                    form.append('profile_pic_file', old_pic);
+                }
             }
-        });
+            else if(is_pic_cleared) // if user has cleared out his old pic
+            {
+                form.append('profile_pic_file', '');
+            }
+            else{ // Has not cleared nor picked a new one so using old val.
+                
+                let old_pic = profile_pic_old_path.split('/').pop()
+                old_pic = old_pic !== 'no_profile_pic.png' ? old_pic : ''; // Null gets sent for no_profile_pic
+                form.append('profile_pic_file', old_pic);
+            }
+
+
+            // CV File Handler
+            const cv_input = $('input[name="cv"]')[0];
+            if (cv_input.files && cv_input.files[0]) { // if user has selected a new cv
+                form.append('cv_file', cv_input.files[0]);
+                cv_old_val = cv_input.files[0].name;
+            }
+            else if(is_cv_cleared)
+            {
+                form.append('cv_file', 'clear');
+                cv_old_val = '';
+            }
+            
+            
+            console.log('---------------------------');
+            for (let [key, value] of form.entries()) {
+                console.log(key, value);
+            }
+        
+            // Sending to endpoint to update database.
+            $.ajax({
+                url: '/user/update-profile', 
+                type: 'POST',
+                data: form,
+                processData: false, 
+                contentType: false,
+                success: function(response) {
+                    if(response.success) {
+                        console.log(response.message);
+                        toggleEditMode(false, true); // Turn off edit mode and fix input values into display
+                    } else {
+                        console.log(response.message);
+                    }
+                },
+                error: function(xhr, status, err) {
+                }
+            });
+        }
 
         
     });
@@ -182,6 +214,10 @@ $(document).ready(function(){
         $(this).hide(); // hide the clear button
     });
 });
+
+
+
+
 
 
 function toggleEditMode(isEditMode, isSaved=false){
@@ -230,7 +266,7 @@ function toggleEditMode(isEditMode, isSaved=false){
 
         // CV
 
-        if(cv_old_val){
+        if(cv_old_val){ // if a cv exists
             $('.cv').html(`
                     <strong>Current CV: </strong>
                     <span id="cv_val">
@@ -263,7 +299,7 @@ function toggleEditMode(isEditMode, isSaved=false){
         $('#ct_phone_val').html(`<input type="text" name="ct_phone" value="${ct_phone_old_val}">`);
 
         // CONTACT EMAIL
-        $('#ct_email_val').html(`<input type="text" name="ct_email" value="${ct_email_old_val}">`);
+        $('#ct_email_val').html(`<input type="email" name="ct_email" value="${ct_email_old_val}">`);
 
         // INDUSTRY
         $('#industry_val').html(`<select name="industry">
@@ -319,10 +355,6 @@ function toggleEditMode(isEditMode, isSaved=false){
 
         if(isSaved){
 
-            // VALIDATE
-
-
-            
 
             // CONFIGURE AND DISPLAY NEW VALUES
             
@@ -439,4 +471,32 @@ function toggleEditMode(isEditMode, isSaved=false){
 
 function emptyFieldToNullString(value) {
   return value === 'None' ? '' : value;
+}
+
+
+function validateFields(){
+
+    let is_error = false;
+    // If the validation turns out false then we say an is error has occured.
+    // gender, ct_email, industry, work_status don't get checked here since they have built-in validation.
+    if (!validateName($('input[name="f_name"]').val(),          $('#f_name_err'))) is_error = true;
+    // console.log('after f_name', is_error);
+    if (!validateName($('input[name="l_name"]').val(),          $('#l_name_err'))) is_error = true;
+    // console.log('after l_name', is_error);
+    if (!validateDOB($('input[name="d_o_b"]').val(),            $('#d_o_b_err'))) is_error = true;
+    // console.log('after dob', is_error);
+    if (!validateBio($('textarea[name="bio"]').val(),           $('#bio_err'))) is_error = true;
+    // console.log('after bio', is_error);
+    if (!validateCV($('input[name="cv"]'),                      $('#cv_err'))) is_error = true;
+    // console.log('after cv', is_error);
+    if (!validateAddress($('input[name="address"]').val(),      $('#address_err'))) is_error = true;
+    // console.log('after address', is_error);
+    if (!validatePostcode( $('input[name="postcode"]').val(),   $('#postcode_err'))) is_error = true;
+    // console.log('after postcode', is_error);
+    if (!validatePhone($('input[name="ct_phone"]').val(),       $('#ct_phone_err'))) is_error = true;  
+    // console.log('after phone', is_error);
+    if (!validateEmail($('input[name="ct_email"]').val(),       $('#ct_email_err'))) is_error = true;  
+        // console.log('after email', is_error);
+
+    return is_error;
 }
