@@ -108,7 +108,7 @@ exports.findIndustryName = function(code){
         "ADV": "Advertising"
     };
 
-    const industry = industries[code] || "Industry not found";
+    const industry = industries[code] || null;
 
     return industry;
 }

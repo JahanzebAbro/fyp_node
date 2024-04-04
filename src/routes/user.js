@@ -1,33 +1,49 @@
 const express = require("express");
 const router = express.Router();
+const path = require('path');
 const pool = require("../config/db/db_config");
 const Seeker = require('../models/seekerModel');
-const fs = require('fs');
 const { isNotAuthReq } = require('../utils');
 const { isProfileBuilt } = require('../utils');
 const { deleteUpload } = require('../utils');
+const { validateFirstName, 
+        validateLastName,
+        validateDOB,
+        validateBio,
+        validateAddress,
+        validateEmail,
+        validatePhone,
+        validatePostcode,
+        validateGender,
+        validateIndustry,
+        validateWorkStatus,
+        validateFile } = require('../validate_utils');
 
+
+// MULTER FILE UPLOADS
 
 const multer  = require('multer');
-const path = require('path');
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'uploads');
     },
     filename: function (req, file, cb) {
-        // const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        // const ext = path.extname(file.originalname); // Extract the extension
-        // cb(null, file.fieldname + '-' + uniqueSuffix + ext); 
         cb(null, file.originalname);
     }
 });
   
-const upload = multer({ storage: storage })
+const upload = multer({ storage: storage,
+                        fileFilter: validateFile,
+                        limits: { fileSize: 2 * 1024 * 1024 }}); // 2MB LIMIT
 
-const seekerUpload = upload.fields([{ name: 'cv', maxCount: 1 }, { name: 'profile_pic', maxCount: 1 }]);
-const seekerEditUpload = upload.fields([{ name: 'cv_file', maxCount: 1 }, { name: 'profile_pic_file', maxCount: 1}]);
+const seekerUpload = upload.fields([{ name: 'cv_file', maxCount: 1 }, { name: 'profile_pic_file', maxCount: 1 }]);
 
+
+
+
+
+// ENDPOINTS
 // ------------DASHBOARD
 router.get("/dashboard", isNotAuthReq, (req, res) => {
     res.render("user/dashboard");
@@ -42,7 +58,7 @@ router.get("/profile", isNotAuthReq, isProfileBuilt, async (req, res) => {
 });
 
 
-router.post('/update-profile', isNotAuthReq, seekerEditUpload, async (req, res) => {
+router.post('/update-profile', isNotAuthReq, seekerUpload, async (req, res) => {
     try {
 
         const updates = req.body; 
@@ -118,53 +134,80 @@ router.get("/profile/builder", isNotAuthReq, async (req, res) => {
     res.render("user/seeker_builder");
 });
 
-// Submission
-router.post("/profile/builder", isNotAuthReq, seekerUpload, async (req, res) => {
 
-    let cv = '';
-    if (req.files['cv'] && req.files['cv'][0]){ // Check if a file was given
-        cv = req.files['cv'][0].filename;
+
+// SUBMIT POINT FOR BUILDER
+router.post("/profile/builder", isNotAuthReq, seekerUpload, validateFirstName,
+                                                            validateLastName,
+                                                            validateGender,
+                                                            validateDOB,
+                                                            validateBio,
+                                                            validateAddress,
+                                                            validatePostcode,
+                                                            validatePhone,
+                                                            validateEmail,
+                                                            validateIndustry,
+                                                            validateWorkStatus,
+                                                            multerSizeErrorHandler,
+                                                            fileErrorHandler,
+                                                            allErrorHandler, async (req, res) => {
+
+
+    try{
+        
+        const user_id = req.user.id;
+        let { f_name, l_name, gender, d_o_b, bio, address, postcode, ct_phone, ct_email, industry, work_status } = req.body;
+
+        let cv_file = '';
+        if (req.files['cv_file'] && req.files['cv_file'][0]){ // Check if a file was given
+            cv_file = req.files['cv'][0].filename;
+        }
+        
+        let profile_pic_file = '';
+        if (req.files['profile_pic_file'] && req.files['profile_pic_file'][0]){ // Check if a file was given
+            profile_pic_file = req.files['profile_pic_file'][0].filename;
+        }
+
+
+        // TRIMMING 
+        bio = bio.trim();
+
+
+        let result = await Seeker.create(pool, 
+            user_id, 
+            f_name, 
+            l_name, 
+            gender, 
+            d_o_b, 
+            bio, 
+            cv_file, 
+            profile_pic_file, 
+            address, 
+            postcode, 
+            ct_phone, 
+            ct_email, 
+            industry, 
+            work_status);
+        
+
+        if(result){
+            res.status(200).json({ success: true, message: 'Profile builder completed!', seeker: result });
+        }
+        else{
+            res.status(400).json({ success: false, message: 'Error in creating profile!', seeker: result });
+        }
     }
-    
-    let profile_pic = '';
-    if (req.files['profile_pic'] && req.files['profile_pic'][0]){ // Check if a file was given
-        profile_pic = req.files['profile_pic'][0].filename;
+    catch(error){
+        console.error(error);
+        res.status(500).json({ success: false, message: 'An internal server error occurred' }); // 500 means internal server error
     }
-
-    let { f_name, l_name, gender, d_o_b, bio, address, postcode, ct_phone, ct_email, industry, work_status } = req.body;
-
-     // Nulling empty strings for non-mandatory fields (except status).
-     gender = gender.trim() || null;
-     bio = bio.trim() || null;
-     address = address.trim() || null;
-     postcode = postcode.trim() || null;
-     ct_phone = ct_phone.trim() || null;
-     ct_email = ct_email.trim() || null;
-     industry = industry.trim() || null;
-
-    const user_id = req.user.id;
-    let result = await Seeker.create(pool, 
-        user_id, f_name, l_name, gender, d_o_b, bio, cv, profile_pic, address, postcode, ct_phone, ct_email, industry, work_status
-        );
-    
-        console.log(result);
-
-    if(result){
-        res.redirect("/user/profile");
-    }
-    else{
-        req.flash("build_msg", "Something went wrong! We couldn't complete your profile. Try again later!");
-        res.redirect("/user/profile");  
-    }
-    
-       
 
 });
 
 
 
 // -------------LOGOUT
-router.get("/logout",isNotAuthReq, (req, res) => {
+router.get("/logout", isNotAuthReq, (req, res) => {
     // Clear the session
     req.logout(function(err) {
         if (err) { 
@@ -174,6 +217,62 @@ router.get("/logout",isNotAuthReq, (req, res) => {
     });
     
 });
-    
+
+
+
+// To catch multer size error
+function multerSizeErrorHandler(err, req, res, next) {
+    if (err instanceof multer.MulterError) {
+        // Check if the error is due to file size
+        if (err.code === 'LIMIT_FILE_SIZE') {
+
+            if (!req.validation_errors) {
+                req.validation_errors = {};
+            }
+            
+            const field_name = err.field || 'file'; 
+            req.validation_errors[field_name] = `File must be less than 2MB.`;
+        }
+
+    }
+
+    next();
+}
+
+// Used for adding file errors to validation error chain
+function fileErrorHandler(req, res, next){
+
+    // console.log("File errors:", req.file_errors);
+
+    if (req.file_errors) {
+        
+        if (!req.validation_errors) { // add to chain storage with rest of errors
+            req.validation_errors = {}
+        };
+
+        // Places cv or profile_pic
+        Object.keys(req.file_errors).forEach(field => {
+            req.validation_errors[field] = req.file_errors[field];
+        });
+    }
+
+    next();
+}
+
+// Used to check validation error chain and return if exists.
+function allErrorHandler(req, res, next){
+
+    // Check if there were any validation errors
+    if (req.validation_errors && Object.keys(req.validation_errors).length > 0) {
+        
+        console.log("Validation Errors:", req.validation_errors);
+
+        // Send all errors back in the response
+        return res.status(400).json({ errors: req.validation_errors });
+    }
+
+    next();
+}
+
 
 module.exports = router;

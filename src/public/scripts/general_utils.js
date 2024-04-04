@@ -18,6 +18,21 @@ const bio_regex = /^[a-zA-Z0-9 .,!?;:'"“”‘’\-_\n]+$/;
 const address_regex = /^[a-zA-Z0-9\s,.'-]{3,150}$/; 
 
 
+export function findMinAndMaxDOB(){
+    let curr_date = new Date();
+    
+    // Setting max date to 18 years and min date to 100 years ago from today.
+    let min_date = new Date(curr_date.getFullYear() - 100, curr_date.getMonth(), curr_date.getDate());
+    let max_date = new Date(curr_date.getFullYear() - 18, curr_date.getMonth(), curr_date.getDate());
+    
+    //splits the ISO string at the 'T' character, separating the date part from the time part.
+    min_date = min_date.toISOString().split('T')[0]; 
+    max_date = max_date.toISOString().split('T')[0]; 
+
+    return { min_date, max_date };
+}
+
+
 export function findMaxAndMinDOB(){
     let curr_date = new Date();
     

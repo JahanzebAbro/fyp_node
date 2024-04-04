@@ -1,70 +1,17 @@
-import { findMaxAndMinDOB } from './general_utils.js';
-import { validateName, 
-            validateDOB,
-            validateBio,
-            validateCV,
-            validatePic,
-            validateAddress,
-            validatePostcode, 
-            validatePhone,
-            validateEmail} from './general_utils.js';
+import { findMinAndMaxDOB } from './general_utils.js';
 
 
-
-
-// ERROR BOXES
-const f_name_err = $('#f_name_err');
-const l_name_err = $('#l_name_err');
-const d_o_b_err = $('#d_o_b_err');
-const bio_err = $('#bio_err')
-const address_err = $('#address_err');
-const postcode_err = $('#postcode_err');
-const ct_phone_err = $('#ct_phone_err');
-const ct_email_err = $('#ct_email_err');
-const cv_err = $('#cv_err');
-const pic_err = $('#pic_err');
-
-
-
-
-// ------------------Date of birth range setter
+// DOB Valid Range Setter
 $(document).ready(function(){
-
 
     let date_picker = $('#d_o_b');
-    const { max_date, min_date } = findMaxAndMinDOB();
+    const { min_date, max_date } = findMinAndMaxDOB();
     
-    date_picker.attr('max', max_date);
     date_picker.attr('min', min_date);
+    date_picker.attr('max', max_date);
 
 });
 
-
-
-
-// Max char limit for name reached
-$(document).ready(function(){
-    
-    // Display error when max char limit reached.
-    $('#f_name, #l_name').on('input', function() {
-
-        let first_name = $('#f_name').val();
-        let last_name = $('#l_name').val();
-        
-        if (first_name.length > 49) {
-            f_name_err.text("First name must be 50 characters or less");
-        } 
-        else if(last_name.length > 49){
-            l_name_err.text("Last name must be 50 characters or less");
-        }
-        else {
-            f_name_err.text("");
-            l_name_err.text("");
-        }
-    });
-
-
-});
 
 
 
@@ -73,33 +20,97 @@ $(document).ready(function(){
 
     $("#seeker_builder_form").submit(function(e){
         
+        e.preventDefault(); // Prevent form submission
 
-        let first_name = $('#f_name').val();
-        let last_name = $('#l_name').val();
-        let d_o_b = $('#d_o_b').val();
-        let bio = $('#bio').val();
-        let cv = $('#cv');
-        let pic = $('#profile_pic');
-        let address = $('#address').val();
-        let postcode = $('#postcode').val();
-        let ct_phone = $('#ct_phone').val();
-        let ct_email = $('#ct_email').val();
+        
+        const form = new FormData(this);
+        for (let [key, value] of form.entries()) {
+            console.log(`${key}: ${value}`);
+            if (value instanceof File) {
+                console.log(value); // Check if the file size is greater than 0
+            }
+        }
 
-        let is_error = false;
-        // If the validation turns out false then we say an is error has occured.
-        if (!validateName(first_name, f_name_err)) is_error = true;
-        if (!validateName(last_name, l_name_err)) is_error = true;
-        if (!validateDOB(d_o_b, d_o_b_err)) is_error = true;
-        if (!validateBio(bio, bio_err)) is_error = true;
-        if (!validateCV(cv, cv_err)) is_error = true;
-        if (!validatePic(pic, pic_err)) is_error = true;
-        if (!validateAddress(address, address_err)) is_error = true;
-        if (!validatePostcode(postcode, postcode_err)) is_error = true;
-        if (!validatePhone(ct_phone, ct_phone_err)) is_error = true;
-        if (!validateEmail(ct_email, ct_email_err)) is_error = true;       
+        $.ajax({
+            url: "/user/profile/builder",
+            type: "POST",
+            data: form,
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                console.log(response.message);
+                window.location.href = "/user/profile"; // Redirect the user
+            },
+            error: function(response) {
+
+                console.log(response);
+
+                // Clear previous error messages
+                $('#f_name_err').text('');
+                $('#l_name_err').text('');
+                $('#d_o_b_err').text('');
+                $('#bio_err').text('');
+                $('#address_err').text('');
+                $('#ct_email_err').text('');
+                $('#ct_phone_err').text('');
+                $('#postcode_err').text('');
+                $('#gender_err').text('');
+                $('#industry_err').text('');
+                $('#work_status_err').text('');
+                $('#cv_err').text('');
+                $('#pic_err').text('');
 
 
-        if (is_error){ e.preventDefault();} // Prevent submission
+                // Display errors
+                if (response.responseJSON.errors && Object.keys(response.responseJSON.errors).length > 0){
+                const errors = response.responseJSON.errors; 
+                    if (errors) {
+
+                        if (errors.f_name) {
+                            $('#f_name_err').text(errors.f_name);
+                        }
+                        if (errors.l_name) {
+                            $('#l_name_err').text(errors.l_name);
+                        }
+                        if (errors.d_o_b) {
+                            $('#d_o_b_err').text(errors.d_o_b);
+                        }
+                        if (errors.bio) {
+                            $('#bio_err').text(errors.bio);
+                        }
+                        if (errors.address) {
+                            $('#address_err').text(errors.address);
+                        }
+                        if (errors.ct_email) {
+                            $('#ct_email_err').text(errors.ct_email);
+                        }
+                        if (errors.ct_phone) {
+                            $('#ct_phone_err').text(errors.ct_phone);
+                        }
+                        if (errors.postcode) {
+                            $('#postcode_err').text(errors.postcode);
+                        }
+                        if (errors.gender) {
+                            $('#gender_err').text(errors.gender);
+                        }
+                        if (errors.industry) {
+                            $('#industry_err').text(errors.industry);
+                        }
+                        if (errors.work_status) {
+                            $('#work_status_err').text(errors.work_status);
+                        }
+                        if (errors.cv) {
+                            $('#cv_err').text(errors.cv);
+                        }
+                        if (errors.profile_pic) {
+                            $('#pic_err').text(errors.profile_pic);
+                        }
+
+                    }
+                }
+            }
+        
+        });
 
     });
 

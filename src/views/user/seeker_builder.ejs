@@ -17,7 +17,8 @@
         <option value="Male">Male</option>
         <option value="Female">Female</option>
         <option value="Other">Other</option>
-    </select><br><br>
+    </select><br>
+    <span  id="gender_err" style="color: red;"></span><br><br>
 
     <label for="d_o_b">Date of Birth*:</label><br>
     <input type="date" id="d_o_b" name="d_o_b"><br>
@@ -28,12 +29,12 @@
     placeholder="Let others know more about YOU with a short description of what you're all about!"></textarea><br>
     <span id="bio_err" style="color: red;"></span><br><br>
 
-    <label for="cv">Upload Your CV (pdf):</label><br>
-    <input type="file" id="cv" name="cv" accept=".pdf"><br>
+    <label for="cv_file">Upload Your CV (pdf):</label><br>
+    <input type="file" id="cv" name="cv_file" accept=".pdf"><br>
     <span id="cv_err" style="color: red;"></span><br><br>
 
-    <label for="profile_pic">Choose a profile picture:</label><br>
-    <input type="file" id="profile_pic" name="profile_pic" accept="image/png, image/jpeg, image/jpg"><br>
+    <label for="profile_pic_file">Choose a profile picture:</label><br>
+    <input type="file" id="profile_pic" name="profile_pic_file" accept="image/png, image/jpeg, image/jpg"><br>
     <span id="pic_err" style="color: red;"></span><br><br>
     
 
@@ -85,7 +86,8 @@
         <option value="FIT">Fitness</option>
         <option value="TRV">Travel</option>
         <option value="ADV">Advertising</option>
-    </select><br><br>
+    </select><br>
+    <span  id="industry_err" style="color: red;"></span><br><br>
     
     <p>Work Status:</p>
     <div id="work_state">
@@ -94,7 +96,7 @@
         <input type="radio" id="not_ready_to_work" name="work_status" value="false">
         <label for="not_ready_to_work">Not Ready to Work</label><br>
     </div><br>
-
+    <span  id="work_status_err" style="color: red;"></span><br><br>
 
 
     <button type="submit" value="Submit">Save Changes</button>
