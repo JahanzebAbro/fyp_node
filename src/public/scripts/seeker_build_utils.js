@@ -99,11 +99,11 @@ $(document).ready(function(){
                         if (errors.work_status) {
                             $('#work_status_err').text(errors.work_status);
                         }
-                        if (errors.cv) {
-                            $('#cv_err').text(errors.cv);
+                        if (errors.cv_file) {
+                            $('#cv_err').text(errors.cv_file);
                         }
-                        if (errors.profile_pic) {
-                            $('#pic_err').text(errors.profile_pic);
+                        if (errors.profile_pic_file) {
+                            $('#pic_err').text(errors.profile_pic_file);
                         }
 
                     }

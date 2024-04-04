@@ -58,62 +58,119 @@ router.get("/profile", isNotAuthReq, isProfileBuilt, async (req, res) => {
 });
 
 
-router.post('/update-profile', isNotAuthReq, seekerUpload, async (req, res) => {
+router.post('/update-profile', isNotAuthReq, seekerUpload, validateFirstName,
+                                                            validateLastName,
+                                                            validateGender,
+                                                            validateDOB,
+                                                            validateBio,
+                                                            validateAddress,
+                                                            validatePostcode,
+                                                            validatePhone,
+                                                            validateEmail,
+                                                            validateIndustry,
+                                                            validateWorkStatus,
+                                                            multerSizeErrorHandler,
+                                                            fileErrorHandler,
+                                                            allErrorHandler, async (req, res) => {
     try {
 
         const updates = req.body; 
-        const old_seeker = await Seeker.getById(pool, req.user.id); // To delete old file paths
-       
-        let result = '';
+        const user_id = req.user.id;
+        const old_seeker = await Seeker.getById(pool, user_id); // To delete old file paths
 
-        // Handling Profile picture update
-        if(req.files['profile_pic_file'] && req.files['profile_pic_file'][0]){ // If a new file was inputted
 
-            // delete old one if exists and not equal to the new one
-            const pic_new_name = req.files['profile_pic_file'][0].filename
-            if (old_seeker.profile_pic && old_seeker.profile_pic !== pic_new_name ) { 
-                deleteUpload(path.join('uploads/' , old_seeker.profile_pic));
-            } 
+        // =======CV FILE MANAGEMENT
 
-            // Append profile_pic name to updates
-            updates.profile_pic_file = pic_new_name;
-        }
-        else{ // No file was inputted so string with old file or null was sent.
+        if (req.files['cv_file'] && req.files['cv_file'][0]){ // Check if a file was given
 
-            // Delete if string is not equal to an existing file
-            if (old_seeker.profile_pic && old_seeker.profile_pic !== req.body.profile_pic_file ) {
-                deleteUpload(path.join('uploads/' , old_seeker.profile_pic));
-            } 
-        }
+            updates.cv_file = req.files['cv_file'][0].filename;
+            console.log('SAVING', updates.cv_file);
 
-        // ==============================
-
-        // Handling CV file update
-        if (req.files['cv_file'] && req.files['cv_file'][0]) {
-            
-            let cv_new_name = req.files['cv_file'][0].filename;
-            // If new file uploaded is same as old one, don't delete
-            if (old_seeker.cv && old_seeker.cv !== cv_new_name) {
-                deleteUpload(path.join('uploads/', old_seeker.cv));
+            if(old_seeker.cv){
+                console.log(console.log('DELETE', old_seeker.cv));
+                deleteUpload('uploads/' + old_seeker.cv);
             }
-            updates.cv_file = cv_new_name; // Adjust this line to match your database column for CV
-        }
 
-        // If new cv request is empty. Which means user wants to clear.
-        if (req.body.cv_file && req.body.cv_file.trim() === 'clear'){
-            deleteUpload(path.join('uploads/', old_seeker.cv));
+        }
+        else if (old_seeker.cv){ // No file was given but previous file exists
+
+            if(updates.is_cv_cleared === 'true'){ // Asked to clear old file by user
+
+                updates.cv_file = '';
+                console.log(console.log('DELETE', old_seeker.cv));
+                deleteUpload('uploads/' + old_seeker.cv);
+
+            }else{ // Maintain old file
+
+                updates.cv_file = old_seeker.cv;
+                console.log('KEEPING', updates.cv_file);
+
+            }
+        }
+        else{ // No file was given and no previous file exists
             updates.cv_file = '';
         }
 
         
-        result = await Seeker.update(pool, req.user.id, updates);
+        //==========================================
+
+
+        // =======PROFILE PICTURE FILE MANAGEMENT
+
+        if (req.files['profile_pic_file'] && req.files['profile_pic_file'][0]){ // Check if a file was given
+
+            updates.profile_pic_file = req.files['profile_pic_file'][0].filename;
+            console.log('SAVING', updates.profile_pic_file);
+
+            if(old_seeker.profile_pic){
+                console.log(console.log('DELETE', old_seeker.profile_pic));
+                deleteUpload('uploads/' + old_seeker.profile_pic);
+            }
+
+        }
+        else if (old_seeker.profile_pic){ // No file was given but previous file exists
+
+            updates.profile_pic_file = old_seeker.profile_pic;
+
+            if(updates.is_pic_cleared === 'true'){ // Asked to clear old file by user
+
+                updates.profile_pic_file = '';
+                console.log(console.log('DELETE', old_seeker.profile_pic));
+                deleteUpload('uploads/' + old_seeker.profile_pic);
+
+            }else{ // Maintain old file
+
+                updates.profile_pic_file = old_seeker.profile_pic;
+                console.log('KEEPING', updates.profile_pic_file);
+
+            }
+        }
+        else{ // No file was given and no previous file exists
+            updates.profile_pic_file = '';
+        }
         
-        // Respond with success message or the updated seeker data
-        res.json({ success: true, message: 'Profile updated successfully', seeker: result });
+        //==========================================
+
+
+
+        // TRIMMING 
+        updates.bio = updates.bio.trim();
+
+        delete updates.is_cv_cleared;
+        delete updates.is_pic_cleared;  
+
+        console.log(updates);
+
+        
+        let result = await Seeker.update(pool, req.user.id, updates);
+        
+        
+        res.json({ success: true, message: 'Profile updated successfully' });
+
 
     } catch (error) {
         console.error(error);
-        res.status(500).json({ success: false, message: 'An error occurred' });
+        res.status(500).json({ success: false, message: 'An internal server error occurred.' });
     }
 });
 
