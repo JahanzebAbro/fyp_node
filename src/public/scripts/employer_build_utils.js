@@ -1,24 +1,8 @@
-import { findMinAndMaxDOB } from './general_utils.js';
-
-
-// DOB Valid Range Setter
-$(document).ready(function(){
-
-    let date_picker = $('#d_o_b');
-    const { min_date, max_date } = findMinAndMaxDOB();
-    
-    date_picker.attr('min', min_date);
-    date_picker.attr('max', max_date);
-
-});
-
-
-
 
 // Form submission 
 $(document).ready(function(){
 
-    $("#seeker_builder_form").submit(function(e){
+    $("#employer_builder_form").submit(function(e){
         
         e.preventDefault(); // Prevent form submission
 
@@ -31,25 +15,23 @@ $(document).ready(function(){
             }
         }
 
-        // Clear previous error messages
-        $('#f_name_err').text('');
-        $('#l_name_err').text('');
-        $('#d_o_b_err').text('');
+        
+        // Clear any previous error messages
+        $('#comp_name_err').text('');
+        $('#comp_size_err').text('');
         $('#bio_err').text('');
+        $('#website_err').text('');
         $('#address_err').text('');
-        $('#ct_email_err').text('');
-        $('#ct_phone_err').text('');
         $('#postcode_err').text('');
-        $('#gender_err').text('');
+        $('#ct_phone_err').text('');
+        $('#ct_email_err').text('');
         $('#industry_err').text('');
-        $('#work_status_err').text('');
-        $('#cv_err').text('');
         $('#pic_err').text('');
 
 
 
         $.ajax({
-            url: "/user/profile/builder/seeker",
+            url: "/user/profile/builder/employer",
             type: "POST",
             data: form,
             contentType: false,
@@ -67,18 +49,15 @@ $(document).ready(function(){
                 const errors = response.responseJSON.errors; 
                     if (errors) {
 
-                        $('#f_name_err').text(errors.f_name || '');
-                        $('#l_name_err').text(errors.l_name || '');
-                        $('#d_o_b_err').text(errors.d_o_b || '');
+                        $('#comp_name_err').text(errors.comp_name || '');
+                        $('#comp_size_err').text(errors.comp_size || '');
                         $('#bio_err').text(errors.bio || '');
+                        $('#website_err').text(errors.website || '');
                         $('#address_err').text(errors.address || '');
-                        $('#ct_email_err').text(errors.ct_email || '');
-                        $('#ct_phone_err').text(errors.ct_phone || '');
                         $('#postcode_err').text(errors.postcode || '');
-                        $('#gender_err').text(errors.gender || '');
+                        $('#ct_phone_err').text(errors.ct_phone || '');
+                        $('#ct_email_err').text(errors.ct_email || '');
                         $('#industry_err').text(errors.industry || '');
-                        $('#work_status_err').text(errors.work_status || '');
-                        $('#cv_err').text(errors.cv_file || '');
                         $('#pic_err').text(errors.profile_pic_file || '');
 
                     }
@@ -90,4 +69,3 @@ $(document).ready(function(){
     });
 
 });
-

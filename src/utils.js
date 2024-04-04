@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const pool = require('./config/db/db_config'); 
 const Seeker = require('./models/seekerModel');
+const Employer = require('./models/employerModel');
 const fs = require('fs');
 // ------------------Password Utilities
 
@@ -114,22 +115,37 @@ exports.findIndustryName = function(code){
 }
 
 
-// Want to make this function check for both employer and seeker.
+// Determine if profile built and for which user type.
 exports.isProfileBuilt = async function (req, res, next) {
     if (req.isAuthenticated()) {
 
-        const seeker = await Seeker.getById(pool, req.user.id);
+        let profile = null;
 
-        // Add an industry name field for display purposes
-        if (seeker && seeker.industry) {
-            seeker.industry_name = exports.findIndustryName(seeker.industry);
+        // Determine the type of user and fetch the corresponding profile
+        if (req.user.user_type === 'seeker') {
+
+            const seeker = await Seeker.getById(pool, req.user.id);
+            if (seeker && seeker.industry) {
+                seeker.industry_name = exports.findIndustryName(seeker.industry);
+            }
+            profile = seeker;
+
+        } 
+        else if (req.user.user_type === 'employer') {
+
+            const employer = await Employer.getById(pool, req.user.id);
+            if (employer && employer.industry) {
+                employer.industry_name = exports.findIndustryName(employer.industry);
+            }
+            profile = employer;
+
         }
 
-
-        res.locals.profile = seeker ? seeker : false;
+        res.locals.profile = profile ? profile : false;
     } else {
         res.locals.profile = false;
     }
+
     next();
 }
 

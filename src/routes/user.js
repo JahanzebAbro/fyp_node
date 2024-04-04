@@ -3,6 +3,7 @@ const router = express.Router();
 const path = require('path');
 const pool = require("../config/db/db_config");
 const Seeker = require('../models/seekerModel');
+const Employer = require('../models/employerModel');
 const { isNotAuthReq } = require('../utils');
 const { isProfileBuilt } = require('../utils');
 const { deleteUpload } = require('../utils');
@@ -17,7 +18,10 @@ const { validateFirstName,
         validateGender,
         validateIndustry,
         validateWorkStatus,
-        validateFile } = require('../validate_utils');
+        validateFile,
+        validateCompanyName,
+        validateCompanySize,
+        validateWebsite } = require('../validate_utils');
 
 
 // MULTER FILE UPLOADS
@@ -38,6 +42,7 @@ const upload = multer({ storage: storage,
                         limits: { fileSize: 2 * 1024 * 1024 }}); // 2MB LIMIT
 
 const seekerUpload = upload.fields([{ name: 'cv_file', maxCount: 1 }, { name: 'profile_pic_file', maxCount: 1 }]);
+const employerUpload = upload.fields([{ name: 'profile_pic_file', maxCount: 1 }]);
 
 
 
@@ -59,7 +64,7 @@ router.get("/profile", isNotAuthReq, isProfileBuilt, async (req, res) => {
 
 
 
-
+// UPDATE USER PROFILE FROM EDIT
 router.post('/update-profile', isNotAuthReq, seekerUpload, validateFirstName,
                                                             validateLastName,
                                                             validateGender,
@@ -184,19 +189,35 @@ router.post('/update-profile', isNotAuthReq, seekerUpload, validateFirstName,
 // ------------USER BUILDER FORM
 router.get("/profile/builder", isNotAuthReq, async (req, res) => {
 
-    // If a seeker profile exists, redirect the user away from the builder page
-    const seeker = await Seeker.getById(pool, req.user.id);
-    if (seeker) {
-        return res.redirect('/user/profile'); 
-    }                       
+    if(req.user.user_type === 'seeker'){
+        
+        // If a seeker profile exists, redirect the user away from the builder page
+        const seeker = await Seeker.getById(pool, req.user.id);
+        if (seeker) {
+            return res.redirect('/user/profile'); 
+        }                       
 
-    res.render("user/seeker_builder");
+        res.render("user/seeker_builder");   
+    }
+
+
+    if(req.user.user_type === 'employer'){
+
+        // If a employer profile exists, redirect the user away from the builder page
+        const employer = await Employer.getById(pool, req.user.id);
+        if (employer) {
+            return res.redirect('/user/profile'); 
+        }                       
+
+        res.render("user/employer_builder");   
+    }
+
 });
 
 
 
-// SUBMIT POINT FOR BUILDER
-router.post("/profile/builder", isNotAuthReq, seekerUpload, validateFirstName,
+// SUBMIT POINT FOR SEEKER BUILDER
+router.post("/profile/builder/seeker", isNotAuthReq, seekerUpload, validateFirstName,
                                                             validateLastName,
                                                             validateGender,
                                                             validateDOB,
@@ -262,6 +283,68 @@ router.post("/profile/builder", isNotAuthReq, seekerUpload, validateFirstName,
     }
 
 });
+
+
+// SUBMIT POINT FOR EMPLOYER BUILDER
+router.post("/profile/builder/employer", isNotAuthReq, employerUpload, validateCompanyName,
+                                                                        validateCompanySize,
+                                                                        validateBio,
+                                                                        validateWebsite,
+                                                                        validateAddress,
+                                                                        validatePostcode,
+                                                                        validatePhone,
+                                                                        validateEmail,
+                                                                        validateIndustry,
+                                                                        validateFile,
+                                                                        multerSizeErrorHandler,
+                                                                        fileErrorHandler,
+                                                                        allErrorHandler, async (req, res) => {
+    
+
+    try{
+
+        const user_id = req.user.id;
+        let { comp_name, comp_size, bio, website, address, postcode, ct_phone, ct_email, industry} = req.body;
+
+        
+        let profile_pic_file = '';
+        if (req.files['profile_pic_file'] && req.files['profile_pic_file'][0]){ // Check if a file was given
+            profile_pic_file = req.files['profile_pic_file'][0].filename;
+        }
+
+
+        // TRIMMING 
+        bio = bio.trim();
+
+
+        let result = await Employer.create(pool, 
+            user_id, 
+            comp_name, 
+            comp_size,  
+            bio, 
+            website, 
+            profile_pic_file, 
+            address, 
+            postcode, 
+            ct_phone, 
+            ct_email, 
+            industry);
+        
+
+        if(result){
+            res.status(200).json({ success: true, message: 'Profile builder completed!', employer: result });
+        }
+        else{
+            res.status(400).json({ success: false, message: 'Error in creating profile!', employer: result });
+        }
+    }
+    catch(error){
+        console.error(error);
+        res.status(500).json({ success: false, message: 'An internal server error occurred' }); // 500 means internal server error
+    }                                                                     
+    
+});
+
 
 
 

@@ -23,6 +23,9 @@ const phone_regex =
 // Reference: https://emailregex.com/
 const email_regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
+// Reference: https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
+const website_regex = /^(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})$/;
+
 const bio_regex = /^$|^[a-zA-Z0-9 .,!?;:'"“”‘’\-_\n]+$/;
 const address_regex = /^$|^[a-zA-Z0-9\s,.'-]{3,150}$/; 
 
@@ -286,7 +289,7 @@ exports.validateFile = function(req, file, cb){
         is_valid = cv_file_types.test(path.extname(file.originalname).toLowerCase()) && cv_file_types.test(file.mimetype);
     }
 
-    if (!is_valid) {
+    if (!is_valid && file.fieldname) {
         req.file_errors[file.fieldname] = 'Invalid file type!';
     } 
 
@@ -296,6 +299,72 @@ exports.validateFile = function(req, file, cb){
 }
 
 
+exports.validateCompanyName = function(req, res, next){
+
+    const { comp_name } = req.body;
+
+    // Initialize if not
+    if (!req.validation_errors){ 
+        req.validation_errors = {};
+    }
+
+
+    if(comp_name == '' || comp_name == null){
+        req.validation_errors.comp_name = "Company name cannot be left empty.";
+    } 
+    else if(comp_name.length < 2){
+        req.validation_errors.comp_name = "Company name cannot have less than 2 characters.";
+    } 
+    else if(comp_name.length > 50){
+        req.validation_errors.comp_name = "Company name cannot exceed 50 characters.";
+    }
+    else if (!name_regex.test(comp_name)) {
+        req.validation_errors.comp_name = "Company name must not contain certain special characters.";
+    }
+
+    next();
+}
+
+
+exports.validateCompanySize = function(req, res, next){
+
+    const { comp_size } = req.body;
+
+    // Initialize if not
+    if (!req.validation_errors){ 
+        req.validation_errors = {};
+    }
+
+    if(comp_size){
+
+        const size = parseInt(comp_size, 10); // Parse to int in decimal system
+
+        if (isNaN(size) || size <= 0) { // Check if is Not-A-Number or is less than or equal to zero.
+            req.validation_errors.comp_size = "Company size must be a positive integer.";
+        }
+
+    }
+
+    next();
+}
+
+
+exports.validateWebsite = function(req, res, next){
+
+    const { website } = req.body;
+
+    if (!req.validation_errors){
+        req.validation_errors = {};
+    }
+
+    if (website && !website_regex.test(website)) {
+
+        req.validation_errors.website = "Please enter a valid website url.";
+
+    }
+
+    next();
+}
 
 
 

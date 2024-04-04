@@ -1,37 +1,27 @@
 
+<form action="/user/profile/builder/employer" method="POST" id="employer_builder_form" class="builder_form" enctype="multipart/form-data">
 
-<form action="/user/profile/builder/seeker" method="POST" id="seeker_builder_form" class="builder_form" enctype="multipart/form-data">
+    COMPANY<br><br>
+    <label for="comp_name">Company Name*:</label><br>
+    <input type="text" id="comp_name" name="comp_name" maxlength="50"><br>
+    <span  id="comp_name_err" style="color: red;"></span><br>
 
-    PERSONAL<br><br>
-    <label for="f_name">First Name*:</label><br>
-    <input type="text" id="f_name" name="f_name" maxlength="50"><br>
-    <span  id="f_name_err" style="color: red;"></span><br>
 
-    <label for="l_name">Last Name*:</label><br>
-    <input type="text" id="l_name" name="l_name" maxlength="50"><br>
-    <span  id="l_name_err" style="color: red;"></span><br>
+    <label for="comp_size">Company Size:</label><br>
+    <input type="text" id="comp_size" name="comp_size" maxlength="50" placeholder="(In terms of personnel)"><br>
+    <span  id="comp_size_err" style="color: red;"></span><br>
 
-    <label for="gender">Gender:</label><br>
-    <select id="gender" name="gender">
-        <option value="">Select a gender</option>
-        <option value="Male">Male</option>
-        <option value="Female">Female</option>
-        <option value="Other">Other</option>
-    </select><br>
-    <span  id="gender_err" style="color: red;"></span><br><br>
-
-    <label for="d_o_b">Date of Birth*:</label><br>
-    <input type="date" id="d_o_b" name="d_o_b"><br>
-    <span  id="d_o_b_err" style="color: red;"></span><br>
 
     <label for="bio">Bio:</label><br>
     <textarea id="bio" name="bio" rows="4" cols="50" maxlength="800" 
-    placeholder="Let others know more about YOU with a short description of what you're all about!"></textarea><br>
+    placeholder="Let others know more about what the COMPANY has to offer with a short description!"></textarea><br>
     <span id="bio_err" style="color: red;"></span><br><br>
 
-    <label for="cv_file">Upload Your CV (pdf):</label><br>
-    <input type="file" id="cv" name="cv_file" accept=".pdf"><br>
-    <span id="cv_err" style="color: red;"></span><br><br>
+
+    <label for="website">Website:</label><br>
+    <input type="text" id="website" name="website" maxlength="50" placeholder="(Place an url/link here)"><br>
+    <span  id="website_err" style="color: red;"></span><br>
+
 
     <label for="profile_pic_file">Choose a profile picture:</label><br>
     <input type="file" id="profile_pic" name="profile_pic_file" accept="image/png, image/jpeg, image/jpg"><br>
@@ -88,19 +78,10 @@
         <option value="ADV">Advertising</option>
     </select><br>
     <span  id="industry_err" style="color: red;"></span><br><br>
-    
-    <p>Work Status:</p>
-    <div id="work_state">
-        <input type="radio" id="ready_to_work" name="work_status" value="true" checked>
-        <label for="ready_to_work">Ready to Work</label><br>
-        <input type="radio" id="not_ready_to_work" name="work_status" value="false">
-        <label for="not_ready_to_work">Not Ready to Work</label><br>
-    </div><br>
-    <span  id="work_status_err" style="color: red;"></span><br><br>
 
 
     <button type="submit" value="Submit">Save Changes</button>
     <a href="/user/profile"><button type="button">Cancel</button></a>
 </form>
 
-<script type="module" src="/scripts/seeker_build_utils.js"></script>
+<script type="module" src="/scripts/employer_build_utils.js"></script>
