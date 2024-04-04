@@ -72,7 +72,7 @@ class Employer {
     static async getById(pool, id) {
         try {
             const query = `
-                SELECT user_id, name, size, bio, profile_pic_file, address, postcode, ct_phone, ct_email, industry 
+                SELECT user_id, name, size, bio, website, profile_pic_file, address, postcode, ct_phone, ct_email, industry 
                 FROM employers 
                 WHERE user_id = $1;
             `;

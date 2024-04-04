@@ -59,7 +59,7 @@ router.get("/dashboard", isNotAuthReq, (req, res) => {
 
 // ------------USER PROFILE PAGE
 router.get("/profile", isNotAuthReq, isProfileBuilt, async (req, res) => {
-    res.render("user/profile");
+    res.render("user/profile", { user_type: req.user.user_type });
 });
 
 
