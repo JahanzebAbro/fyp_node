@@ -29,11 +29,17 @@ CREATE TABLE IF NOT EXISTS seekers (
 
 
 CREATE TABLE IF NOT EXISTS employers (
-    employer_id INTEGER PRIMARY KEY,
-    company_name VARCHAR(255) NOT NULL,
-    industry VARCHAR(100),
-    -- website VARCHAR(255),
-    user_id INTEGER NOT NULL REFERENCES users(id),
-    UNIQUE(user_id)
+    user_id BIGINT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    size INT,
+    bio VARCHAR(800),
+    website TEXT,
+    profile_pic_file TEXT, 
+    address VARCHAR(150),
+    postcode VARCHAR(20),
+    ct_phone VARCHAR(20),
+    ct_email VARCHAR(100),
+    industry VARCHAR(50),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 

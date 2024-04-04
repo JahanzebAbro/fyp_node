@@ -58,6 +58,8 @@ router.get("/profile", isNotAuthReq, isProfileBuilt, async (req, res) => {
 });
 
 
+
+
 router.post('/update-profile', isNotAuthReq, seekerUpload, validateFirstName,
                                                             validateLastName,
                                                             validateGender,

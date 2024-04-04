@@ -63,15 +63,15 @@ class Seeker {
             }
             else{
 
-            const query = `
-                INSERT INTO seekers(user_id, f_name, l_name, gender, d_o_b, bio, cv_file, profile_pic_file, address, postcode, ct_phone, ct_email, industry, work_status)
-                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
-                RETURNING user_id`;
+                const query = `
+                    INSERT INTO seekers(user_id, f_name, l_name, gender, d_o_b, bio, cv_file, profile_pic_file, address, postcode, ct_phone, ct_email, industry, work_status)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+                    RETURNING user_id`;
 
-            const params = [user_id, f_name, l_name, gender, d_o_b, bio, cv, profile_pic, address, postcode, ct_phone, ct_email, industry, work_status];
-            const result = await pool.query(query, params);
+                const params = [user_id, f_name, l_name, gender, d_o_b, bio, cv, profile_pic, address, postcode, ct_phone, ct_email, industry, work_status];
+                const result = await pool.query(query, params);
 
-            return result.rows[0].user_id;
+                return result.rows[0].user_id;
             }  
         }   
         catch(err){
@@ -153,7 +153,7 @@ class Seeker {
             
             params.push(user_id);
 
-            // Check if there is anything to update.
+            // Check if anything to update.
             if (set_columns.length === 0) {
                 return 'Nothing to update';
             }
@@ -162,7 +162,8 @@ class Seeker {
                 UPDATE seekers
                 SET ${set_columns.join(', ')}
                 WHERE user_id = $${set_columns.length + 1}
-                RETURNING *;`; // Returns updated row
+                RETURNING *;
+            `; 
 
             
             const result = await pool.query(query, params);
