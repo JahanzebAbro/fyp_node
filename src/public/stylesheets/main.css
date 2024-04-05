@@ -1,3 +1,85 @@
+/* =======================================PROFILE PAGE============================================ */
+
+.seeker-details {
+    display: flex;
+    justify-content: space-between; 
+    align-items: flex-start; 
+}
+
+.employer-details {
+    display: flex;
+    justify-content: space-between; 
+    align-items: flex-start; 
+}
+
+.profile_info_section {
+    flex-grow: 1;
+    margin-left: 20px;
+    margin-right: 50px; 
+}
+
+.profile_info_section p{
+    font-family: 'Playfair Display';
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+.profile_info_section strong{
+    font-family: 'Jost';
+    font-weight: 300;
+    font-size: 1.1rem;;
+}
+
+.profile_info_section input{
+    
+    padding: 0 8px;
+    vertical-align: middle;
+    border-radius: 2px;
+    min-height: 36px;
+    background-color: #ffffff;
+    border: 1px solid rgba(36,28,21,0.3);
+    transition: all 0.2s ease-in-out 0s;
+    font-size: 16px;
+    line-height: 18px;
+    font-weight: normal;
+    :focus{
+        outline: none;
+        border: 1px solid #007c89;
+        box-shadow: inset 0 0 0 1px #007c89;
+    }
+
+}
+
+.profile_info_section button{
+    
+    display: inline-block;
+    background:black;
+    outline: 0;
+    cursor: pointer;
+    border: 2px solid #000;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 400;
+    padding: 5px 10px;
+    text-align:center;
+    
+}
+
+.profile_info_section button:hover {
+    background: #ffffff; /* Change to the desired background color */
+    color: #000000; /* Optional: Change text color if needed */
+}
+
+.profile_picture_section {
+    flex-shrink: 0; 
+    margin-right: 20px;
+    overflow: hidden; 
+}
+
+
+
+
+/* ============================================EDIT MODE========================================== */
 
 .profile_pic_container {
     position: relative;
@@ -43,7 +125,111 @@
     height: auto;
 }
 
-.clear_btn{ /*Used for cv clear*/
-    margin-left: 0.5em; 
-    color: red;
+.clear_btn{
+    margin-left: 10px;
+}
+
+
+
+/* ==========================================NAV BAR=============================================== */
+
+.user_nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding: 10px 20px;
+}
+
+.nav_center,
+.nav_left {
+    display: flex;
+    align-items: center;
+}
+
+.logo h1 {
+    font-family: Inter;
+    font-size: 24px;
+    cursor: pointer;
+    font-size: 1.8em;
+}
+
+.nav_center a,
+.nav_left a {
+    text-decoration: none;
+    color: #686868;
+    margin-left: 20px;
+    margin-right: 20px;
+    font-family: Jost;
+    font-weight: 300;
+    font-size: 1.3em;
+    cursor: pointer;
+}
+
+.notif_icon{
+    width: 25px;
+    height: auto;
+    background-size: cover; 
+}
+
+.notif_link:hover .notif_icon {
+    transition: background-image 0.6s; 
+    background-image: url('/img/notif_bell_hover.png'); /* Change to the hover image */
+  }
+
+.user_icon {
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+}
+
+.nav_center a:hover,
+.nav_left a:hover {
+    color: black; 
+    font-weight: 400;
+    transition: font-weight 0.3s ease;
+    transition: color 0.3s ease;
+    text-decoration: underline;
+}
+
+
+/* ==========================================DROP DOWN=============================================== */
+
+.user_dropdown {
+    position: relative; 
+}
+
+.user_dropdown_trigger {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dropdown_content {
+    display: none;
+    position: absolute;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    top: 100%; /* Position the dropdown right below the trigger area */
+    left: -20px;
+    background-color: #ffffff;
+    box-shadow: 0px 1px 4px 1px rgba(0,0,0,0.2);
+    z-index: 1000;
+}
+
+.dropdown_content a{
+    font-family: 'Jost';
+    font-weight: 300;
+    font-size: 1.1em;
+    padding: 5px;
+    display: block;
+}
+
+.user_dropdown_trigger:hover + .dropdown_content {
+    display: block;
+}
+
+
+.dropdown_content:hover {
+    display: block;
 }

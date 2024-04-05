@@ -207,13 +207,13 @@ function toggleEditMode(isEditMode, isSaved=false){
         
         
         // BIOGRAPHY
-        $('#bio_val').html(`<br><textarea name="bio" rows="4" cols="50" maxlength="800" 
+        $('#bio_val').html(`<textarea name="bio" rows="5" cols="75" maxlength="800" 
             placeholder="Let others know more about YOU with a short description of what you're all about!">${bio_old_val}</textarea>`);
 
 
         // WEBSITE
         $('.website').html(`
-                <strong>Website: </strong>
+                <strong>Website</strong><br>
                 <span id="website_val">
                     <input type="text" id="website" name="website" maxlength="50" value="${website_old_val}" placeholder="(Place an url/link here)"><br>
                 </span>
@@ -286,6 +286,7 @@ function toggleEditMode(isEditMode, isSaved=false){
             
             
             $('.profile_pic_container').html(`<img id="profile_pic_val" src="${profile_pic_old_path}" alt="Profile Picture">`);
+            $('.user_icon').attr('src', `${profile_pic_old_path}`);
 
             comp_name_old_val = $('input[name="comp_name"]').val();
             $('#comp_name_val').text(comp_name_old_val || 'None');
@@ -300,14 +301,14 @@ function toggleEditMode(isEditMode, isSaved=false){
             website_old_val = $('input[name="website"]').val();
             if(website_old_val){
                 $('.website').html(`
-                                <strong>Website:</strong>
+                                <strong>Website</strong><br>
                                 <span id="website_val">
                                     <a href="${website_old_val}" target="_blank" rel="noopener noreferrer">${website_old_val}</a>
                                 </span>`);
             }
             else{
                 $('.website').html(`
-                            <strong>Website:</strong>
+                            <strong>Website</strong><br>
                             <span id="website_val">
                                 <a>None</a>
                             </span>`);
@@ -334,6 +335,18 @@ function toggleEditMode(isEditMode, isSaved=false){
 
             // =============CANCEL EDIT
 
+            // Clear any previous error messages
+            $('#comp_name_err').text('');
+            $('#comp_size_err').text('');
+            $('#bio_err').text('');
+            $('#website_err').text('');
+            $('#address_err').text('');
+            $('#postcode_err').text('');
+            $('#ct_phone_err').text('');
+            $('#ct_email_err').text('');
+            $('#industry_err').text('');
+            $('#pic_err').text('');
+
             // Convert input fields back to text with old values or 'None' if they had no value.
             $('.profile_pic_container').html(`<img id="profile_pic_val" src="${profile_pic_old_path}" alt="Profile Picture">`);
             $('#comp_name_val').text(comp_name_old_val || 'None');
@@ -342,14 +355,14 @@ function toggleEditMode(isEditMode, isSaved=false){
 
             if(website_old_val){
                 $('.website').html(`
-                                <strong>Website:</strong>
+                                <strong>Website</strong><br>
                                 <span id="website_val">
                                     <a href="${website_old_val}" target="_blank" rel="noopener noreferrer">${website_old_val}</a>
                                 </span>`);
             }
             else{
                 $('.website').html(`
-                            <strong>Website:</strong>
+                            <strong>Website</strong><br>
                             <span id="website_val">
                                 <a>None</a>
                             </span>`);

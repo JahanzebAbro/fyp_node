@@ -17,86 +17,91 @@
 
 
     <div class="employer-details">
+                
 
-        <!-- DISPLAYING PROFILE PICTURE -->
-        <strong>Profile Picture:</strong><br>
-        <% if (profile.profile_pic) { %>
-            <div class="profile_pic_container">
-                <img id="profile_pic_val" src="/uploads/<%= profile.profile_pic %>" alt="Profile Picture">
-            </div>
-        <% } else { %>
-            <div class="profile_pic_container">
-                <img id="profile_pic_val" src="/img/no_profile_pic.png" alt="Profile Picture">
-            </div>
-        <% } %>
-        
+        <div class="profile_info_section">
 
-        <button id="clear-pic-btn" type="button" style="display: none;">Clear Photo</button><br>
-        <span  id="pic_err" style="color: red;"></span>
-
-
-
-        <p class="comp_name"><strong>Company:</strong> 
-            <span id="comp_name_val"><%= profile.name ? profile.name : 'None' %></span><br>
-            <span  id="comp_name_err" style="color: red;"></span>
-        </p>
-
-        <p class="comp_size"><strong>Size:</strong> 
-            <span id="comp_size_val"><%= profile.size ? profile.size + ' people': 'None' %></span><br> 
-            <span  id="comp_size_err" style="color: red;"></span>
-        </p>
-
-        
-        <p class="bio"><strong>Bio:</strong>
-            <span id="bio_val"><%= profile.bio ? profile.bio : 'None' %></span><br>
-            <span  id="bio_err" style="color: red;"></span>
-        </p>
-
-        <!-- EXTERNAL LINK FOR WEBSITE -->
-        <% if (profile.website) { %>
-            <p class="website">
-                <strong>Website:</strong>
-                <span id="website_val">
-                    <a href="<%= profile.website %>" target="_blank" rel="noopener noreferrer"><%= profile.website %></a>
-                </span>
+            <p class="comp_name"><strong>Company</strong><br>
+                <span id="comp_name_val"><%= profile.name ? profile.name : 'None' %></span><br>
+                <span  id="comp_name_err" style="color: red;"></span>
             </p>
-        <% } else { %>
-            <p class="website"><strong>Website:</strong> None</p>
-        <% } %>
-        <span  id="website_err" style="color: red;"></span>
+            
+            <p class="bio"><strong>Bio</strong><br>
+                <span id="bio_val"><%= profile.bio ? profile.bio : 'None' %></span><br>
+                <span  id="bio_err" style="color: red;"></span>
+            </p>
+
+            <p class="comp_size"><strong>Size</strong><br>
+                <span id="comp_size_val"><%= profile.size ? profile.size + ' people': 'None' %></span><br> 
+                <span  id="comp_size_err" style="color: red;"></span>
+            </p>
+
+            
+
+            <!-- EXTERNAL LINK FOR WEBSITE -->
+            <% if (profile.website) { %>
+                <p class="website">
+                    <strong>Website</strong><br>
+                    <span id="website_val">
+                        <a href="<%= profile.website %>" target="_blank" rel="noopener noreferrer"><%= profile.website %></a>
+                    </span>
+                </p>
+            <% } else { %>
+                <p class="website"><strong>Website</strong><br>None</p>
+            <% } %>
+            <span  id="website_err" style="color: red;"></span>
 
 
-        <p class="address"><strong>Address:</strong>
-            <span id="address_val"><%= profile.address ? profile.address : 'None' %></span><br>
-            <span  id="address_err" style="color: red;"></span>
-        </p>
+            <p class="address"><strong>Address</strong><br>
+                <span id="address_val"><%= profile.address ? profile.address : 'None' %></span><br>
+                <span  id="address_err" style="color: red;"></span>
+            </p>
 
-        <p class="postcode"><strong>Postcode:</strong>
-            <span id="postcode_val"><%= profile.postcode ? profile.postcode : 'None' %></span><br>
-            <span  id="postcode_err" style="color: red;"></span>
-        </p>
+            <p class="postcode"><strong>Postcode</strong><br>
+                <span id="postcode_val"><%= profile.postcode ? profile.postcode : 'None' %></span><br>
+                <span  id="postcode_err" style="color: red;"></span>
+            </p>
 
-        <p class="ct_phone"><strong>Phone:</strong>
-            <span id="ct_phone_val"><%= profile.ct_phone ? profile.ct_phone : 'None' %></span><br>
-            <span  id="ct_phone_err" style="color: red;"></span>
-        </p>
+            <p class="ct_phone"><strong>Phone</strong><br>
+                <span id="ct_phone_val"><%= profile.ct_phone ? profile.ct_phone : 'None' %></span><br>
+                <span  id="ct_phone_err" style="color: red;"></span>
+            </p>
 
-        <p class="ct_email"><strong>Email:</strong>
-            <span id="ct_email_val"><%= profile.ct_email ? profile.ct_email : 'None' %></span><br>
-            <span  id="ct_email_err" style="color: red;"></span>
-        </p>
+            <p class="ct_email"><strong>Email</strong><br>
+                <span id="ct_email_val"><%= profile.ct_email ? profile.ct_email : 'None' %></span><br>
+                <span  id="ct_email_err" style="color: red;"></span>
+            </p>
 
-        <p class="industry"><strong>Industry:</strong>
-            <span id="industry_val"><%= profile.industry ? profile.industry_name : 'None' %></span>
-        </p>
+            <p class="industry"><strong>Industry</strong><br>
+                <span id="industry_val"><%= profile.industry ? profile.industry_name : 'None' %></span>
+            </p>
+
+            <!-- Edit features -->
+            <button id="edit-profile-btn" type="button">Edit Profile</button>
+            <button id="save-edit-btn" type="button" style="display: none;">Save Changes</button>
+            <button id="cancel-edit-btn" type="button" style="display: none;">Cancel</button>
+
+        </div>
+
+
+        <div class="profile_picture_section">
+            <!-- DISPLAYING PROFILE PICTURE -->
+            <% if (profile.profile_pic) { %>
+                <div class="profile_pic_container">
+                    <img id="profile_pic_val" src="/uploads/<%= profile.profile_pic %>" alt="Profile Picture">
+                </div>
+            <% } else { %>
+                <div class="profile_pic_container">
+                    <img id="profile_pic_val" src="/img/no_profile_pic.png" alt="Profile Picture">
+                </div>
+            <% } %>
+
+            <br><button id="clear-pic-btn" type="button" style="display: none;">Clear Photo</button><br>
+            <span  id="pic_err" style="color: red;"></span>
+        </div>
         
-    </div>
-
-    <!-- Edit features -->
-    <button id="edit-profile-btn" type="button">Edit Profile</button>
-    <button id="save-edit-btn" type="button" style="display: none;">Save Changes</button>
-    <button id="cancel-edit-btn" type="button" style="display: none;">Cancel</button>
-    
+        
+    </div>    
    
 
 

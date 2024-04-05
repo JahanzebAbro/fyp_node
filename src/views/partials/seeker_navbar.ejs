@@ -1,4 +1,4 @@
-<nav>
+<nav class="user_nav">
 
     <div class="logo">
         <h1>DOMAIN</h1>
@@ -14,72 +14,26 @@
         <a class="notif_link">
             <img class="notif_icon" src="/img/notif_bell_off.png">
         </a>
-        <a class="user_link">
-            <img class="user_icon" src="/img/no_profile_pic.png">
-            User
-        </a>
+        <div class="user_dropdown">
+            <a href="/user/profile" class="user_dropdown_trigger">
+
+                <% if (locals.user_icon) { %>
+                    <img class="user_icon" src="/uploads/<%= locals.user_icon%>">
+                <% } else { %>
+                    <img class="user_icon" src="/img/no_profile_pic.png">
+                <% } %>
+
+                <span class="user_drop_name">User</span>
+            </a>
+            <div class="dropdown_content">
+                <a href="/user/profile">Profile</a>
+                <a href="/user/dashboard">Dashboard</a>
+                <a href="#">Settings & Privacy</a>
+                <a href="#">Saved Jobs</a>
+                <a href="#">Analytics</a>
+                <a href="/user/logout" style="color: red;">Sign Out</a>
+            </div>
+        </div>
     </div>  
 
 </nav>
-
-
-<style>
-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: white;
-    padding: 10px 20px;
-}
-
-.nav_center,
-.nav_left {
-    display: flex;
-    align-items: center;
-}
-
-.logo h1 {
-    font-family: Inter;
-    font-size: 24px;
-    cursor: pointer;
-    font-size: 1.5em;
-}
-
-.nav_center a,
-.nav_left a {
-    text-decoration: none;
-    transition: color 0.3s ease;
-    color: #686868;
-    margin-left: 20px;
-    margin-right: 20px;
-    font-weight: bold;
-    font-family: Jost;
-    font-size: 1em;
-    cursor: pointer;
-}
-
-.user_link {
-    display: flex;
-    align-items: center;
-    gap: 10px; /* This adds a small space between the icon and text. Adjust as needed. */
-}
-
-.notif_icon{
-    width: 20px;
-    height: auto;
-}
-
-.user_icon {
-    border-radius: 50%;
-    width: 35px;
-    height: auto;
-}
-
-/* Hover effect for links */
-.nav_center a:hover,
-.nav_left a:hover {
-    color: black; 
-    text-decoration: underline;
-}
-
-</style>

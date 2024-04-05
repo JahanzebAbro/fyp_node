@@ -149,6 +149,37 @@ exports.isProfileBuilt = async function (req, res, next) {
     next();
 }
 
+// Grab profile pic for user icon
+exports.getUserIcon = async function (req, res, next) {
+    if (req.isAuthenticated()) {
+
+        let user_icon = null;
+
+        // Determine the type of user and fetch the corresponding profile
+        if (req.user.user_type === 'seeker') {
+
+            const seeker = await Seeker.getById(pool, req.user.id);
+            if (seeker && seeker.profile_pic) {
+                 user_icon = seeker.profile_pic
+            }
+
+        } 
+        else if (req.user.user_type === 'employer') {
+
+            const employer = await Employer.getById(pool, req.user.id);
+            if (employer && employer.profile_pic) {
+                user_icon = employer.profile_pic;
+            }
+
+        }
+
+        res.locals.user_icon = user_icon ? user_icon : false;
+    } else {
+        res.locals.user_icon = false;
+    }
+
+    next();
+}
 
 exports.deleteUpload = function(file_path) {
     fs.unlink(file_path, (err) => {

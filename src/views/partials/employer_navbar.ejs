@@ -1,2 +1,39 @@
-HI I AM AN EMPLOYER NAVBAR
-<br><br>
+<nav class="user_nav">
+
+    <div class="logo">
+        <h1>DOMAIN</h1>
+    </div>
+
+    <div class="nav_center">
+        <a>Search</a>
+        <a>Postings</a>
+        <a>Articles</a>
+    </div>    
+
+    <div class="nav_left">
+        <a class="notif_link">
+            <img class="notif_icon" src="/img/notif_bell_off.png">
+        </a>
+        <div class="user_dropdown">
+            <a class="user_dropdown_trigger">
+
+                <% if (locals.user_icon) { %>
+                    <img class="user_icon" src="/uploads/<%= locals.user_icon%>">
+                <% } else { %>
+                    <img class="user_icon" src="/img/no_profile_pic.png">
+                <% } %>
+
+                <span class="user_drop_name">User</span>
+            </a>
+            <div href="/user/profile" class="dropdown_content">
+                <a href="/user/profile">Profile</a>
+                <a href="/user/dashboard">Dashboard</a>
+                <a href="#">Create Job</a>
+                <a href="#">Settings & Privacy</a>
+                <a href="#">Analytics</a>
+                <a href="/user/logout" style="color: red;">Sign Out</a>
+            </div>
+        </div>
+    </div>  
+
+</nav>

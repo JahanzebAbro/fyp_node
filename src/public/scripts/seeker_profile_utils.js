@@ -261,7 +261,7 @@ function toggleEditMode(isEditMode, isSaved=false){
                                 min="${min_date}" max="${max_date}" ">`);
         
         // BIOGRAPHY
-        $('#bio_val').html(`<br><textarea name="bio" rows="4" cols="50" maxlength="800" 
+        $('#bio_val').html(`<br><textarea name="bio" rows="5" cols="75" maxlength="800" 
             placeholder="Let others know more about YOU with a short description of what you're all about!">${bio_old_val}</textarea>`);
 
 
@@ -269,24 +269,24 @@ function toggleEditMode(isEditMode, isSaved=false){
 
         if(cv_old_val){ // if a cv exists
             $('.cv').html(`
-                    <strong>Current CV: </strong>
+                    <strong>Current CV</strong><br>
                     <span id="cv_val">
                         <a href="/uploads/${cv_old_val}" target="_blank" rel="noopener noreferrer">${cv_old_val}</a>
                     </span>
                     <button type="buttton" id="clear-cv-btn" class="clear_btn" name="clear_cv">x</button>
                     <br><br>
-                    <strong>Select New CV: </strong>
+                    <strong>Select New CV</strong><br>
                     <input type="file" name="cv" accept=".pdf"></input>`);
         }
         else{
             $('.cv').html(`
                     
-                    <strong>Current CV: </strong>
+                    <strong>Current CV</strong><br>
                     <span id="cv_val">
                         <a>None</a>
                     </span>
                     <br><br>
-                    <strong>Select New CV: </strong>
+                    <strong>Select New CV</strong><br>
                     <input type="file" name="cv" accept=".pdf"></input>`);
         }
 
@@ -368,6 +368,8 @@ function toggleEditMode(isEditMode, isSaved=false){
             
             
             $('.profile_pic_container').html(`<img id="profile_pic_val" src="${profile_pic_old_path}" alt="Profile Picture">`);
+            $('.user_icon').attr('src', `${profile_pic_old_path}`);
+            
 
             f_name_old_val = $('input[name="f_name"]').val();
             $('#f_name_val').text(f_name_old_val || 'None');
@@ -389,7 +391,7 @@ function toggleEditMode(isEditMode, isSaved=false){
 
             if(cv_new){
                 $('.cv').html(`
-                            <strong>CV:</strong>
+                            <strong>CV</strong><br>
                             <span id="cv_val">
                                 <a href="/uploads/${cv_new}" target="_blank" rel="noopener noreferrer">${cv_new}</a>
                             </span>`);
@@ -397,7 +399,7 @@ function toggleEditMode(isEditMode, isSaved=false){
             }
             else{
                 $('.cv').html(`
-                <strong>CV:</strong>
+                <strong>CV</strong><br>
                 <span id="cv_val">
                     <a>None</a>
                 </span>`);
@@ -426,6 +428,20 @@ function toggleEditMode(isEditMode, isSaved=false){
 
 
             // =============CANCEL EDIT
+            // Clear previous error messages
+            $('#f_name_err').text('');
+            $('#l_name_err').text('');
+            $('#d_o_b_err').text('');
+            $('#bio_err').text('');
+            $('#address_err').text('');
+            $('#ct_email_err').text('');
+            $('#ct_phone_err').text('');
+            $('#postcode_err').text('');
+            $('#gender_err').text('');
+            $('#industry_err').text('');
+            $('#work_status_err').text('');
+            $('#cv_err').text('');
+            $('#pic_err').text('');
 
             // Convert input fields back to text with old values or 'None' if they had no value.
             $('.profile_pic_container').html(`<img id="profile_pic_val" src="${profile_pic_old_path}" alt="Profile Picture">`);
@@ -436,14 +452,14 @@ function toggleEditMode(isEditMode, isSaved=false){
             $('#bio_val').text(bio_old_val || 'None');
             if(cv_old_val){
                 $('.cv').html(`
-                                <strong>CV:</strong>
+                                <strong>CV</strong><br>
                                 <span id="cv_val">
                                     <a href="/uploads/${cv_old_val}" target="_blank" rel="noopener noreferrer">${cv_old_val}</a>
                                 </span>`);
             }
             else{
                 $('.cv').html(`
-                            <strong>CV:</strong>
+                            <strong>CV</strong><br>
                             <span id="cv_val">
                                 <a>None</a>
                             </span>`);

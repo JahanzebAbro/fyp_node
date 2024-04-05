@@ -4,7 +4,7 @@ const pool = require("../config/db/db_config");
 const Seeker = require('../models/seekerModel');
 const Employer = require('../models/employerModel');
 const { isNotAuthReq } = require('../utils');
-const { isProfileBuilt } = require('../utils');
+const { isProfileBuilt, getUserIcon } = require('../utils');
 const { deleteUpload } = require('../utils');
 const { validateFirstName, 
         validateLastName,
@@ -49,7 +49,8 @@ const employerUpload = upload.fields([{ name: 'profile_pic_file', maxCount: 1 }]
 
 // ENDPOINTS
 // ----------------------------------------DASHBOARD
-router.get("/dashboard", isNotAuthReq, (req, res) => {
+router.get("/dashboard", isNotAuthReq, getUserIcon, async (req, res) => {
+
     res.render("user/dashboard", { user_type: req.user.user_type});
 });
 
@@ -57,7 +58,7 @@ router.get("/dashboard", isNotAuthReq, (req, res) => {
 
 
 // ----------------------------------------USER PROFILE PAGE
-router.get("/profile", isNotAuthReq, isProfileBuilt, async (req, res) => {
+router.get("/profile", isNotAuthReq, isProfileBuilt,  getUserIcon, async (req, res) => {
     
     if(req.user.user_type === 'seeker'){
         res.render("user/seeker_profile");
