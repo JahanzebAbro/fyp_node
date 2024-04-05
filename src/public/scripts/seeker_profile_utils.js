@@ -16,13 +16,13 @@ let industry_old_val = $('#industry_val').text().trim();
 let work_status_old_val = $('#work_status_val').text().trim();
 
 // Setting all fields with 'None' to null.
-gender_old_val = emptyFieldToNullString($('#gender_val').text().trim());
-bio_old_val = emptyFieldToNullString($('#bio_val').text().trim());
-cv_old_val = emptyFieldToNullString($('#cv_val a').text().trim());
-address_old_val = emptyFieldToNullString($('#address_val').text().trim());
-postcode_old_val = emptyFieldToNullString($('#postcode_val').text().trim());
-ct_phone_old_val = emptyFieldToNullString($('#ct_phone_val').text().trim());
-ct_email_old_val = emptyFieldToNullString($('#ct_email_val').text().trim());
+gender_old_val = emptyFieldToNullString(gender_old_val);
+bio_old_val = emptyFieldToNullString(bio_old_val);
+cv_old_val = emptyFieldToNullString(cv_old_val);
+address_old_val = emptyFieldToNullString(address_old_val);
+postcode_old_val = emptyFieldToNullString(postcode_old_val);
+ct_phone_old_val = emptyFieldToNullString(ct_phone_old_val);
+ct_email_old_val = emptyFieldToNullString(ct_email_old_val);
 
 
 let profile_pic_new = ''; // To help display changes of images in after edit mode
@@ -139,7 +139,7 @@ $(document).ready(function(){
         
         // Sending to endpoint to update database.
         $.ajax({
-            url: '/user/update-profile', 
+            url: '/user/update-profile/seeker', 
             type: 'POST',
             data: form,
             processData: false, 
@@ -158,45 +158,19 @@ $(document).ready(function(){
                 const errors = response.responseJSON.errors; 
                     if (errors) {
 
-                        if (errors.f_name) {
-                            $('#f_name_err').text(errors.f_name);
-                        }
-                        if (errors.l_name) {
-                            $('#l_name_err').text(errors.l_name);
-                        }
-                        if (errors.d_o_b) {
-                            $('#d_o_b_err').text(errors.d_o_b);
-                        }
-                        if (errors.bio) {
-                            $('#bio_err').text(errors.bio);
-                        }
-                        if (errors.address) {
-                            $('#address_err').text(errors.address);
-                        }
-                        if (errors.ct_email) {
-                            $('#ct_email_err').text(errors.ct_email);
-                        }
-                        if (errors.ct_phone) {
-                            $('#ct_phone_err').text(errors.ct_phone);
-                        }
-                        if (errors.postcode) {
-                            $('#postcode_err').text(errors.postcode);
-                        }
-                        if (errors.gender) {
-                            $('#gender_err').text(errors.gender);
-                        }
-                        if (errors.industry) {
-                            $('#industry_err').text(errors.industry);
-                        }
-                        if (errors.work_status) {
-                            $('#work_status_err').text(errors.work_status);
-                        }
-                        if (errors.cv_file) {
-                            $('#cv_err').text(errors.cv_file);
-                        }
-                        if (errors.profile_pic_file) {
-                            $('#pic_err').text(errors.profile_pic_file);
-                        }
+                        $('#f_name_err').text(errors.f_name || '');
+                        $('#l_name_err').text(errors.l_name || '');
+                        $('#d_o_b_err').text(errors.d_o_b || '');
+                        $('#bio_err').text(errors.bio || '');
+                        $('#address_err').text(errors.address || '');
+                        $('#ct_email_err').text(errors.ct_email || '');
+                        $('#ct_phone_err').text(errors.ct_phone || '');
+                        $('#postcode_err').text(errors.postcode || '');
+                        $('#gender_err').text(errors.gender || '');
+                        $('#industry_err').text(errors.industry || '');
+                        $('#work_status_err').text(errors.work_status || '');
+                        $('#cv_err').text(errors.cv_file || '');
+                        $('#pic_err').text(errors.profile_pic_file || '');
 
                     }
                 }

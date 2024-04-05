@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const path = require('path');
 const pool = require("../config/db/db_config");
 const Seeker = require('../models/seekerModel');
 const Employer = require('../models/employerModel');
@@ -72,8 +71,8 @@ router.get("/profile", isNotAuthReq, isProfileBuilt, async (req, res) => {
 
 
 
-// UPDATE USER PROFILE FROM EDIT
-router.post('/update-profile', isNotAuthReq, seekerUpload, validateFirstName,
+// UPDATE SEEKER PROFILE FROM EDIT
+router.post("/update-profile/seeker", isNotAuthReq, seekerUpload, validateFirstName,
                                                             validateLastName,
                                                             validateGender,
                                                             validateDOB,
@@ -189,12 +188,95 @@ router.post('/update-profile', isNotAuthReq, seekerUpload, validateFirstName,
     }
 });
 
+// UPDATE EMPLOYER PROFILE FROM EDIT
+router.post("/update-profile/employer", isNotAuthReq, employerUpload, validateCompanyName,
+                                                                        validateCompanySize,
+                                                                        validateBio,
+                                                                        validateWebsite,
+                                                                        validateAddress,
+                                                                        validatePostcode,
+                                                                        validatePhone,
+                                                                        validateEmail,
+                                                                        validateIndustry,
+                                                                        validateFile,
+                                                                        multerSizeErrorHandler,
+                                                                        fileErrorHandler,
+                                                                        allErrorHandler, async (req, res) => {
+    
+
+    try{
+
+        const updates = req.body;
+        const user_id = req.user.id;
+        const old_employer = await Employer.getById(pool, user_id); // To delete old file paths
+
+        // =================PROFILE PICTURE FILE MANAGEMENT
+
+        if (req.files['profile_pic_file'] && req.files['profile_pic_file'][0]){ // Check if a file was given
+
+            updates.profile_pic_file = req.files['profile_pic_file'][0].filename;
+            console.log('SAVING', updates.profile_pic_file);
+
+            if(old_employer.profile_pic){
+                console.log(console.log('DELETE', old_employer.profile_pic));
+                deleteUpload('uploads/' + old_employer.profile_pic);
+            }
+
+        }
+        else if (old_employer.profile_pic){ // No file was given but previous file exists
+
+            updates.profile_pic_file = old_employer.profile_pic;
+
+            if(updates.is_pic_cleared === 'true'){ // Asked to clear old file by user
+
+                updates.profile_pic_file = '';
+                console.log(console.log('DELETE', old_employer.profile_pic));
+                deleteUpload('uploads/' + old_employer.profile_pic);
+
+            }else{ // Maintain old file
+
+                updates.profile_pic_file = old_employer.profile_pic;
+                console.log('KEEPING', updates.profile_pic_file);
+
+            }
+        }
+        else{ // No file was given and no previous file exists
+            updates.profile_pic_file = '';
+        }
+
+        //====================================================
+
+        // TRIMMING 
+        updates.bio = updates.bio.trim();
+
+        // FIXING VARIABLE NAMES
+        updates.name = updates.comp_name;
+        updates.size = updates.comp_size ? updates.comp_size : null; // Makes sure we're not send string to db
+        delete updates.comp_name;
+        delete updates.comp_size;
+        delete updates.is_pic_cleared;  
+
+        console.log(updates);
+
+        
+        let result = await Employer.update(pool, req.user.id, updates);
+
+
+        res.json({ success: true, message: 'Profile updated successfully' });
+    }
+    catch(error){
+        console.error(error);
+        res.status(500).json({ success: false, message: 'An internal server error occurred' }); // 500 means internal server error
+    }                                                                     
+    
+});
 
 
 
 
 
-// ------------USER BUILDER FORM
+
+// ----------------------------------------USER BUILDER FORM
 router.get("/profile/builder", isNotAuthReq, async (req, res) => {
 
     if(req.user.user_type === 'seeker'){
@@ -368,6 +450,11 @@ router.get("/logout", isNotAuthReq, (req, res) => {
     });
     
 });
+
+
+
+
+
 
 
 
