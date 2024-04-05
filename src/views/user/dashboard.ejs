@@ -1,3 +1,13 @@
+<!-- NAVBAR -->
+<% if(user_type === 'seeker') { %>
+    <%- include('../partials/seeker_navbar.ejs') %>
+<% } %>
+
+<% if(user_type === 'employer') { %>
+    <%- include('../partials/employer_navbar.ejs') %>
+<% } %>
+
+
 Hello User, this is the dashboard!
 
 <br><a href="/user/profile">User</a>

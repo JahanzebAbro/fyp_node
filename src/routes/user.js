@@ -48,15 +48,15 @@ const employerUpload = upload.fields([{ name: 'profile_pic_file', maxCount: 1 }]
 
 
 // ENDPOINTS
-// ------------DASHBOARD
+// ----------------------------------------DASHBOARD
 router.get("/dashboard", isNotAuthReq, (req, res) => {
-    res.render("user/dashboard");
+    res.render("user/dashboard", { user_type: req.user.user_type});
 });
 
 
 
 
-// ------------USER PROFILE PAGE
+// ----------------------------------------USER PROFILE PAGE
 router.get("/profile", isNotAuthReq, isProfileBuilt, async (req, res) => {
     
     if(req.user.user_type === 'seeker'){
