@@ -59,7 +59,15 @@ router.get("/dashboard", isNotAuthReq, (req, res) => {
 
 // ------------USER PROFILE PAGE
 router.get("/profile", isNotAuthReq, isProfileBuilt, async (req, res) => {
-    res.render("user/profile", { user_type: req.user.user_type });
+    
+    if(req.user.user_type === 'seeker'){
+        res.render("user/seeker_profile");
+    }
+ 
+    if(req.user.user_type === 'employer'){
+        res.render("user/employer_profile");
+    }
+    
 });
 
 
@@ -315,6 +323,7 @@ router.post("/profile/builder/employer", isNotAuthReq, employerUpload, validateC
 
         // TRIMMING 
         bio = bio.trim();
+        comp_size = comp_size ? comp_size : null;
 
 
         let result = await Employer.create(pool, 
