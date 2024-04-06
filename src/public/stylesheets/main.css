@@ -49,15 +49,15 @@
 
 }
 
-.profile_info_section button{
+#clear-pic-btn, .profile_info_section button{
     
     display: inline-block;
-    background:black;
+    background:#ffffff;
     outline: 0;
     cursor: pointer;
     border: 2px solid #000;
     border-radius: 3px;
-    color: #fff;
+    color: #000000;
     font-size: 1rem;
     font-weight: 400;
     padding: 5px 10px;
@@ -65,9 +65,9 @@
     
 }
 
-.profile_info_section button:hover {
-    background: #ffffff; /* Change to the desired background color */
-    color: #000000; /* Optional: Change text color if needed */
+#clear-pic-btn:hover, .profile_info_section button:hover {
+    background: #000000; 
+    color: #ffffff;
 }
 
 .profile_picture_section {
