@@ -1,0 +1,133 @@
+<%- include('../partials/employer_navbar.ejs') %>
+
+
+<form action="/user/job/create" method="POST" id="job_form" class="job_form">
+
+    <label for="job_title">Title*</label><br>
+    <input type="text" id="job_title" name="job_title" maxlength="50"><br>
+    <span  id="job_title_err" style="color: red;"></span><br>
+
+    <label for="openings">Number of openings*</label><br>
+    <input type="number" id="openings" name="openings" maxlength="10"><br>
+    <span  id="openings_err" style="color: red;"></span><br>
+
+
+
+    <span>Type of job*</span><br>
+    <div class="job_type_check">
+        <% job_types.forEach(function(type) { %>
+            <label for="type_<%= type.id %>">
+                <span><input type="checkbox" id="type_<%= type.id %>" name="job_type" value="<%= type.id %>"> <%= type.name %></span>
+            </label>                                                                            
+        <% }); %>
+    </div>
+    <span  id="job_type_err" style="color: red;"></span><br><br>
+
+
+
+    <label for="job_style">Work Style*</label><br>
+    <select id="job_style" name="job_style">
+        <option value="Remote">Remote</option>
+        <option value="In-person">In-person</option>
+        <option value="Hybrid">Hybrid</option>
+    </select><br>
+    <span  id="job_style_err" style="color: red;"></span><br><br>
+
+    
+    <label for="description">Description</label><br>
+    <textarea id="description" name="description" rows="15" cols="100" maxlength="5000" 
+    placeholder="Let others know more about the position you're hiring!"></textarea><br>
+    <span id="description_err" style="color: red;"></span><br><br>
+    
+    
+
+
+    <label for="address">Address</label><br>
+    <input type="text" id="address" name="address"><br>
+    <span  id="address_err" style="color: red;"></span><br>
+
+
+    <label for="postcode">Postcode</label><br>
+    <input type="text" id="postcode" name="postcode"><br>
+    <span  id="postcode_err" style="color: red;"></span><br><br>
+
+
+    <label for="start_date">Start Date</label><br>
+    <input type="date" id="start_date" name="start_date"><br>
+    <span  id="start_date_err" style="color: red;"></span><br>
+
+    <span>Pay</span><br>
+    <div class="pay_form_container">
+        <div>
+            <div> 
+                <label for="min_pay">Minimum</label><br>
+                <input type="number" id="min_pay" name="min_pay" placeholder="£0.00">
+            </div>
+        </div>
+
+        <div>
+            to
+        </div>
+        
+        <div>
+            <div> 
+                <label for="min_pay">Maximum</label><br>
+                <input type="number" id="max_pay" name="max_pay" placeholder="£0.00">
+            </div>
+        </div>
+      
+        <div>
+            <br>
+            <div>per month</div>
+        </div>
+    </div>
+    <span  id="pay_err" style="color: red;"></span><br>
+
+
+
+    <span>Benefits</span><br>
+    <div class="benefits_check">
+        <% benefits.forEach(function(benefit) { %>
+                <span><input type="checkbox" name="benefits" value="<%= benefit.id %>"> <%= benefit.name %></span>
+        <% }); %>
+    </div><br>
+
+    <input type="text" id="custom_benefit" name="benefits" placeholder="Your benefit" maxlength="50">
+    <button type="button" id="add_benefit_btn">Add Benefit</button><br>
+    <div class="new_benefits"></div>
+    <button type="button" id="clear_benefit_btn" style="display:none;">Clear all</button><br>
+    <span  id="benefits_err" style="color: red;"></span><br><br>
+
+    
+    <span>Screening Questions</span><br><br>
+    <div class="questions_container"></div>
+    <button type="button" id="add_question_btn">Add Question</button>
+    <button type="button" id="clear_question_btn" style="display:none;">Clear</button><br>
+    <span  id="question_err" style="color: red;"></span><br><br>
+    
+    
+
+
+    <span>CV Requirement</span>
+    <div id="cv_req">
+        <input type="radio" id="cv_is_req" name="cv_req" value="true">
+        <label for="cv_is_req">Required</label><br>
+        <input type="radio" id="cv_not_req" name="cv_req" value="false" checked>
+        <label for="cv_not_req">Not Required</label><br>
+    </div><br>
+    <span  id="cv_req_err" style="color: red;"></span><br>
+
+
+
+    <label for="deadline">Deadline</label><br>
+    <input type="date" id="deadline" name="deadline"><br>
+    <span  id="deadline_err" style="color: red;"></span><br><br>
+
+    <!-- exp_years -->
+
+
+    <button type="submit" value="Submit">Create Job</button>
+</form>
+
+
+<script type="module" src="/scripts/job_create_utils.js"></script>

@@ -1,9 +1,8 @@
 -- CREATE DATABASE IF NOT EXISTS fyp_recruit;
 
 CREATE TYPE user_type_enum AS ENUM ('seeker', 'employer');
-CREATE TYPE job_type_enum AS ENUM ('Full-time', 'Part-time', 'Temporary');
-CREATE TYPE job_style_enum AS ENUM ('Remote', 'In-person', 'Hybrid');
-CREATE TYPE education_enum AS ENUM ('None', 'Highschool Diploma', "Bachelor's", "Master's", 'Doctorate', 'Custom');
+CREATE TYPE job_style_enum AS ENUM ('Remote', 'In-person', 'Hybrid'); --Style is a single option
+CREATE TYPE response_type_enum as ENUM('text','num','bool');
 
 CREATE TABLE IF NOT EXISTS users(
     id BIGSERIAL PRIMARY KEY,
@@ -48,13 +47,12 @@ CREATE TABLE IF NOT EXISTS employers (
 );
 
 
-CREATE TABLE IF NOT EXISTS job (
+CREATE TABLE IF NOT EXISTS jobs (
     id BIGSERIAL PRIMARY KEY,
     user_id BIGINT,
     title VARCHAR(50) NOT NULL,
     openings INT NOT NULL,
     description VARCHAR(5000) NOT NULL,
-    type job_type_enum NOT NULL,
     style job_style_enum NOT NULL,
     address VARCHAR(150),
     postcode VARCHAR(20),
@@ -62,9 +60,85 @@ CREATE TABLE IF NOT EXISTS job (
     max_pay INT,
     cv_req BOOLEAN,
     deadline DATE,
-    benefits TEXT,
-    exp_years INT,
-    min_edu education_enum,
     start_date DATE,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- DEFINING TYPES AVAILABLE
+CREATE TABLE IF NOT EXISTS job_types (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL
+);
+
+
+-- LINKING TABLE FOR JOBS AND JOB TYPES
+CREATE TABLE IF NOT EXISTS jobs_job_types (
+    job_id BIGINT NOT NULL,
+    type_id INT NOT NULL,
+    FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE,
+    FOREIGN KEY (type_id) REFERENCES job_types(id) ON DELETE RESTRICT,
+    PRIMARY KEY (job_id, type_id)
+);
+
+-- SCREENING QUESTIONS FOR APPLICATIONS
+CREATE TABLE IF NOT EXISTS screen_questions (
+    id SERIAL PRIMARY KEY,
+    job_id BIGINT NOT NULL,
+    question VARCHAR(200) NOT NULL,
+    response_type response_type_enum,
+    req BOOLEAN NOT NULL DEFAULT FALSE,
+    FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE
+);
+
+-- TO STORE ALL RESPONSES FROM SEEKERS TO JOB QUESTIONS 
+CREATE TABLE IF NOT EXISTS question_responses (
+    id SERIAL PRIMARY KEY,
+    seeker_id BIGINT NOT NULL,  
+    question_id BIGINT NOT NULL, 
+    response TEXT NOT NULL,   
+    FOREIGN KEY (seeker_id) REFERENCES seeker(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (question_id) REFERENCES screen_questions(id) ON DELETE CASCADE
+);
+
+-- DEFINING USER/SCREENING SKILLS
+CREATE TABLE IF NOT EXISTS skills (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL
+);
+
+-- SCREENING SKILLS REQUIREMENTS FOR JOBS
+CREATE TABLE IF NOT EXISTS screen_skills (
+    id SERIAL PRIMARY KEY,
+    job_id BIGINT NOT NULL,
+    skill_id NOT NULL,
+    req BOOLEAN NOT NULL DEFAULT FALSE,
+    FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE,
+    FOREIGN KEY (skill_id) REFERENCES skills(id) ON DELETE CASCADE
+);
+
+-- LINKING TABLE FOR SEEKERS AND THEIR SKILLS
+CREATE TABLE IF NOT EXISTS seeker_skills (
+    seeker_id BIGINT NOT NULL,
+    skill_id INT NOT NULL,
+    FOREIGN KEY (seeker_id) REFERENCES seeker(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (skill_id) REFERENCES skills(id) ON DELETE RESTRICT,
+    PRIMARY KEY (seeker_id, skill_id)
+);
+
+
+
+-- DEFINING BENEFITS
+CREATE TABLE IF NOT EXISTS benefits (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    is_custom BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+-- LINKING TABLE FOR JOB AND THEIR BENEFITS
+CREATE TABLE IF NOT EXISTS job_benefits (
+    job_id BIGINT NOT NULL,
+    benefit_id INT NOT NULL,
+    FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE,
+    FOREIGN KEY (benefit_id) REFERENCES benefits(id) ON DELETE RESTRICT,
+    PRIMARY KEY (job_id, benefit_id)
 );

@@ -71,6 +71,11 @@ app.use("/", indexRouter);
 const userRouter = require("./routes/user");
 app.use("/user", userRouter);
 
+// Job paths
+const jobRouter = require("./routes/job");
+app.use("/user/job", jobRouter);
+
+
 app.use(errorHandler);
 
 

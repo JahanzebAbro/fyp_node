@@ -1,12 +1,11 @@
 class Job {
 
-    constructor(id, user_id, title, openings, description, type, style, address, postcode, min_pay, max_pay, cv_req, deadline, benefits, exp_years, min_edu, start_date) {
+    constructor(id, user_id, title, openings, description, style, address, postcode, min_pay, max_pay, cv_req, deadline, start_date) {
         this.id = id;
         this.user_id = user_id;
         this.title = title;
         this.openings = openings;
         this.description = description;
-        this.type = type;
         this.style = style;
         this.address = address;
         this.postcode = postcode;
@@ -14,19 +13,14 @@ class Job {
         this.max_pay = max_pay;
         this.cv_req = cv_req;
         this.deadline = deadline;
-        this.benefits = benefits;
-        this.exp_years = exp_years;
-        this.min_edu = min_edu;
         this.start_date = start_date;
     }
 
-    // Create a new job 
     static async create(pool, 
         user_id, 
         title, 
         openings, 
         description, 
-        type, 
         style, 
         address, 
         postcode, 
@@ -34,35 +28,27 @@ class Job {
         max_pay, 
         cv_req, 
         deadline, 
-        benefits, 
-        exp_years, 
-        min_edu, 
         start_date) {
         try {
-
             const query = `
-                INSERT INTO job(user_id, title, openings, description, type, style, address, postcode, min_pay, max_pay, cv_req, deadline, benefits, exp_years, min_edu, start_date)
-                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+                INSERT INTO jobs(user_id, title, openings, description, style, address, postcode, min_pay, max_pay, cv_req, deadline, start_date)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
                 RETURNING id;
             `;
 
-            const params = [user_id, title, openings, description, type, style, address, postcode, min_pay, max_pay, cv_req, deadline, benefits, exp_years, min_edu, start_date];
+            const params = [user_id, title, openings, description, style, address, postcode, min_pay, max_pay, cv_req, deadline, start_date];
             const result = await pool.query(query, params);
 
             return result.rows[0].id;
-
         } catch(err) {
-
             throw err;
         }
     }
 
-    // Retrieve job details by job's id
     static async getById(pool, id) {
         try {
-
             const query = `
-                SELECT * FROM job WHERE id = $1;
+                SELECT * FROM jobs WHERE id = $1;
             `;
             
             const params = [id];
@@ -76,7 +62,6 @@ class Job {
                     job.title,
                     job.openings,
                     job.description,
-                    job.type,
                     job.style,
                     job.address,
                     job.postcode,
@@ -84,9 +69,6 @@ class Job {
                     job.max_pay,
                     job.cv_req,
                     job.deadline,
-                    job.benefits,
-                    job.exp_years,
-                    job.min_edu,
                     job.start_date
                 );
             } else {
@@ -97,11 +79,12 @@ class Job {
         }
     }
 
+
     // Retrieve all jobs for a user id
     static async getJobsByUser(pool, user_id) {
         try {
             const query = `
-                SELECT * FROM job WHERE user_id = $1;
+                SELECT * FROM jobs WHERE user_id = $1;
             `;
             
             const params = [user_id];
@@ -114,7 +97,6 @@ class Job {
                 job.title,
                 job.openings,
                 job.description,
-                job.type,
                 job.style,
                 job.address,
                 job.postcode,
@@ -122,9 +104,6 @@ class Job {
                 job.max_pay,
                 job.cv_req,
                 job.deadline,
-                job.benefits,
-                job.exp_years,
-                job.min_edu,
                 job.start_date
             ));
         } catch(err) {
@@ -135,6 +114,7 @@ class Job {
     // Update job details
     static async update(pool, id, fields) {
         try {
+
             const set_columns = [];
             const params = [];
 
@@ -150,7 +130,7 @@ class Job {
             }
 
             const query = `
-                UPDATE job
+                UPDATE jobs
                 SET ${set_columns.join(', ')}
                 WHERE id = $${set_columns.length + 1}
                 RETURNING id;
@@ -159,11 +139,15 @@ class Job {
             const result = await pool.query(query, params);
 
             if (result.rows.length > 0) {
+                
                 return result.rows[0].id;
             } else {
+
                 return null;
             }
+
         } catch(err) {
+
             throw err;
         }
     }
@@ -173,7 +157,7 @@ class Job {
         try {
 
             const query = `
-                DELETE FROM job WHERE id = $1 RETURNING id;
+                DELETE FROM jobs WHERE id = $1 RETURNING id;
             `;
             
             const params = [id];
@@ -190,6 +174,66 @@ class Job {
             throw err;
         }
     }
+
+    
+
+
+
+
+    // Construct a relationship between a job and multiple types (using their id)
+    static async addTypesToJob(pool, job_id, types){
+        try{
+
+            
+            // Check if there are types to add
+            if (types.length === 0) {
+                throw new Error("No types provided");
+            }
+
+            // Loop through each type and insert it into the database
+            for (const type_id of types) {
+                // Prepare the SQL query for inserting a single job type
+                const query = `
+                    INSERT INTO job_job_types(job_id, type_id)
+                    VALUES ($1, $2);
+                `;
+
+                // Parameters for the SQL query
+                const params = [job_id, type_id];
+
+                // Execute the query for the current type_id
+                await pool.query(query, params);
+            }
+
+
+        }catch(err){
+            throw err;
+        }
+    }
+
+    // Grabs all job types a job id has
+    static async getTypesFromJob(pool, job_id){
+
+
+    }
+
+
+    // Grabs all job types
+    static async getAllJobTypes(pool){
+        try{
+            
+            const query = 'SELECT * FROM job_types;';
+            const result = await pool.query(query);
+
+            // Array of job types
+            return result.rows;
+        }
+        catch(err){
+            throw err;
+        }
+    }
+
+
 }
 
 module.exports = Job;
