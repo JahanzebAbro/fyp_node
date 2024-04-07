@@ -30,6 +30,7 @@ INSERT INTO job_types(name) VALUES
     
 INSERT INTO jobs (
     user_id, 
+    status,
     title, 
     openings, 
     description, 
@@ -42,6 +43,7 @@ INSERT INTO jobs (
     start_date
 ) VALUES (
     4,
+    'open',
     'Mechanical Engineer',
     1,
     'Develop and maintain web applications using modern technologies.',
@@ -50,6 +52,20 @@ INSERT INTO jobs (
     50000,
     70000,
     TRUE,
+    '2023-12-31',
+    '2023-09-01'
+),
+(
+    4,
+    'hidden',
+    'Engineer',
+    3,
+    'Develop and maintain web applications.',
+    'Remote',
+    'Canvey',
+    50000,
+    70000,
+    FALSE,
     '2023-12-31',
     '2023-09-01'
 );

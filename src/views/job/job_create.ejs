@@ -92,7 +92,7 @@
         <% }); %>
     </div><br>
 
-    <input type="text" id="custom_benefit" name="benefits" placeholder="Your benefit" maxlength="50">
+    <input type="text" id="custom_benefit" name="benefits" placeholder="Enter a benefit" maxlength="50">
     <button type="button" id="add_benefit_btn">Add Benefit</button><br>
     <div class="new_benefits"></div>
     <button type="button" id="clear_benefit_btn" style="display:none;">Clear all</button><br>
@@ -106,7 +106,12 @@
     <span  id="question_err" style="color: red;"></span><br><br>
     
     
-
+    <span>Associated Skills</span><br><br>
+    <input type="text" id="skill" name="skill" placeholder="Enter a skill" maxlength="50">
+    <button type="button" id="add_skill_btn">Add Skill</button><br>
+    <div class="new_skills"></div>
+    <button type="button" id="clear_skill_btn" style="display:none;">Clear</button><br>
+    <span  id="skill_err" style="color: red;"></span><br><br>
 
     <span>CV Requirement</span>
     <div id="cv_req">
@@ -123,7 +128,6 @@
     <input type="date" id="deadline" name="deadline"><br>
     <span  id="deadline_err" style="color: red;"></span><br><br>
 
-    <!-- exp_years -->
 
 
     <button type="submit" value="Submit">Create Job</button>

@@ -1,7 +1,8 @@
 class Job {
 
-    constructor(id, user_id, title, openings, description, style, address, postcode, min_pay, max_pay, cv_req, deadline, start_date) {
+    constructor(id, user_id, status, title, openings, description, style, address, postcode, min_pay, max_pay, cv_req, deadline, start_date) {
         this.id = id;
+        this.status = status;
         this.user_id = user_id;
         this.title = title;
         this.openings = openings;
@@ -16,8 +17,10 @@ class Job {
         this.start_date = start_date;
     }
 
+
     static async create(pool, 
         user_id, 
+        status,
         title, 
         openings, 
         description, 
@@ -29,24 +32,30 @@ class Job {
         cv_req, 
         deadline, 
         start_date) {
+
         try {
+
             const query = `
-                INSERT INTO jobs(user_id, title, openings, description, style, address, postcode, min_pay, max_pay, cv_req, deadline, start_date)
-                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+                INSERT INTO jobs(user_id, status, title, openings, description, style, address, postcode, min_pay, max_pay, cv_req, deadline, start_date)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
                 RETURNING id;
             `;
 
-            const params = [user_id, title, openings, description, style, address, postcode, min_pay, max_pay, cv_req, deadline, start_date];
+            const params = [user_id, status, title, openings, description, style, address, postcode, min_pay, max_pay, cv_req, deadline, start_date];
             const result = await pool.query(query, params);
 
             return result.rows[0].id;
+
         } catch(err) {
+
             throw err;
         }
     }
 
+
     static async getById(pool, id) {
         try {
+
             const query = `
                 SELECT * FROM jobs WHERE id = $1;
             `;
@@ -59,6 +68,7 @@ class Job {
                 return new Job(
                     job.id,
                     job.user_id,
+                    job.status,
                     job.title,
                     job.openings,
                     job.description,
@@ -71,10 +81,13 @@ class Job {
                     job.deadline,
                     job.start_date
                 );
+
             } else {
+
                 return null;
             }
         } catch(err) {
+
             throw err;
         }
     }
@@ -94,6 +107,7 @@ class Job {
             return result.rows.map(job => new Job(
                 job.id,
                 job.user_id,
+                job.status,
                 job.title,
                 job.openings,
                 job.description,
@@ -176,33 +190,44 @@ class Job {
     }
 
     
-
+    // ======================================JOB TYPE METHODS=============================================================
 
 
 
     // Construct a relationship between a job and multiple types (using their id)
-    static async addTypesToJob(pool, job_id, types){
+    static async addTypes(pool, job_id, types){
         try{
 
-            
+            // Example Input: types = [1,3]
+
             // Check if there are types to add
             if (types.length === 0) {
                 throw new Error("No types provided");
             }
 
-            // Loop through each type and insert it into the database
-            for (const type_id of types) {
-                // Prepare the SQL query for inserting a single job type
-                const query = `
-                    INSERT INTO job_job_types(job_id, type_id)
-                    VALUES ($1, $2);
-                `;
+             // Reference help: CHATGPT 4
+            let positions = types.map((type_id, index) => `($1, $${index + 2})`).join(", "); 
+            // End reference
+            // Above, $1 is a constant so that doesn't get increased with each type.
+            // We are adding 2 indexes with every row added for type_id.
 
-                // Parameters for the SQL query
-                const params = [job_id, type_id];
+            const query = `
+                INSERT INTO job_job_types (job_id, type_id)
+                VALUES ${positions}
+                RETURNING job_id, type_id;
+            `;
 
-                // Execute the query for the current type_id
-                await pool.query(query, params);
+            const params = [job_id].concat(types); // Joining arrays
+
+            
+            const result = await pool.query(query, params);
+
+            if (result){
+
+                return result;
+            }
+            else{
+                return false;
             }
 
 
@@ -211,9 +236,34 @@ class Job {
         }
     }
 
-    // Grabs all job types a job id has
-    static async getTypesFromJob(pool, job_id){
+    // Grabs all types for a job
+    static async getTypesByJob(pool, job_id){
+        try {
 
+            const query = `
+                SELECT job_types.id, job_types.name
+                FROM job_types
+                JOIN jobs_job_types ON job_types.id = jobs_job_types.type_id
+                WHERE jobs_job_types.job_id = $1;
+            `;
+            // Above returns job type id and name by joining job_types and junction table based on given job id.
+            
+            params = [job_id];
+    
+    
+            const result = await pool.query(query, params);
+
+            if(result){
+                 result.rows;
+            }
+            else{
+                return false;
+            }
+
+        } catch(err) {
+            
+            throw err;
+        }
 
     }
 
@@ -233,6 +283,158 @@ class Job {
         }
     }
 
+    // ======================================JOB QUESTIONS=============================================================
+
+    // Give an array of question objectss and it will be attached to a job id.
+    static async createQuestions(pool, job_id, questions){
+        try{
+
+            // Example Input expectation:
+            //  questions = [{ question: 'Fake Question', reponse_type: 'text', is_req: 'true'}, 
+            //               { question: 'Fake Question', reponse_type: 'text', is_req: 'true'}];
+
+            // Check if there are questions to add
+            if (questions.length === 0) {
+                throw new Error("No questions provided");
+            }
+
+            
+            let query = `
+                INSERT INTO job_questions (job_id, question, response_type, is_req) VALUES 
+            `;
+
+            const positions = []; // Array for values positions
+            const params = [];
+
+            // Reference help: CHATGPT 4
+            questions.forEach((question, index) => {
+        
+                const position_count = index * 4 + 1; // Starting $1, multiply 4 to suggest new row, add 1 since sql is 1-indexed.
+                positions.push(`($${position_count}, $${position_count + 1}, $${position_count + 2}, $${position_count + 3})`);
+
+                params.push(job_id, question.question, question.response_type, question.is_req === 'true'); // make sure is_req is boolean
+            });
+            // End reference
+
+            query += positions.join(", ");
+            query += ' RETURNING id';
+
+            const result = await pool.query(query, params);
+
+            if(result){
+
+                return result.rows;
+            }
+            else{
+
+                return false;
+            }
+
+
+        }catch(err){
+            throw err;
+        }
+
+    }
+
+
+    static async getQuestionsByJob(pool, job_id){
+        try {
+
+            const query = `
+                SELECT * FROM job_questions WHERE job_id = $1;
+            `;
+            
+            const params = [job_id];
+            const result = await pool.query(query, params);
+
+            // Returns array of questions
+            if(result){
+
+                return result.rows;
+            }
+            else{
+                return false;
+            }
+
+        } catch(err) {
+
+            throw err;
+        }
+    }
+
+    // ====================================JOB SKILLS====================================================================
+
+    
+    // Create skills for a job id
+    static async createSkills(pool, job_id, skills){
+
+        try{
+
+            // Example Input expectation:
+            //  skills = [skill1, skill2];
+
+            // Check if there are types to add
+            if (skills.length === 0) {
+                throw new Error("No skills provided");
+            }
+
+             // Reference help: CHATGPT 4
+            let skills = types.map((skill, index) => `($1, $${index + 2})`).join(", "); 
+            // End reference
+            // Above, $1 is a constant so that doesn't get increased with each skill.
+            // We are adding 2 indexes with every row added for skill.
+
+            const query = `
+                INSERT INTO job_skills (job_id, name)
+                VALUES ${skills}
+                RETURNING id;
+            `;
+
+            const params = [job_id].concat(skills); // Joining arrays
+
+            
+            const result = await pool.query(query, params);
+
+            if (result){
+
+                return result;
+            }
+            else{
+                return false;
+            }
+
+
+        }catch(err){
+            throw err;
+        }
+
+    }
+
+    static async getSkillsByJob(pool, job_id){
+        try {
+
+            const query = `
+                SELECT * FROM job_skills WHERE job_id = $1;
+            `;
+            
+            const params = [job_id];
+            const result = await pool.query(query, params);
+
+            // Returns array of questions
+            if(result){
+
+                return result.rows;
+            }
+            else{
+                return false;
+            }
+
+        } catch(err) {
+
+            throw err;
+        }
+    }
 
 }
 

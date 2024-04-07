@@ -1,18 +1,4 @@
 
-
-$(document).ready(function(){
-
-    $('#min_edu').change(function() {
-        if($(this).val() === 'Custom'){
-            $('#custom_min_edu').show();
-        } else {
-            $('#custom_min_edu').hide();
-        }
-    });
-
-    
-});
-
 // ADD BENEFIT FUNCTIONALITY
 $(document).ready(function(){
 
@@ -51,6 +37,9 @@ $(document).ready(function(){
     });
 
 });
+
+
+
 
 
 // ADD QUESTION CREATOR
@@ -108,6 +97,66 @@ $(document).ready(function(){
 
         if(question_count <=5){
             $('#add_question_btn').prop('disabled', false);
+        }
+
+    });
+
+});
+
+
+
+
+
+
+
+// ADD SKILL CREATOR
+$(document).ready(function(){
+
+    let skill_count = 1;
+
+    $('#add_skill_btn').click(function(){
+           
+        const new_skill = $('#skill').val();
+
+        if(new_skill && skill_count <= 5){
+            $('.new_skills').append(`
+                <label for="skill_${skill_count}"> 
+                    <input type="hidden"id="skill_${skill_count}" value="${new_skill}">
+                    <span>${skill_count}. ${new_skill}</span><br>
+                </label>
+            `);
+
+           
+            $('#clear_skill_btn').show();
+            skill_count++;
+        }
+
+        
+        
+        if(skill_count > 5){
+            $('#add_skill_btn').prop('disabled', true);
+        }
+
+        $('#skill').val('');
+
+    });
+
+
+    // CLEAR THE MOST RECENT SKILL ONLY
+    $('#clear_skill_btn').click(function() {
+
+
+        if(skill_count > 1 ) {
+            skill_count--; 
+            $(`label[for="skill_${skill_count}"]`).remove(); // Remove the last question
+        }
+
+        if(skill_count <= 1) {
+            $('#clear_skill_btn').hide(); 
+        }
+
+        if(skill_count <=5){
+            $('#add_skill_btn').prop('disabled', false);
         }
 
     });
