@@ -11,25 +11,6 @@ const date_regex =
 /^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/;
 
 
-exports.validateJobStatus = function(req, res, next){
-
-    const { status } = req.body;
-
-    // Initialize if not
-    if (!req.validation_errors){ 
-        req.validation_errors = {};
-    }
-
-
-    if (status !== 'open' && status !== 'hidden' && status !== 'closed'){
-        req.validation_errors.status = "Please select a given job status.";
-        return next();
-    }
-
-
-
-    next();
-}
 
 
 exports.validateJobTitle = function(req, res, next) {
@@ -123,7 +104,7 @@ exports.validateJobType = async function(req, res, next){
         }
     }
 
-
+    req.body.job_type = job_type;
 
     next();
 }
@@ -160,14 +141,26 @@ exports.validateDescription = function(req, res, next){
     }
 
 
-    if (description.length > 5000) {
-        req.validation_errors.description = 'Description cannot exceed 5000 characters.'; 
+    if(description){ // Only if given
+        
+        
+        if (description.length > 5000) {
+            req.validation_errors.description = 'Description cannot exceed 5000 characters.';
+            return next();
+        }
+        
+        if (!description_regex.test(description)) {
+            req.validation_errors.description = 'Contains invalid characters';
+            return next();
+        }
+        
     }
-    else if (!description_regex.test(description)) {
-        req.validation_errors.description = 'Contains invalid characters'; 
+    else{
+
+        req.validation_errors.description = 'Description cannot be left empty.';
+        return next();
     }
-
-
+        
 
     next();
 }
@@ -355,7 +348,6 @@ exports.validateBenefits = async function(req, res, next){
     // Make sure not more than 5 can be chosen.
 
 
-
     if(benefits){ // Only if given
 
         // Check for single string and turn into an array if so.
@@ -382,6 +374,7 @@ exports.validateBenefits = async function(req, res, next){
 
     }
 
+    req.body.benefits = benefits ? benefits : null;
 
     next();
 }
@@ -443,6 +436,7 @@ exports.validateCustomBenefits= function(req, res, next){
         
     }
 
+    req.body.custom_benefits = custom_benefits ? custom_benefits : null;
 
 
     next();
@@ -555,6 +549,9 @@ exports.validateQuestions = function(req, res, next){
     }
 
 
+    req.body.questions = questions ? questions : null;
+    req.body.response_types = response_types ? response_types : null;
+    req.body.question_reqs = question_reqs.length > 0 ? question_reqs : null; // We don't want an empty array
 
 
     next();
@@ -583,7 +580,7 @@ exports.validateSkills = function(req, res, next){
         skills = Array.isArray(skills) ? skills : [skills];
 
         if(skills.length > 5){
-            req.validation_errors.skills = "You can only create up to 5 skills.";
+            req.validation_errors.skill = "You can only create up to 5 skills.";
             return next();
         }
 
@@ -593,22 +590,22 @@ exports.validateSkills = function(req, res, next){
         for (const skill of skills){
 
             if (valid_skills.includes(skill.toLowerCase().trim())) {
-                req.validation_errors.skills = "Skills must be unique.";
+                req.validation_errors.skill = "Skills must be unique.";
                 return next();
             }
 
             if(skill.length < 3){
-                req.validation_errors.skills = `Skill ${i} must have at least 3 characters.`;
+                req.validation_errors.skill = `Skill ${i} must have at least 3 characters.`;
                 return next();
             } 
             
             if(skill.length > 50){
-                req.validation_errors.skills = `Skill ${i} cannot exceed 50 characters.`;
+                req.validation_errors.skill = `Skill ${i} cannot exceed 50 characters.`;
                 return next();
             }
             
             if (title_regex.test(skill)) { // Same regex pattern so reusing title regex.
-                req.validation_errors.skills = `Skill ${i} should only contain letters.`;
+                req.validation_errors.skill = `Skill ${i} should only contain letters.`;
                 return next();
             }
 
@@ -618,6 +615,8 @@ exports.validateSkills = function(req, res, next){
         }
         
     }
+
+    req.body.skills = skills ? skills : null;
 
     next();
 }
@@ -633,10 +632,31 @@ exports.validateCVReq = function(req, res, next){
         req.validation_errors = {};
     }
 
-    
     if (cv_req !== 'true' && cv_req !== 'false') {
         req.validation_errors.cv_req = "Please select a valid option.";
     }
+
+
+    next();
+}
+
+
+
+exports.validateJobStatus = function(req, res, next){
+
+    const { status } = req.body;
+
+    // Initialize if not
+    if (!req.validation_errors){ 
+        req.validation_errors = {};
+    }
+
+
+    if (status !== 'open' && status !== 'hidden' && status !== 'closed'){
+        req.validation_errors.status = "Please select a given job status.";
+        return next();
+    }
+
 
 
     next();

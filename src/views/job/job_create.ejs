@@ -35,7 +35,7 @@
     <span  id="job_style_err" style="color: red;"></span><br><br>
 
     
-    <label for="description">Description</label><br>
+    <label for="description">Description*</label><br>
     <textarea id="description" name="description" rows="15" cols="100" maxlength="5000" 
     placeholder="Let others know more about the position you're hiring!"></textarea><br>
     <span id="description_err" style="color: red;"></span><br><br>
@@ -92,12 +92,12 @@
                 <span><input type="checkbox" name="benefits" value="<%= benefit.id %>"> <%= benefit.name %></span>
         <% }); %>
     </div><br>
-
+    <span id="benefits_err" style="color: red;"></span><br>
     <input type="text" id="custom_benefit" placeholder="Enter a benefit" maxlength="50">
     <button type="button" id="add_benefit_btn">Add Benefit</button><br>
     <div class="new_benefits"></div>
     <button type="button" id="clear_benefit_btn" style="display:none;">Clear all</button><br>
-    <span  id="benefits_err" style="color: red;"></span><br><br>
+    <span id="custom_benefits_err" style="color: red;"></span><br><br>
 
     
     <span>Screening Questions</span><br><br>

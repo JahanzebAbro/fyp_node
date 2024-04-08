@@ -1,9 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const pool = require("../config/db/db_config");
+const multer = require('multer');
+const upload = multer(); // To help parse form in req.body
 const Job = require('../models/jobModel');
 const Benefit = require('../models/benefitModel');
-const { isNotAuthReq, getUserIcon} = require('../utils');
+const { isNotAuthReq, getUserIcon, allErrorHandler} = require('../utils');
 const { validateJobStatus,
         validateJobTitle,
         validateOpenings,
@@ -42,60 +44,80 @@ router.get("/create", isNotAuthReq, getUserIcon, async (req, res) => {
 
 
 // CREATE SUBMISSION POINT 
-router.post("/create", isNotAuthReq, getUserIcon, validateJobTitle,
-                                                    validateOpenings,
-                                                    validateJobType,
-                                                    validateJobStyle,
-                                                    validateDescription,
-                                                    validateAddress,
-                                                    validatePostcode,
-                                                    validateStartDate,
-                                                    validatePay,
-                                                    validateBenefits,
-                                                    validateCustomBenefits,
-                                                    validateQuestions,
-                                                    validateSkills,
-                                                    validateCVReq,
-                                                    validateDeadline,
-                                                    validateJobStatus, async (req, res) => {
+router.post("/create", isNotAuthReq, getUserIcon, upload.none(),
+                                                                validateJobTitle,
+                                                                validateOpenings,
+                                                                validateJobType,
+                                                                validateJobStyle,
+                                                                validateDescription,
+                                                                validateAddress,
+                                                                validatePostcode,
+                                                                validateStartDate,
+                                                                validatePay,
+                                                                validateBenefits,
+                                                                validateCustomBenefits,
+                                                                validateQuestions,
+                                                                validateSkills,
+                                                                validateCVReq,
+                                                                validateDeadline,
+                                                                validateJobStatus,
+                                                                allErrorHandler, async (req, res) => {
     
     if(req.user.user_type === 'seeker'){ // Seeker cannot create a job.
         res.status(401).render("401", { url: req.originalUrl });
     }
     else if(req.user.user_type === 'employer'){
 
-        let job_data = req.body;
-        //Default data sent:
-        // 1. job_title
-        // 2. openings
-        // 3. job_style
-        // 4. description
-        // 5. address
-        // 6. postcode
-        // 7. start_date
-        // 8. min_pay
-        // 9. max_pay
-        // 10. cv_req
-        // 11. deadline
-        // 12. status
-        
-        // Missing: for job
-        // const user_id = req.user.id;
-    
-        // To re-arrange:
-        // if(req.body.job_type)
-        // if(req.body.benefits)
-        // if(req.body.custom_benefits)
-        // if(req.body.questions)
-        // if(req.body.response_types)
-        // if(req.body.question_reqs_x)
-        // if(req.body.skills)
+        const user_id = req.user.id;
+
+        let { job_title, 
+                openings,
+                job_type, 
+                job_style, 
+                description, 
+                address, 
+                postcode, 
+                start_date, 
+                min_pay, 
+                max_pay,
+                benefits,
+                custom_benefits,
+                questions,
+                response_types, 
+                question_reqs,
+                skills, 
+                cv_req, 
+                deadline, 
+                status } = req.body;
+
+
+        console.log(req.body);
+
+        // Bare mimimum gets sent:
+        // job_title: 'fasdfa',
+        // openings: '4',
+        // job_type: [ '2' ],
+        // job_style: 'In-person',
+        // description: 'sdfa',
+        // address: '',
+        // postcode: '',
+        // start_date: '',
+        // min_pay: '',
+        // max_pay: '',
+        // cv_req: 'false',
+        // deadline: '',
+        // status: 'open',
+        // benefits: null,
+        // custom_benefits: null,
+        // questions: null,
+        // response_types: null,
+        // question_reqs: null,
+        // skills: null
 
         // TRIMMING
         
-        console.log(req.validation_errors);
 
-        res.send(job_data);
+        res.send('GOT THE DATA');
     }
         
 });

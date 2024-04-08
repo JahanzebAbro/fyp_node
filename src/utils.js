@@ -181,6 +181,7 @@ exports.getUserIcon = async function (req, res, next) {
     next();
 }
 
+
 exports.deleteUpload = function(file_path) {
     fs.unlink(file_path, (err) => {
         if (err) {
@@ -189,4 +190,21 @@ exports.deleteUpload = function(file_path) {
             console.log('Old file deleted.');
         }
     });
+}
+
+
+
+// Used to check validation error chain and return if exists.
+exports.allErrorHandler = function(req, res, next){
+
+    // Check if there were any validation errors
+    if (req.validation_errors && Object.keys(req.validation_errors).length > 0) {
+        
+        console.log("Validation Errors:", req.validation_errors);
+
+        // Send all errors back in the response
+        return res.status(400).json({ errors: req.validation_errors });
+    }
+
+    next();
 }

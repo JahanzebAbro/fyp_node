@@ -4,7 +4,7 @@ const pool = require("../config/db/db_config");
 const Seeker = require('../models/seekerModel');
 const Employer = require('../models/employerModel');
 const { isNotAuthReq } = require('../utils');
-const { isProfileBuilt, getUserIcon } = require('../utils');
+const { isProfileBuilt, getUserIcon, allErrorHandler } = require('../utils');
 const { deleteUpload } = require('../utils');
 const { validateFirstName, 
         validateLastName,
@@ -454,10 +454,7 @@ router.get("/logout", isNotAuthReq, (req, res) => {
 
 
 
-
-
-
-
+// FILE VALIDATION FUNCTIONS
 
 // To catch multer size error
 function multerSizeErrorHandler(err, req, res, next) {
@@ -477,6 +474,7 @@ function multerSizeErrorHandler(err, req, res, next) {
 
     next();
 }
+
 
 // Used for adding file errors to validation error chain
 function fileErrorHandler(req, res, next){
@@ -498,20 +496,7 @@ function fileErrorHandler(req, res, next){
     next();
 }
 
-// Used to check validation error chain and return if exists.
-function allErrorHandler(req, res, next){
 
-    // Check if there were any validation errors
-    if (req.validation_errors && Object.keys(req.validation_errors).length > 0) {
-        
-        console.log("Validation Errors:", req.validation_errors);
-
-        // Send all errors back in the response
-        return res.status(400).json({ errors: req.validation_errors });
-    }
-
-    next();
-}
 
 
 module.exports = router;

@@ -156,19 +156,22 @@ exports.validateAddress = function(req, res, next) {
         req.validation_errors = {};
     }
 
-    
-    if (address.length > 150) {
-        req.validation_errors.address = 'Address cannot exceed 150 characters.'; 
-    }
-    else if (address && !address_regex.test(address)) {
-        if(address.length < 3){
-            req.validation_errors.address = 'Address cannot be less than 3 characters.'; 
-        }
-        else{
-            req.validation_errors.address = 'Contains invalid characters'; 
-        }
-    }
+    if(address){ // Only if given
 
+        if (address.length > 150) {
+            req.validation_errors.address = 'Address cannot exceed 150 characters.'; 
+        }
+        else if (address && !address_regex.test(address)) {
+            if(address.length < 3){
+                req.validation_errors.address = 'Address cannot be less than 3 characters.'; 
+            }
+            else{
+                req.validation_errors.address = 'Contains invalid characters'; 
+            }
+        }
+
+    }
+        
     next();
 }
 
