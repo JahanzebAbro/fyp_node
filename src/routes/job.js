@@ -4,7 +4,22 @@ const pool = require("../config/db/db_config");
 const Job = require('../models/jobModel');
 const Benefit = require('../models/benefitModel');
 const { isNotAuthReq, getUserIcon} = require('../utils');
-const { validateQuestions } = require('../validate_job');
+const { validateJobStatus,
+        validateJobTitle,
+        validateOpenings,
+        validateJobType,
+        validateJobStyle,
+        validateDescription,
+        validatePay,
+        validateStartDate,
+        validateDeadline,
+        validateBenefits,
+        validateCustomBenefits,
+        validateQuestions,
+        validateSkills,
+        validateCVReq } = require('../validate_job');
+const { validateAddress,
+        validatePostcode } = require('../validate_utils');
 
 
 
@@ -27,7 +42,22 @@ router.get("/create", isNotAuthReq, getUserIcon, async (req, res) => {
 
 
 // CREATE SUBMISSION POINT 
-router.post("/create", isNotAuthReq, getUserIcon, validateQuestions, async (req, res) => {
+router.post("/create", isNotAuthReq, getUserIcon, validateJobTitle,
+                                                    validateOpenings,
+                                                    validateJobType,
+                                                    validateJobStyle,
+                                                    validateDescription,
+                                                    validateAddress,
+                                                    validatePostcode,
+                                                    validateStartDate,
+                                                    validatePay,
+                                                    validateBenefits,
+                                                    validateCustomBenefits,
+                                                    validateQuestions,
+                                                    validateSkills,
+                                                    validateCVReq,
+                                                    validateDeadline,
+                                                    validateJobStatus, async (req, res) => {
     
     if(req.user.user_type === 'seeker'){ // Seeker cannot create a job.
         res.status(401).render("401", { url: req.originalUrl });
@@ -60,8 +90,10 @@ router.post("/create", isNotAuthReq, getUserIcon, validateQuestions, async (req,
         // if(req.body.response_types)
         // if(req.body.question_reqs_x)
         // if(req.body.skills)
+
+        // TRIMMING
         
-        console.log(req.validation_errors.question);
+        console.log(req.validation_errors);
 
         res.send(job_data);
     }

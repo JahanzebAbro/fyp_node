@@ -93,25 +93,32 @@ exports.validateLastName = function(req, res, next) {
 
 exports.validateDOB = function(req, res, next) {
     
-    const { d_o_b } = req.body;
+    let { d_o_b } = req.body;
 
     // Initialize if not
     if (!req.validation_errors){ 
         req.validation_errors = {};
     }
     
-    const {min_date, max_date} = findMinAndMaxDOB();
+    let {min_date, max_date} = findMinAndMaxDOB();
 
     // Check for null
     if(d_o_b === '' || d_o_b === null){
         req.validation_errors.d_o_b = "Date of birth cannot be left empty.";
+        return next();
     }
     // Check for format
     else if(!date_regex.test(d_o_b)){
         req.validation_errors.d_o_b = "Date of birth must be in valid format.";
+        return next();
     }
+    
     // Check for range
-    else if (d_o_b < min_date || d_o_b > max_date) {
+    d_o_b = new Date(d_o_b);
+    min_date = new Date(min_date);
+    max_date = new Date(max_date);
+
+    if (d_o_b < min_date || d_o_b > max_date) {
         req.validation_errors.d_o_b = "Date of birth must be in range of a valid age.";
     }
 

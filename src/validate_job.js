@@ -20,8 +20,10 @@ exports.validateJobStatus = function(req, res, next){
         req.validation_errors = {};
     }
 
+
     if (status !== 'open' && status !== 'hidden' && status !== 'closed'){
         req.validation_errors.status = "Please select a given job status.";
+        return next();
     }
 
 
@@ -67,19 +69,25 @@ exports.validateOpenings = function(req, res, next){
         req.validation_errors = {};
     }
 
-    if(openings){
 
-        const size = parseInt(openings, 10); // Parse to int in decimal system
 
-        if (isNaN(size) || size <= 0) { // Check if is Not-A-Number or is less than or equal to zero.
-            req.validation_errors.openings = "Openings must be a positive integer.";
-        }
-
-        else if(size > 100){
-            req.validation_errors.openings = "Openings is too unreasonably large of a value.";
-        }
-
+    if(!openings){
+        req.validation_errors.openings = "Openings cannot be left empty.";
+        return next();
     }
+
+    const size = parseInt(openings, 10); // Parse to int in decimal system
+
+    if (isNaN(size) || size <= 0) { // Check if is Not-A-Number or is less than or equal to zero.
+        req.validation_errors.openings = "Openings must be a positive integer.";
+        return next();
+    }
+
+    if(size > 100){
+        req.validation_errors.openings = "We allow only up to a 100 openings for a job.";
+        return next();
+    }
+
 
     next();
 }
@@ -111,8 +119,7 @@ exports.validateJobType = async function(req, res, next){
         if (!valid_ids.includes(type)) {
 
             req.validation_errors.job_type = "Please select valid job type(s).";
-
-            break;
+            return next();
         }
     }
 
@@ -180,40 +187,63 @@ exports.validatePay = function(req, res, next){
     // Min cannot be greater than max and vice versa
     // Must check they are positive integers. 
 
+    let min_pay_int = '';
+    let max_pay_int = '';
+
     if(min_pay){
 
-        const min_pay_int = parseInt(min_pay, 10); // Parse to int in decimal system
         
-        if (isNaN(min_pay_int)) { // Check if is Not-A-Number
+        if (isNaN(min_pay)) { // Check if is Not-A-Number
             req.validation_errors.pay = "Minimum payment values must be an integer.";
+            return next();
         }
-
-        else if (min_pay_int <= 0) { // Check if less or equal to zero.
+        
+        min_pay_int = parseInt(min_pay, 10); // Parse to int in decimal system
+        
+        if (min_pay_int <= 0) { // Check if less or equal to zero.
             req.validation_errors.pay = "Minimum payment values must be positive.";
+            return next();
         }
 
-        else if(min_pay > 1000000){ // Set cap of a million
+        if(min_pay_int > 1000000){ // Set cap of a million
             req.validation_errors.pay = "Minimum payment is unreasonably large of a value.";
+            return next();
         }
     }
 
-    else if(max_pay){
+    if(max_pay){
 
-        const max_pay_int = parseInt(min_pay, 10); // Parse to int in decimal system
-
-        if (isNaN(max_pay_int)) { // Check if is Not-A-Number
+        
+        if (isNaN(max_pay)) { // Check if is Not-A-Number
             req.validation_errors.pay = "Maximum payment values must be an integer.";
+            return next();
         }
-
-        else if (max_pay_int <= 0) { // Check if less or equal to zero.
+        
+        max_pay_int = parseInt(max_pay, 10); // Parse to int in decimal system
+        
+        if (max_pay_int <= 0) { // Check if less or equal to zero.
             req.validation_errors.pay = "Maximum payment values must be positive.";
+            return next();
         }
 
-        else if(max_pay > 1000000){ // Set cap of a million
-            req.validation_errors.pay = "Maximumayment is unreasonably large of a value.";
+        if(max_pay_int > 1000000){ // Set cap of a million
+            req.validation_errors.pay = "Maximum payment is unreasonably large of a value.";
+            return next();
         }
     }
 
+    // Compare the two pays
+    if(min_pay_int && max_pay_int){
+        if( min_pay_int > max_pay_int){
+            req.validation_errors.pay = "Maximum cannot be less than minimum.";
+            return next();
+        }
+
+        if( min_pay_int == max_pay_int){
+            req.validation_errors.pay = "Both pays should not be equal to each other.";
+            return next();
+        }
+    }
 
     next();
 }
@@ -222,7 +252,7 @@ exports.validatePay = function(req, res, next){
 
 exports.validateStartDate = function(req, res, next){
 
-    const { start_date } = req.body;
+    let { start_date } = req.body;
 
     // Initialize if not
     if (!req.validation_errors){ 
@@ -240,12 +270,17 @@ exports.validateStartDate = function(req, res, next){
         let min_date = new Date(curr_date.getFullYear(), curr_date.getMonth(), curr_date.getDate()); // Today
         let max_date = new Date(curr_date.getFullYear() + 1, curr_date.getMonth(), curr_date.getDate()); // A year from today
 
+
         // Check for format
         if(!date_regex.test(start_date)){
             req.validation_errors.start_date = "Start date must be in valid format.";
+            return next();
         }
-        // Check for min range
-        else if (start_date <= min_date) {
+
+
+        start_date = new Date(start_date); // To allow comparisons
+        // Check for range
+        if (start_date <= min_date) {
             req.validation_errors.start_date = "Start date can only be set to a future date.";
         }
         else if (start_date > max_date) {
@@ -264,7 +299,7 @@ exports.validateStartDate = function(req, res, next){
 
 exports.validateDeadline = function(req, res, next){
 
-    const { deadline } = req.body;
+    let { deadline } = req.body;
 
     // Initialize if not
     if (!req.validation_errors){ 
@@ -285,10 +320,13 @@ exports.validateDeadline = function(req, res, next){
         // Check for format
         if(!date_regex.test(deadline)){
             req.validation_errors.deadline = "Deadline must be in valid format.";
+            return next();
         }
+
+        deadline = new Date(deadline); // To allow comparisons
         // Check for min range
-        else if (deadline < min_date) {
-            req.validation_errors.deadline = "Deadline cannot be set before today.";
+        if (deadline <= min_date) {
+            req.validation_errors.deadline = "Deadline can only be set to a future date.";
         }
         else if (deadline > max_date) {
             req.validation_errors.deadline = "Deadline can only be set to within a year from today.";
@@ -325,6 +363,7 @@ exports.validateBenefits = async function(req, res, next){
 
         if(benefits.length > 5){
             req.validation_errors.benefits = "You can only select up to 5 benefits.";
+            return next();
         }
 
         const valid_benefits = await Benefit.getAll(pool);
@@ -335,8 +374,7 @@ exports.validateBenefits = async function(req, res, next){
             if (!valid_ids.includes(benefit)) {
 
                 req.validation_errors.benefits = "Please select valid benefit(s).";
-
-                break;
+                return next();
             }
         }
 
@@ -363,6 +401,7 @@ exports.validateCustomBenefits= function(req, res, next){
     // Make sure not more than 3 customs are given.
     // Make sure customs are valid format, only letters and spaces allowed.
     // Make sure customs are right length, min 3 and max 50 characters.
+    // Make sure customs are unique.
 
     if(custom_benefits){ // Only if given
 
@@ -371,22 +410,34 @@ exports.validateCustomBenefits= function(req, res, next){
 
         if(custom_benefits.length > 3){
             req.validation_errors.custom_benefits = "You can only create up to 3 custom benefits.";
+            return next();
         }
+
+        valid_customs = []; // To store validated benefits from the for loop to find duplicates.
 
         for (const benefit of custom_benefits){
 
+            if (valid_customs.includes(benefit.toLowerCase().trim())) {
+                req.validation_errors.custom_benefits = "Custom benefits must be unique.";
+                return next();
+            }
+
             if(benefit.length < 3){
                 req.validation_errors.custom_benefits = "Custom benefit must have at least 3 characters.";
-                break;
+                return next();
             } 
-            else if(benefit.length > 50){
+            
+            if(benefit.length > 50){
                 req.validation_errors.custom_benefits = "Custom benefit cannot exceed 50 characters.";
-                break;
+                return next();
             }
-            else if (title_regex.test(benefit)) { // Same regex pattern so reusing title regex.
+
+            if (title_regex.test(benefit)) { // Same regex pattern so reusing title regex.
                 req.validation_errors.custom_benefits = "Custom benefit can only contain letters.";
-                break;
+                return next();
             }
+
+            valid_customs.push(benefit.toLowerCase().trim()); // To rid of minor differences
 
         }
         
@@ -524,6 +575,7 @@ exports.validateSkills = function(req, res, next){
     // Make sure not more than 5 skills are given.
     // Make sure skills are valid format, only letters and spaces allowed.
     // Make sure customs are right length, min 3 and max 50 characters.
+    // Make sure skills are unique.
 
     if(skills){ // Only if given
 
@@ -532,23 +584,35 @@ exports.validateSkills = function(req, res, next){
 
         if(skills.length > 5){
             req.validation_errors.skills = "You can only create up to 5 skills.";
+            return next();
         }
+
+        valid_skills = []; // To store skills from the for loop to find duplicates.
 
         let i = 1; // To identify which skill commits error first.
         for (const skill of skills){
 
+            if (valid_skills.includes(skill.toLowerCase().trim())) {
+                req.validation_errors.skills = "Skills must be unique.";
+                return next();
+            }
+
             if(skill.length < 3){
                 req.validation_errors.skills = `Skill ${i} must have at least 3 characters.`;
-                break;
+                return next();
             } 
-            else if(skill.length > 50){
+            
+            if(skill.length > 50){
                 req.validation_errors.skills = `Skill ${i} cannot exceed 50 characters.`;
-                break;
+                return next();
             }
-            else if (title_regex.test(skill)) { // Same regex pattern so reusing title regex.
+            
+            if (title_regex.test(skill)) { // Same regex pattern so reusing title regex.
                 req.validation_errors.skills = `Skill ${i} should only contain letters.`;
-                break;
+                return next();
             }
+
+            valid_skills.push(skill.toLowerCase().trim()); // To rid of minor differences
 
             i++;
         }
