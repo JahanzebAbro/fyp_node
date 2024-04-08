@@ -111,7 +111,6 @@ $(document).ready(function(){
 
 
 
-
 // ADD SKILL CREATOR
 $(document).ready(function(){
 

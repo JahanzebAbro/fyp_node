@@ -401,7 +401,7 @@ exports.validateCustomBenefits= function(req, res, next){
 
 exports.validateQuestions = function(req, res, next){
 
-    const { questions, response_types, 
+    let { questions, response_types, 
         question_reqs_1, 
         question_reqs_2,
         question_reqs_3,
@@ -414,11 +414,94 @@ exports.validateQuestions = function(req, res, next){
     }
 
     // Make sure no more than 5 questions are given.
-    // So check questions, response types for length
+    // So check questions, response types, question_reqs for their length.
+    // Make sure if a question is added, all fields are filled.
     // Make sure question is in valid format, similar to description regex pattern.
     // Make sure response_type are all the allowed ones.
     // Check question_reqs_x are bools.
 
+
+    let question_reqs = [question_reqs_1, question_reqs_2, question_reqs_3, question_reqs_4, question_reqs_5];
+    question_reqs = question_reqs.filter(function(req){
+        return req === 'true' || req === 'false';
+    }); // Only accept boolean values
+
+
+
+    if(questions || response_types || question_reqs.length > 0){ // Only if given
+
+        // Check for single string and turn into an array if so.
+        questions = Array.isArray(questions) ? questions : [questions];
+        response_types = Array.isArray(response_types) ? response_types : [response_types];
+
+        if(questions.length > 5 || response_types.length > 5 || question_reqs.length > 5){ // Check if max questions reached
+
+            req.validation_errors.question = "You can only create up to 5 questions.";
+            return next();
+
+        }
+
+        if(questions.length !== response_types.length || 
+            questions.length !== question_reqs.length ){ // Check all fields lengths are the same according to questions created.
+        
+                req.validation_errors.question = "Make sure all question fields are filled out.";
+                return next();
+        }
+
+
+        let i = 1; // To specify question number
+        for(const question of questions){ // Valid format checking
+            
+            if(!question){ // Check if question description is empty
+                req.validation_errors.question = `Question ${i} description cannot be left empty.`;
+                return next();
+            }
+            else if(question.length < 3){
+                req.validation_errors.question = `Question ${i} description cannot be less than 3 characters.`;
+                return next();
+            }
+            else if(question.length > 200){
+                req.validation_errors.question = `Question ${i} description cannot be more than 200 characters.`;
+                return next();
+            }
+            else if(!description_regex.test(question)){
+                req.validation_errors.question = `Question ${i} description contains invalid characters.`;
+                return next();
+            }
+
+            i++;
+
+        }
+
+        i=1;
+
+
+        for(const type of response_types){ // Valid format checking
+
+            if( type !== 'text' && type !== 'num' && type !== 'bool'){
+                req.validation_errors.question = `Question ${i} reponse type is invalid.`;
+                return next();
+            }
+
+            i++;
+
+        }
+
+        i=1;
+
+        for(const req of question_reqs){ // Valid format checking
+
+            if( req !== 'true' && req !== 'false'){
+                req.validation_errors.question = `Question ${i} requirement input is invalid.`;
+                return next();
+            }
+
+            i++;
+
+        }
+
+
+    }
 
 
 
