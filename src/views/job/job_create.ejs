@@ -27,8 +27,9 @@
 
     <label for="job_style">Work Style*</label><br>
     <select id="job_style" name="job_style">
-        <option value="Remote">Remote</option>
+        <option value="">None</option>
         <option value="In-person">In-person</option>
+        <option value="Remote">Remote</option>
         <option value="Hybrid">Hybrid</option>
     </select><br>
     <span  id="job_style_err" style="color: red;"></span><br><br>
@@ -92,7 +93,7 @@
         <% }); %>
     </div><br>
 
-    <input type="text" id="custom_benefit" name="benefits" placeholder="Enter a benefit" maxlength="50">
+    <input type="text" id="custom_benefit" placeholder="Enter a benefit" maxlength="50">
     <button type="button" id="add_benefit_btn">Add Benefit</button><br>
     <div class="new_benefits"></div>
     <button type="button" id="clear_benefit_btn" style="display:none;">Clear all</button><br>
@@ -107,7 +108,7 @@
     
     
     <span>Associated Skills</span><br><br>
-    <input type="text" id="skill" name="skill" placeholder="Enter a skill" maxlength="50">
+    <input type="text" id="new_skill" placeholder="Enter a skill" maxlength="50">
     <button type="button" id="add_skill_btn">Add Skill</button><br>
     <div class="new_skills"></div>
     <button type="button" id="clear_skill_btn" style="display:none;">Clear</button><br>
@@ -128,6 +129,15 @@
     <input type="date" id="deadline" name="deadline"><br>
     <span  id="deadline_err" style="color: red;"></span><br><br>
 
+
+    <label for="job_status">Job Status*</label><br>
+    <select id="job_status" name="status">
+        <option value="open">Open</option>
+        <option value="hidden">Hidden</option>
+        <option value="closed">Closed</option>
+    </select><br>
+    <div class="job_status_info"></div>
+    <span  id="status_err" style="color: red;"></span><br><br>
 
 
     <button type="submit" value="Submit">Create Job</button>

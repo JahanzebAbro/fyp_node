@@ -1,6 +1,6 @@
 class Job {
 
-    constructor(id, user_id, status, title, openings, description, style, address, postcode, min_pay, max_pay, cv_req, deadline, start_date) {
+    constructor(id, user_id, status, title, openings, description, style, address, postcode, min_pay, max_pay, cv_req, deadline, start_date, created_at) {
         this.id = id;
         this.status = status;
         this.user_id = user_id;
@@ -15,6 +15,7 @@ class Job {
         this.cv_req = cv_req;
         this.deadline = deadline;
         this.start_date = start_date;
+        this.created_at = created_at;
     }
 
 
@@ -53,6 +54,7 @@ class Job {
     }
 
 
+    // Grab a specific job id.
     static async getById(pool, id) {
         try {
 
@@ -79,7 +81,8 @@ class Job {
                     job.max_pay,
                     job.cv_req,
                     job.deadline,
-                    job.start_date
+                    job.start_date,
+                    job.created_at
                 );
 
             } else {
@@ -118,7 +121,8 @@ class Job {
                 job.max_pay,
                 job.cv_req,
                 job.deadline,
-                job.start_date
+                job.start_date,
+                job.created_at
             ));
         } catch(err) {
             throw err;

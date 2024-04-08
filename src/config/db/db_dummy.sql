@@ -22,9 +22,9 @@ INSERT INTO benefits (name, is_custom) VALUES
 
 
 INSERT INTO job_types(name) VALUES
-    ('In-Person'),
-    ('Remote'),
-    ('Hybrid'),
+    ('Full-time'),
+    ('Part-time'),
+    ('Temporary'),
     ('Other');
 
     
@@ -46,7 +46,7 @@ INSERT INTO jobs (
     'open',
     'Mechanical Engineer',
     1,
-    'Develop and maintain web applications using modern technologies.',
+    'Description',
     'Hybrid',
     'Morrisons',
     50000,
@@ -60,7 +60,7 @@ INSERT INTO jobs (
     'hidden',
     'Engineer',
     3,
-    'Develop and maintain web applications.',
+    'Description',
     'Remote',
     'Canvey',
     50000,

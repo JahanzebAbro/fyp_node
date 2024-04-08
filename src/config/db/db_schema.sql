@@ -1,7 +1,7 @@
 -- CREATE DATABASE IF NOT EXISTS fyp_recruit;
 
 CREATE TYPE user_type_enum AS ENUM ('seeker', 'employer');
-CREATE TYPE job_style_enum AS ENUM ('Remote', 'In-person', 'Hybrid'); --Style is a single option
+CREATE TYPE job_style_enum AS ENUM ('Remote', 'In-person', 'Hybrid'); --Style is a SINGLE choice option
 CREATE TYPE response_type_enum as ENUM('text','num','bool');
 CREATE TYPE job_status_enum as ENUM('open','hidden','closed');
 
@@ -63,6 +63,7 @@ CREATE TABLE IF NOT EXISTS jobs (
     cv_req BOOLEAN,
     deadline DATE,
     start_date DATE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
