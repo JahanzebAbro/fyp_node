@@ -4,8 +4,9 @@ const pool = require("../config/db/db_config");
 const multer = require('multer');
 const upload = multer(); // To help parse form in req.body
 const Job = require('../models/jobModel');
+const Employer = require('../models/employerModel');
 const Benefit = require('../models/benefitModel');
-const { isNotAuthReq, getUserIcon, allErrorHandler} = require('../utils');
+const { isNotAuthReq, getUserIcon, allErrorHandler, formatDateForDisplay} = require('../utils');
 const { validateJobStatus,
         validateJobTitle,
         validateOpenings,
@@ -31,20 +32,45 @@ router.get("/postings", isNotAuthReq, getUserIcon, async (req, res) => {
     }
     else if(req.user.user_type === 'employer'){
 
-        const job_id = 2;
-        const job = await Job.getById(pool, job_id);
-        const job_types = await Job.getTypesByJob(pool, job_id);
-        const job_benefits = await Job.getBenefitsByJob(pool, job_id);
-        const job_questions = await Job.getQuestionsByJob(pool, job_id);
-        const job_skills = await Job.getSkillsByJob(pool, job_id);
+        
 
+        const job_id = 3;
+        const user_id = req.user.id;
 
-        res.render("job/postings", {job: job, 
-                                      job_types : job_types, 
-                                      job_benefits : job_benefits,
-                                      job_questions : job_questions,
-                                      job_skills: job_skills});
+        
+        try{
+            // const job_postings = await Job.getJobsByUser(pool, user_id);
 
+            const [employer, job, job_types, job_benefits, job_questions, job_skills] = await Promise.all([
+                Employer.getById(pool, user_id),
+                Job.getById(pool, job_id),
+                Job.getTypesByJob(pool, job_id),
+                Job.getBenefitsByJob(pool, job_id),
+                Job.getQuestionsByJob(pool, job_id),
+                Job.getSkillsByJob(pool, job_id),
+            ]); // To allow parallel running we use Promise.all()
+            
+
+            // Formatting dates
+            job.created_at = formatDateForDisplay(job.created_at);
+            job.start_date = formatDateForDisplay(job.start_date);
+            job.deadline = formatDateForDisplay(job.deadline);
+
+            res.render("job/postings", { 
+                employer: employer,
+                job: job, 
+                job_types : job_types, 
+                job_benefits : job_benefits,
+                job_questions : job_questions,
+                job_skills: job_skills
+            });
+                
+        }
+        catch(err){
+
+            console.error(err);
+            res.status(500).send("Internal Server Error");
+        }
 
     }
 });
