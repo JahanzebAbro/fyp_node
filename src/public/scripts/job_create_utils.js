@@ -259,7 +259,7 @@ $(document).ready(function(){
             processData: false,
             success: function(response) {
                 console.log(response.message);
-                // window.location.href = "/user/profile"; // Redirect the user
+                window.location.href = "/user/job/postings"; // Redirect the user
             },
             error: function(response) {
 

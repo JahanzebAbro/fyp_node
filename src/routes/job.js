@@ -25,6 +25,31 @@ const { validateAddress,
 
 
 
+router.get("/postings", isNotAuthReq, getUserIcon, async (req, res) => {
+    if(req.user.user_type === 'seeker'){ // Seeker cannot create a job.
+        res.status(401).render("401", { url: req.originalUrl });
+    }
+    else if(req.user.user_type === 'employer'){
+
+        const job_id = 2;
+        const job = await Job.getById(pool, job_id);
+        const job_types = await Job.getTypesByJob(pool, job_id);
+        const job_benefits = await Job.getBenefitsByJob(pool, job_id);
+        const job_questions = await Job.getQuestionsByJob(pool, job_id);
+        const job_skills = await Job.getSkillsByJob(pool, job_id);
+
+
+        res.render("job/postings", {job: job, 
+                                      job_types : job_types, 
+                                      job_benefits : job_benefits,
+                                      job_questions : job_questions,
+                                      job_skills: job_skills});
+
+
+    }
+});
+
+
 
 // JOB CREATION FORM PAGE
 router.get("/create", isNotAuthReq, getUserIcon, async (req, res) => {
@@ -93,31 +118,70 @@ router.post("/create", isNotAuthReq, getUserIcon, upload.none(),
 
         console.log(req.body);
 
-        // Bare mimimum gets sent:
-        // job_title: 'fasdfa',
-        // openings: '4',
-        // job_type: [ '2' ],
-        // job_style: 'In-person',
-        // description: 'sdfa',
-        // address: '',
-        // postcode: '',
-        // start_date: '',
-        // min_pay: '',
-        // max_pay: '',
-        // cv_req: 'false',
-        // deadline: '',
-        // status: 'open',
-        // benefits: null,
-        // custom_benefits: null,
-        // questions: null,
-        // response_types: null,
-        // question_reqs: null,
-        // skills: null
 
-        // TRIMMING
+        // TRIMMING AND NULLING IF EMPTY STRING
+        // Certain values won't need trimming due to validation check.
+
+        job_title = job_title.trim(); 
+        openings = openings.trim(); 
+        description = description.trim();
+        address = address.trim() || null;
+        postcode = postcode.trim() || null;
+        min_pay = min_pay.trim() || null;
+        max_pay = max_pay.trim() || null;
+        start_date = start_date.trim() || null;
+        benefits = benefits ? benefits.map(value => value.trim()) : null; // Map values can't work on null vals.
+        custom_benefits = custom_benefits ? custom_benefits.map(value => value.trim()) : null;
+        questions = questions ? questions.map(value => value.trim()) : null;
+        skills = skills ? skills.map(value => value.trim()) : null;
+        deadline = deadline.trim() || null;
         
 
-        res.send('GOT THE DATA');
+        // ADD JOB
+        const job_id = await Job.create(
+                                        pool,
+                                        user_id,
+                                        status,
+                                        job_title,
+                                        openings,
+                                        description,
+                                        job_style,
+                                        address,
+                                        postcode,
+                                        min_pay,
+                                        max_pay,
+                                        cv_req,
+                                        deadline,  
+                                    );
+
+        
+        // ADD JOB TYPE
+        const type_result = await Job.addTypes(pool, job_id, job_type);
+        
+        // ADD CUSTOM BENEFITS
+        const custom_benefit_ids = custom_benefits ? await Benefit.createCustom(pool, custom_benefits) : null; 
+
+
+        // ADD BENEFITS 
+        const benefits_result = benefits ? await Job.addBenefits(pool, job_id, benefits) : null;  
+        const custom_benefits_result = custom_benefits ? await Job.addBenefits(pool, job_id, custom_benefit_ids) : null;                        
+
+
+        // ADD QUESTIONS, RESPONSE TYPE, AND REQ
+        let questions_obj = questions ? questions.map((question, index) => ({ // Create array of question object for model create.
+            question: question,
+            response_type: response_types[index],
+            is_req: question_reqs[index]
+        })) : null;
+
+        const questions_result = questions_obj ? await Job.createQuestions(pool, job_id, questions_obj) : null;
+
+
+        // ADD SKILL
+        const skills_result = skills ? await Job.createSkills(pool, job_id, skills) : null;
+
+
+        res.status(200).json({ success: true, message: 'Job created!'});
     }
         
 });

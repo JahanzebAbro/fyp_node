@@ -129,6 +129,7 @@ class Job {
         }
     }
 
+
     // Update job details
     static async update(pool, id, fields) {
         try {
@@ -170,6 +171,7 @@ class Job {
         }
     }
 
+
     // Delete a job with it's id
     static async deleteById(pool, id) {
         try {
@@ -206,7 +208,7 @@ class Job {
 
             // Check if there are types to add
             if (types.length === 0) {
-                throw new Error("No types provided");
+                return "No types provided";
             }
 
              // Reference help: CHATGPT 4
@@ -216,7 +218,7 @@ class Job {
             // We are adding 2 indexes with every row added for type_id.
 
             const query = `
-                INSERT INTO job_job_types (job_id, type_id)
+                INSERT INTO jobs_job_types (job_id, type_id)
                 VALUES ${positions}
                 RETURNING job_id, type_id;
             `;
@@ -240,6 +242,7 @@ class Job {
         }
     }
 
+
     // Grabs all types for a job
     static async getTypesByJob(pool, job_id){
         try {
@@ -252,13 +255,13 @@ class Job {
             `;
             // Above returns job type id and name by joining job_types and junction table based on given job id.
             
-            params = [job_id];
+            const params = [job_id];
     
     
             const result = await pool.query(query, params);
 
             if(result){
-                 result.rows;
+                 return result.rows;
             }
             else{
                 return false;
@@ -286,6 +289,80 @@ class Job {
             throw err;
         }
     }
+
+
+    // =======================================JOB BENEFITS=============================================================
+
+
+    // Construct a relationship between a job and multiple benefits (using their id)
+    static async addBenefits(pool, job_id, benefits){
+        try{
+
+            // Example Input: benefits = [1,3]
+
+            // Check if there are types to add
+            if (benefits.length === 0) {
+                return "No benefits provided";
+            }
+
+             // Reference help: CHATGPT 4
+            let positions = benefits.map((benefit_id, index) => `($1, $${index + 2})`).join(", "); 
+            // End reference
+            // Above, $1 is a constant so that doesn't get increased with each benefit.
+            // We are adding 2 indexes with every row added for benefit_id.
+
+            const query = `
+                INSERT INTO job_benefits (job_id, benefit_id)
+                VALUES ${positions}
+                RETURNING job_id, benefit_id;
+            `;
+
+            const params = [job_id].concat(benefits); // Joining arrays
+
+            
+            const result = await pool.query(query, params);
+
+            if (result){
+
+                return result;
+            }
+            else{
+                return false;
+            }
+
+
+        }catch(err){
+
+            throw err;
+        }
+    }
+
+    // Get all benefits that is under that job id.
+    static async getBenefitsByJob(pool, job_id){
+        try {
+           
+            const query = `
+                SELECT benefits.* FROM benefits
+                INNER JOIN job_benefits ON benefits.id = job_benefits.benefit_id
+                WHERE job_benefits.job_id = $1;
+            `;
+
+
+            const params = [job_id];
+    
+            const result  = await pool.query(query, params);
+
+            // returns array of benefit(s).
+            return result.rows;
+
+        } catch (err) {
+
+            throw err; 
+        }
+
+    }
+
+
 
     // ======================================JOB QUESTIONS=============================================================
 
@@ -380,18 +457,18 @@ class Job {
 
             // Check if there are types to add
             if (skills.length === 0) {
-                throw new Error("No skills provided");
+                return "No skills provided";
             }
 
              // Reference help: CHATGPT 4
-            let skills = types.map((skill, index) => `($1, $${index + 2})`).join(", "); 
+            let positions = skills.map((skill, index) => `($1, $${index + 2})`).join(", "); 
             // End reference
             // Above, $1 is a constant so that doesn't get increased with each skill.
             // We are adding 2 indexes with every row added for skill.
 
             const query = `
                 INSERT INTO job_skills (job_id, name)
-                VALUES ${skills}
+                VALUES ${positions}
                 RETURNING id;
             `;
 
@@ -433,9 +510,9 @@ class Job {
             else{
                 return false;
             }
-
+            
         } catch(err) {
-
+            
             throw err;
         }
     }

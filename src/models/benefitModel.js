@@ -7,19 +7,21 @@ class Benefit{
     }
 
 
-    static async createCustom(pool, name){
+    static async createCustom(pool, names){
         try{
+
+            const positions = names.map((name, index) => `($${index + 1}, TRUE)`).join(', ');
 
             const query = `
                 INSERT INTO benefits(name, is_custom)
-                VALUES ($1, TRUE)
+                VALUES ${positions}
                 RETURNING id;
             `;
 
-            const params = [name];
-            const result = await pool.query(query, params);
+            const result = await pool.query(query, names);
 
-            return result.rows[0].id;
+            // Return array of ids
+            return result.rows.map(row => row.id); // Reference: Chat GPT4 
 
         }
         catch(err){
@@ -73,31 +75,6 @@ class Benefit{
         }
     }
 
-
-    // Get all benefits that is under that job id.
-    static async getAllByJobId(pool, job_id){
-        try {
-           
-            const query = `
-                SELECT benefits.* FROM benefits
-                INNER JOIN job_benefits ON benefits.id = job_benefits.benefit_id
-                WHERE job_benefits.job_id = $1;
-            `;
-
-
-            const params = [job_id];
-    
-            const benefits  = await pool.query(query, params);
-
-            // returns array of benefit(s).
-            return benefits;
-
-        } catch (err) {
-
-            throw err; 
-        }
-
-    }
 
     // Delete a custom benefit with it's benefit.id and job.id
     static async deleteCustomByJobId(pool, job_id, benefit_id) {
