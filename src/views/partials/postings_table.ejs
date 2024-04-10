@@ -1,6 +1,8 @@
 
-
-<h1><%= employer.name %> Postings</h1>
+<div class="page_title">
+    <img src="/img/line.png" class="page_title_line">
+    <span class="page_title_text">POSTINGS</span>
+</div>
 
 <table>
     <tr>
@@ -13,199 +15,104 @@
             <div class="table_filter_icon"></div>
         </th>
     </tr>
-    <tr id="job_row_1">
-        <td><%= job.status || 'N/A' %></td>
-        <td><%= job.title || 'N/A' %></td>
-        <td><%= job.address || 'N/A' %></td>
+    <% postings.forEach(function(post, index) { %>
+        <tr id="job_row_<%= index %>">
+            <td><%= post.status || 'N/A' %></td>
+            <td><%= post.title || 'N/A' %></td>
+            <td><%= post.address || 'N/A' %></td>
 
-        <td>
-            <% if (job_types) { %>
-                <div>
-                    <%= job_types.map(function(type) { 
-                        return type.name; 
-                    }).join(", ") %>
-                </div>
-            <% } else { %>
-                <div>N/A</div>
-            <% } %>
-        </td>
+            <td>
+                <% if (post.job_types) { %>
+                    <div>
+                        <%= post.job_types.map(function(type) { 
+                            return type.name; 
+                        }).join(", ") %>
+                    </div>
+                <% } else { %>
+                    <div>N/A</div>
+                <% } %>
+            </td>
 
-        <td><%= job.created_at || 'N/A'%></td>
-        <td><div class="table_expand_icon" onclick="showHideRow('hidden_row1')"></div></td>
-    </tr>
-    <tr id="hidden_row1" class="hidden_row">
-        <td></td>
-        <td colspan="5">
-            <div class="hidden_row_flex_box">
-                <div class="hidden_row_info">
+            <td><%= post.created_at || 'N/A'%></td>
+            <td><div class="table_expand_icon" onclick="toggleRow('hidden_row_<%= index %>')"></div></td>
+        </tr>
+        <tr id="hidden_row_<%= index %>" class="hidden_row">
+            <td></td>
+            <td colspan="5">
+                <div class="hidden_row_flex_box">
+                    <div class="hidden_row_info">
 
-                    <div class="hidden_row_title">Job Description:</div>
-                        <div class="hidden_row_content"><%= job.description || 'N/A'%></div>
+                        <div class="hidden_row_title">Job Description:</div>
+                            <div class="hidden_row_content"><%= post.description || 'N/A'%></div>
 
-                    <div class="hidden_row_title">Start Date:</div>
-                        <div class="hidden_row_content"><%= job.start_date || 'N/A' %></div>
+                        <div class="hidden_row_title">Start Date:</div>
+                            <div class="hidden_row_content"><%= post.start_date || 'N/A' %></div>
 
-                    <div class="hidden_row_title">Salary range:</div>
-                        <div class="hidden_row_content">£<%= job.min_pay || 'N/A'%> - £<%= job.max_pay || 'N/A' %> (per month)</div>
+                        <div class="hidden_row_title">Salary range:</div>
+                            <div class="hidden_row_content">£<%= post.min_pay || 'N/A'%> - £<%= post.max_pay || 'N/A' %> (per month)</div>
 
 
-                    <div class="hidden_row_title">Working Environment:</div>
-                        <div class="hidden_row_content"><%= job.style || 'N/A'%></div>
+                        <div class="hidden_row_title">Working Environment:</div>
+                            <div class="hidden_row_content"><%= post.style || 'N/A'%></div>
 
-                    <div class="hidden_row_title">Address:</div>
-                        <div class="hidden_row_content"><%= job.address || 'N/A' %></div>
+                        <div class="hidden_row_title">Address:</div>
+                            <div class="hidden_row_content"><%= post.address || 'N/A' %></div>
 
-                    <div class="hidden_row_title">Postcode:</div>
-                        <div class="hidden_row_content"><%= job.postcode || 'N/A' %></div>
-                        
+                        <div class="hidden_row_title">Postcode:</div>
+                            <div class="hidden_row_content"><%= post.postcode || 'N/A' %></div>
+                            
 
-                    <div class="hidden_row_title">Benefits:</div>
-                        <% if (job_benefits) { %>
+                        <div class="hidden_row_title">Benefits:</div>
+                            <% if (post.job_benefits.length > 0) { %>
+                                <div class="hidden_row_content">
+                                    <%= post.job_benefits.map(function(benefit) { 
+                                        return benefit.name; 
+                                    }).join(", ") %>
+                                </div>
+                            <% } else { %>
+                                <div class="hidden_row_content">None</div>
+                            <% } %>
+
+                            
+                        <div class="hidden_row_title">Skills:</div>
+                        <% if (post.job_skills.length > 0) { %>
                             <div class="hidden_row_content">
-                                <%= job_benefits.map(function(benefit) { 
-                                    return benefit.name; 
+                                <%= post.job_skills.map(function(skill) { 
+                                    return skill.name; 
                                 }).join(", ") %>
                             </div>
                         <% } else { %>
                             <div class="hidden_row_content">None</div>
                         <% } %>
 
-                        
-                    <div class="hidden_row_title">Skills:</div>
-                    <% if (job_skills) { %>
-                        <div class="hidden_row_content">
-                            <%= job_skills.map(function(skill) { 
-                                return skill.name; 
-                            }).join(", ") %>
-                        </div>
-                    <% } else { %>
-                        <div class="hidden_row_content">None</div>
-                    <% } %>
 
-
-                </div>
-                <div>
-                    <div class="table_hidden_btn">
-                        <button type="button" class="table_hidden_edit_btn">Edit</button>
-                        <button type="button" class="table_hidden_view_btn">View</button>
                     </div>
+                    <div>
+                        <div class="table_hidden_btn">
+                            <button type="button" class="table_hidden_edit_btn">Edit</button>
+                            <button type="button" class="table_hidden_view_btn">View</button>
+                        </div>
 
-                    <div class="hidden_row_title">Contact:</div>
-                    <div>Email: <%= employer.ct_email || 'N/A' %></div>
-                    <div class="hidden_row_content">Phone: <%= employer.ct_phone || 'N/A' %></div>
+                        <div class="hidden_row_title">Contact:</div>
+                        <div>Email: <%= post.employer.ct_email || 'N/A' %></div>
+                        <div class="hidden_row_content">Phone: <%= post.employer.ct_phone || 'N/A' %></div>
 
-                    <div class="hidden_row_title">Openings:</div>
-                    <div class="hidden_row_content"><%= job.openings|| 'N/A'%> vacant</div>
+                        <div class="hidden_row_title">Openings:</div>
+                        <div class="hidden_row_content"><%= post.openings|| 'N/A'%> vacant</div>
 
-                    <div class="hidden_row_title">Deadline:</div>
-                    <div class="hidden_row_content"><%= job.deadline || 'N/A' %></div>
+                        <div class="hidden_row_title">Deadline:</div>
+                        <div class="hidden_row_content"><%= post.deadline || 'N/A' %></div>
+                    </div>
                 </div>
-            </div>
-        </td>
-    </tr>
-
+            </td>
+        </tr>
+    <% }) %>
 </table>
 
 
+
 <script type="text/javascript"> 
-    function showHideRow(row) { 
+    function toggleRow(row) { 
         $("#" + row).toggle(); 
     } 
 </script> 
-
-
-<style>
-    table {
-        font-family: 'Jost';
-        font-weight: 400;
-        border-collapse: collapse;
-        table-layout: fixed;
-        border: 1px solid #FFF2DF;
-        background-color: #FEFAE0;
-        width: 95%;
-        margin-left: auto;
-        margin-right: auto;
-    }
-    
-    th {
-        background-color: #FEFAE0;
-        font-weight: 500;
-    }
-
-    td, th {
-        text-align: center;
-        padding: 10px;
-    }
-    
-    tr:nth-child(even) {
-        background-color: #FDF6C7;
-    }
-
-    table .hidden_row { 
-        display: none; 
-    } 
-
-    .table_filter-header {
-        text-align: center;
-    }
-
-    .hidden_row_flex_box {
-        display:flex;
-        align-items: flex-start;
-        text-align: left;
-        justify-content: space-between;
-        margin-top: 20px;
-    }
-
-    .hidden_row_title {
-        margin-bottom: 5px;
-        text-decoration: underline;
-    }
-
-    .hidden_row_info{
-        margin-right: 100px;
-    }
-    
-    .hidden_row_content {
-        margin-bottom: 10px;
-    }
-
-    .table_hidden_btn {
-        margin-right: 20px;
-        margin-bottom: 20px;
-        display: flex;
-    }
-
-    .table_hidden_btn button {
-        width: 100px;
-        cursor: pointer;
-        border-radius: 1px;
-        font-size: 1rem;
-        font-weight: 400;
-        padding: 5px 10px;
-        text-align:center;
-        margin-right: 10px;
-        
-    }
-
-    .table_hidden_edit_btn {
-        border: 2px solid #C59349;
-        background:#C59349;
-        color: #ffffff;
-    }
-
-    .table_hidden_view_btn {
-        border: 2px solid #000000;
-        background:#000000;
-        color: #ffffff;
-    }
-
-    .table_hidden_edit_btn:hover, .table_hidden_view_btn:hover {
-        background: #ffffff; 
-        color: #000000;
-    }
-
-    
-    
-    
-</style>

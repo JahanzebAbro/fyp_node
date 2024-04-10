@@ -27,43 +27,76 @@ const { validateAddress,
 
 
 router.get("/postings", isNotAuthReq, getUserIcon, async (req, res) => {
-    if(req.user.user_type === 'seeker'){ // Seeker cannot create a job.
+
+    if(req.user.user_type === 'seeker'){ // Seeker cannot look at postings.
+
         res.status(401).render("401", { url: req.originalUrl });
     }
     else if(req.user.user_type === 'employer'){
 
         
-
         const job_id = 3;
         const user_id = req.user.id;
 
         
         try{
-            // const job_postings = await Job.getJobsByUser(pool, user_id);
 
-            const [employer, job, job_types, job_benefits, job_questions, job_skills] = await Promise.all([
-                Employer.getById(pool, user_id),
-                Job.getById(pool, job_id),
-                Job.getTypesByJob(pool, job_id),
-                Job.getBenefitsByJob(pool, job_id),
-                Job.getQuestionsByJob(pool, job_id),
-                Job.getSkillsByJob(pool, job_id),
-            ]); // To allow parallel running we use Promise.all()
+            const user_jobs = await Job.getJobsByUser(pool, user_id);
+            const employer = await Employer.getById(pool, user_id);
+
+            const postings = await Promise.all(user_jobs.map(async function(job){ 
+
+                const job_id = job.id;
+
+                const [job_types, job_benefits, job_questions, job_skills] = await Promise.all([ // Grabbing job details
+                    Job.getTypesByJob(pool, job_id),
+                    Job.getBenefitsByJob(pool, job_id),
+                    Job.getQuestionsByJob(pool, job_id),
+                    Job.getSkillsByJob(pool, job_id),
+                ]);
+
+                // Formatting dates
+                job.created_at = job.created_at ? formatDateForDisplay(job.created_at) : job.created_at;
+                job.start_date = job.start_date ? formatDateForDisplay(job.start_date) : job.start_date;
+                job.deadline = job.deadline ? formatDateForDisplay(job.deadline): job.deadline;
+
+                return {
+                    ...job,
+                    employer,
+                    job_types,
+                    job_benefits,
+                    job_questions,
+                    job_skills
+                }; // return an array value of a complete combined job object
+
+            }));
+
+            res.render("job/postings", { postings: postings });
+
+
+            // const [employer, job, job_types, job_benefits, job_questions, job_skills] = await Promise.all([
+            //     Employer.getById(pool, user_id),
+            //     Job.getById(pool, job_id),
+            //     Job.getTypesByJob(pool, job_id),
+            //     Job.getBenefitsByJob(pool, job_id),
+            //     Job.getQuestionsByJob(pool, job_id),
+            //     Job.getSkillsByJob(pool, job_id),
+            // ]);
             
 
-            // Formatting dates
-            job.created_at = formatDateForDisplay(job.created_at);
-            job.start_date = formatDateForDisplay(job.start_date);
-            job.deadline = formatDateForDisplay(job.deadline);
+            // // Formatting dates
+            // job.created_at = formatDateForDisplay(job.created_at);
+            // job.start_date = formatDateForDisplay(job.start_date);
+            // job.deadline = formatDateForDisplay(job.deadline);
 
-            res.render("job/postings", { 
-                employer: employer,
-                job: job, 
-                job_types : job_types, 
-                job_benefits : job_benefits,
-                job_questions : job_questions,
-                job_skills: job_skills
-            });
+            // res.render("job/postings", { 
+            //     employer: employer,
+            //     job: job, 
+            //     job_types : job_types, 
+            //     job_benefits : job_benefits,
+            //     job_questions : job_questions,
+            //     job_skills: job_skills
+            // });
                 
         }
         catch(err){
