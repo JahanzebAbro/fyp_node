@@ -24,25 +24,6 @@
 
 </div>
     
-<!-- job.status,
-    job.title,
-    job.openings,
-    job.description,
-    job.style,
-    job.address,
-    job.postcode,
-    job.min_pay,
-    job.max_pay,
-    job.deadline,
-    job.start_date,
-    job.created_at,
-    types
-    benefits
-    skills
-    
-    SCREENING DETAILS
-    job.cv_req,
-    questions-->
 
 <div class="post_container">
     <div class="post_info">
@@ -96,6 +77,13 @@
                 Address
             </span><br>
             <%= post.address || 'None'%>
+        </div>
+
+        <div>
+            <span>
+                Postcode
+            </span><br>
+            <%= post.postcode || 'None'%>
         </div>
 
         <div>
@@ -174,7 +162,7 @@
     </div>
 
     <div class="post_btn">
-        <a href=""><button type="button" class="post_edit_btn">Edit</button></a>
+        <a href="/user/job/postings/edit/<%= post.id %>"><button type="button" class="post_edit_btn">Edit</button></a>
         <a href=""><button type="button" class="post_delete_btn">Delete</button></a>
     </div>
 </div>

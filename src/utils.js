@@ -211,7 +211,7 @@ exports.allErrorHandler = function(req, res, next){
 }
 
 
-// Input date string from database and turn into DD-MM-YYYY
+// Input date string from database and turn into DD/MM/YYYY
 exports.formatDateForDisplay = function(date_string){
     const date = new Date(date_string);
 
@@ -220,6 +220,18 @@ exports.formatDateForDisplay = function(date_string){
     const day = date.getDate().toString().padStart(2, '0');
 
     return `${day}/${month}/${year}`;
+}
+
+
+// Input date string from database and turn into YYYY-MM-DD
+exports.formatDateForEdit = function(date_string){
+    const date = new Date(date_string);
+    
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); 
+    const day = date.getDate().toString().padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
 }
 
 

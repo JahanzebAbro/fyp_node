@@ -6,7 +6,7 @@ const upload = multer(); // To help parse form in req.body
 const Job = require('../models/jobModel');
 const Employer = require('../models/employerModel');
 const Benefit = require('../models/benefitModel');
-const { isNotAuthReq, getUserIcon, allErrorHandler, formatDateForDisplay, isEmployerAuth} = require('../utils');
+const { isNotAuthReq, getUserIcon, allErrorHandler, formatDateForDisplay, isEmployerAuth, formatDateForEdit} = require('../utils');
 const { validateJobStatus,
         validateJobTitle,
         validateOpenings,
@@ -123,6 +123,182 @@ router.get("/postings/:job_id", isNotAuthReq, isEmployerAuth, getUserIcon, async
 
 });
 
+
+// JOB POST EDIT
+router.get("/postings/edit/:job_id", isNotAuthReq, isEmployerAuth, getUserIcon, async (req, res) => {
+
+
+    try{
+
+        const user_id = req.user.id;
+        const job_id =  req.params.job_id;
+
+        const job = await Job.getById(pool, job_id);
+
+
+        if(user_id.toString() !== job.user_id){ // If the job doesnt match with the current user id.
+            res.status(401).render("401", { url: req.originalUrl });
+        }
+
+    
+        const [job_types, job_benefits, job_questions, job_skills] = await Promise.all([ // Grabbing job details
+            Job.getTypesByJob(pool, job_id),
+            Job.getBenefitsByJob(pool, job_id),
+            Job.getQuestionsByJob(pool, job_id),
+            Job.getSkillsByJob(pool, job_id),
+        ]);
+
+
+        // Formatting dates
+        job.start_date = job.start_date ? formatDateForEdit(job.start_date) : job.start_date;
+        job.deadline = job.deadline ? formatDateForEdit(job.deadline): job.deadline;
+        
+
+        const post = {
+            ...job,
+            job_types,
+            job_benefits, 
+            job_questions,
+            job_skills
+        };
+
+        const db_job_types = await Job.getAllJobTypes(pool);
+        const db_benefits = await Benefit.getAll(pool);    
+
+        // const db_benefits = await Benefit.getAllForJob(pool, job_id);    
+        
+
+        res.render("job/edit_post", {post: post, job_types: db_job_types, benefits: db_benefits});
+
+    }
+    catch(err){
+
+        console.error(err);
+        res.status(500).send("Internal Server Error");
+    }
+
+});
+
+
+// JOB UPDATE 
+router.post("/update", isNotAuthReq, isEmployerAuth, getUserIcon, upload.none(),
+                                                                validateJobTitle,
+                                                                validateOpenings,
+                                                                validateJobType,
+                                                                validateJobStyle,
+                                                                validateDescription,
+                                                                validateAddress,
+                                                                validatePostcode,
+                                                                validateStartDate,
+                                                                validatePay,
+                                                                validateBenefits,
+                                                                validateCustomBenefits,
+                                                                validateQuestions,
+                                                                validateSkills,
+                                                                validateCVReq,
+                                                                validateDeadline,
+                                                                validateJobStatus,
+                                                                allErrorHandler, async (req, res) => {
+    
+    try{
+
+        const user_id = req.user.id;
+        
+        let { job_title, 
+            openings,
+            job_type, 
+            job_style, 
+            description, 
+            address, 
+            postcode, 
+            start_date, 
+            min_pay, 
+            max_pay,
+            benefits,
+            custom_benefits,
+            questions,
+            response_types, 
+            question_reqs,
+            skills, 
+            cv_req, 
+            deadline, 
+            status } = req.body;
+            
+            
+            console.log(req.body);
+            
+            
+            // TRIMMING AND NULLING IF EMPTY STRING
+            // Certain values won't need trimming due to validation check.
+            
+            job_title = job_title.trim(); 
+            openings = openings.trim(); 
+            description = description.trim();
+            address = address.trim() || null;
+            postcode = postcode.trim() || null;
+            min_pay = min_pay.trim() || null;
+            max_pay = max_pay.trim() || null;
+            start_date = start_date.trim() || null;
+            benefits = benefits ? benefits.map(value => value.trim()) : null; // Map values can't work on null vals.
+            custom_benefits = custom_benefits ? custom_benefits.map(value => value.trim()) : null;
+            questions = questions ? questions.map(value => value.trim()) : null;
+            skills = skills ? skills.map(value => value.trim()) : null;
+            deadline = deadline.trim() || null;
+            
+            
+            // // ADD JOB
+            // const job_id = await Job.create(
+            //     pool,
+            //     user_id,
+            //     status,
+            //     job_title,
+            //     openings,
+            //     description,
+            //     job_style,
+            //     address,
+            //     postcode,
+            //     min_pay,
+            //     max_pay,
+            //     cv_req,
+            //     deadline,  
+            // );
+            
+            
+            // // ADD JOB TYPE
+            // const type_result = await Job.addTypes(pool, job_id, job_type);
+            
+            // // ADD CUSTOM BENEFITS
+            // const custom_benefit_ids = custom_benefits ? await Benefit.createCustom(pool, custom_benefits) : null; 
+            
+            
+            // // ADD BENEFITS 
+            // const benefits_result = benefits ? await Job.addBenefits(pool, job_id, benefits) : null;  
+            // const custom_benefits_result = custom_benefits ? await Job.addBenefits(pool, job_id, custom_benefit_ids) : null;                        
+            
+            
+            // // ADD QUESTIONS, RESPONSE TYPE, AND REQ
+            // let questions_obj = questions ? questions.map((question, index) => ({ // Create array of question object for model create.
+            //     question: question,
+            //     response_type: response_types[index],
+            //     is_req: question_reqs[index]
+            // })) : null;
+            
+            // const questions_result = questions_obj ? await Job.createQuestions(pool, job_id, questions_obj) : null;
+            
+            
+            // // ADD SKILL
+            // const skills_result = skills ? await Job.createSkills(pool, job_id, skills) : null;
+            
+            
+            res.status(200).json({ success: true, message: 'Job updated!'});
+            
+        }
+        catch(err){
+
+            console.error(error);
+            res.status(500).json({ success: false, message: 'An internal server error occurred' }); // 500 means internal server error
+        }                                                                
+});
 
 
 // JOB CREATION FORM PAGE

@@ -1,0 +1,242 @@
+<%- include('../partials/employer_navbar.ejs') %>
+
+<div class="page_title">
+    <img src="/img/line.png" class="page_title_line">
+    <span class="page_title_text">EDIT JOB</span>
+</div>
+
+<!-- job.status,
+    job.title,
+    job.openings,
+    job.description,
+    job.style,
+    job.address,
+    job.postcode,
+    job.min_pay,
+    job.max_pay,
+    job.deadline,
+    job.start_date,
+    job.created_at,
+    types
+    benefits
+    skills
+    
+    SCREENING DETAILS
+    job.cv_req,
+    questions-->
+
+
+<form action="/user/job/update" method="POST" id="job_edit_form" class="job_form">
+
+        <label for="job_title">Title*</label><br>
+        <input type="text" id="job_title" name="job_title" maxlength="50" value="<%= post.title %>"><br>
+        <span  id="job_title_err" style="color: red;"></span><br>
+    
+        <label for="openings">Number of openings*</label><br>
+        <input type="number" id="openings" name="openings" maxlength="10" value="<%= post.openings %>"><br>
+        <span  id="openings_err" style="color: red;"></span><br>
+    
+    
+    
+        <span>Type of job*</span><br>
+        <div class="job_type_check">
+            <% job_types.forEach(function(type) { %>
+                <label for="type_<%= type.id %>">
+                    <span><input type="checkbox" id="type_<%= type.id %>" name="job_type" value="<%= type.id %>"
+
+                        <% if (post.job_types.some(function(post_type) { return post_type.id === type.id; })) { %> checked <% } %>> <!--CHAT GPT4 REFERENCE-->
+                        <%= type.name %></span> <!--array.some() checks an array for a value through a function-->
+                        
+                </label>                                                                            
+            <% }); %>
+        </div>
+        <span  id="job_type_err" style="color: red;"></span><br><br>
+    
+    
+    
+        <label for="job_style">Work Style*</label><br>
+        <select id="job_style" name="job_style">
+            <option value="">None</option>
+            <option value="In-person" <% if (post.style === 'In-person') { %> selected <% } %> >In-person</option>
+            <option value="Remote" <% if (post.style === 'Remote') { %> selected <% } %> >Remote</option>
+            <option value="Hybrid" <% if (post.style === 'Hybrid') { %> selected <% } %> >Hybrid</option>
+        </select><br>
+        <span id="job_style_err" style="color: red;"></span><br><br>
+    
+        
+        <label for="description">Description*</label><br>
+        <textarea id="description" name="description" rows="15" cols="100" maxlength="5000" 
+        placeholder="Let others know more about the position you're hiring!"><%= post.description %></textarea><br>
+        <span id="description_err" style="color: red;"></span><br><br>
+        
+        
+    
+    
+        <label for="address">Address</label><br>
+        <input type="text" id="address" name="address" value="<%= post.address %>"><br>
+        <span  id="address_err" style="color: red;"></span><br>
+    
+    
+        <label for="postcode">Postcode</label><br>
+        <input type="text" id="postcode" name="postcode"><br>
+        <span  id="postcode_err" style="color: red;" value="<%= post.postcode %>"></span><br><br>
+    
+    
+        <label for="start_date">Start Date</label><br>
+        <input type="date" id="start_date" name="start_date" value="<%= post.start_date %>"><br>
+        <span  id="start_date_err" style="color: red;"></span><br>
+    
+        <span>Pay</span><br>
+        <div class="pay_form_container">
+            <div>
+                <div> 
+                    <label for="min_pay">Minimum</label><br>
+                    <input type="number" id="min_pay" name="min_pay" placeholder="£0.00" value="<%= post.min_pay %>">
+                </div>
+            </div>
+    
+            <div>
+                to
+            </div>
+            
+            <div>
+                <div> 
+                    <label for="min_pay">Maximum</label><br>
+                    <input type="number" id="max_pay" name="max_pay" placeholder="£0.00" value="<%= post.max_pay %>">
+                </div>
+            </div>
+          
+            <div>
+                <br>
+                <div>per month</div>
+            </div>
+        </div>
+        <span  id="pay_err" style="color: red;"></span><br>
+    
+    
+    
+        <span>Benefits</span><br>
+        <div class="benefits_check">
+            <% benefits.forEach(function(benefit) { %>
+                <span><input type="checkbox" name="benefits" value="<%= benefit.id %>"
+
+                    <% if (post.job_benefits.some(function(post_benefit) { return post_benefit.id === benefit.id; })) { %> checked <% } %>> <!--CHAT GPT4 REFERENCE-->
+                    <%= benefit.name %></span> <!--array.some() checks an array for a value through a function-->
+
+            <% }); %>
+        </div><br>
+
+        <span>Custom Benefits</span><br>
+        <span id="benefits_err" style="color: red;"></span><br>
+        <input type="text" id="custom_benefit" placeholder="Enter a benefit" maxlength="50">
+        <button type="button" id="add_benefit_btn">Add Benefit</button><br>
+        <div class="new_benefits">
+            <% if (post.job_benefits.length > 0) {%>
+                <% let i = 1; %>
+                <% post.job_benefits.forEach(function(benefit) { %>
+                    <% if (benefit.is_custom) { %>
+                        <label for="custom_<%= i %>"> 
+                            <p>
+                                <input type="checkbox" id="custom_<%= i %>" name="custom_benefits" value="<%= benefit.name %>" checked>
+                                 <%= benefit.name%>
+                            </p>
+                        </label>
+                        <% i++; %>
+                    <% } %>
+                <% }); %>
+            <% } %>
+        </div>
+        <button type="button" id="clear_benefit_btn" style="display:none;">Clear all</button><br><br>
+        <span id="custom_benefits_err" style="color: red;"></span><br><br>
+    
+        
+        <span>Screening Questions</span><br><br>
+        <div class="questions_container">
+            <% if (post.job_questions.length > 0) {%>
+                <% post.job_questions.forEach(function(question, index) { %>
+                    <div id="single_question_container_<%= index + 1 %>" class="single_question_container">
+                        <div>
+                            <label for="question_<%= index + 1 %>">Question <%= index + 1 %></label><br>
+                            <textarea rows="2" cols="75" id="question_<%= index + 1 %>" name="questions" 
+                                placeholder="Type out your question here!" maxlength="200"><%= question.question %></textarea>
+                        </div>
+                        <div>
+                            <label for="response_type_<%= index + 1 %>">Response Type</label><br>
+                            <select id="response_type_<%= index + 1 %>" name="response_types">
+                                <option value="text" <% if (question.response_type === 'text') { %> selected <% } %> >Text</option>
+                                <option value="num" <% if (question.response_type === 'num') { %> selected <% } %> >Number</option>
+                                <option value="bool" <% if (question.response_type === 'bool') { %> selected <% } %> >Yes/No</option>
+                            </select><br>
+                        </div>
+                        <div>
+                            <span">Required?</span><br>
+                            <span><input type="radio" name="question_reqs_<%= index + 1 %>" value="true" <% if (question.is_req) { %> checked <% } %>> Yes</span>
+                            <span><input type="radio" name="question_reqs_<%= index + 1 %>" value="false" <% if (!question.is_req) { %> checked <% } %>> No</span>
+                        </div>
+                    </div>
+                <% }); %>
+            <% } %>
+        </div>
+        <button type="button" id="add_question_btn">Add Question</button>
+        <button type="button" id="clear_question_btn" style="display:none;">Clear</button><br><br>
+        <span  id="question_err" style="color: red;"></span><br><br>
+        
+        
+        <span>Associated Skills</span><br><br>
+        <input type="text" id="new_skill" placeholder="Enter a skill" maxlength="50">
+        <button type="button" id="add_skill_btn">Add Skill</button><br>
+        <div class="new_skills">
+            <% if (post.job_skills.length > 0) {%>
+                <% post.job_skills.forEach(function(skill, index) { %>
+                    <label for="skill_<%= index + 1 %>"> 
+                        <input type="hidden" id="skill_<%= index + 1 %>" name="skills" value="<%= skill.name %>">
+                        <span><%= index + 1 %>. <%= skill.name %></span><br>
+                    </label>
+                <% }); %>
+            <% } %>
+        </div>
+        <button type="button" id="clear_skill_btn" style="display:none;">Clear</button><br>
+        <span  id="skill_err" style="color: red;"></span><br><br>
+    
+        <span>CV Requirement</span>
+        <div id="cv_req">
+            <input type="radio" id="cv_is_req" name="cv_req" value="true" <% if (post.cv_req ) { %> checked <% } %>>
+            <label for="cv_is_req">Required</label><br>
+            <input type="radio" id="cv_not_req" name="cv_req" value="false" <% if (!post.cv_req) { %> checked <% } %>>
+            <label for="cv_not_req">Not Required</label><br>
+        </div><br>
+        <span  id="cv_req_err" style="color: red;"></span><br>
+    
+    
+    
+        <label for="deadline">Deadline</label><br>
+        <input type="date" id="deadline" name="deadline" value="<%= post.deadline %>"><br>
+        <span  id="deadline_err" style="color: red;"></span><br><br>
+    
+    
+        <label for="job_status">Job Status*</label><br>
+        <select id="job_status" name="status">
+            <option value="open" <% if (post.status === 'open') { %> selected <% } %>>Open</option>
+            <option value="hidden" <% if (post.status === 'hidden') { %> selected <% } %>>Hidden</option>
+            <option value="closed" <% if (post.status === 'closed') { %> selected <% } %>>Closed</option>
+        </select>
+        <div class="job_status_info"></div>
+        <span  id="status_err" style="color: red;"></span><br><br>
+    
+    
+        <button type="submit" value="Submit">Save Changes</button>
+        <a href="/user/job/postings/<%= post.id %>"><button type="button">Cancel</button></a>
+    </form>
+
+
+<script>
+    $(document).ready(function() {
+        
+
+    
+    
+    });
+</script>
+        
+
+    <script type="module" src="/scripts/edit_post_utils.js"></script>

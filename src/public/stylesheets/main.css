@@ -284,6 +284,9 @@ button:hover {
 
 /* ===================================JOB CREATE==================================== */
 
+.job_form {
+    margin-left: 20px;
+}
 .pay_form_container{
     display: flex;
     align-items: flex-end;

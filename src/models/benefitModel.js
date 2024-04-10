@@ -34,8 +34,36 @@ class Benefit{
     static async getAll(pool){
         try{
 
-            const query = "SELECT id, name FROM benefits WHERE is_custom='false';";
+            const query = "SELECT * FROM benefits WHERE is_custom='false';";
             const result = await pool.query(query);
+
+            // Array of benefits
+            return result.rows;
+        }
+        catch(err){
+            throw err
+        }
+    }
+
+
+    // Retrieves ALL benefits PLUS custom for a SPECIFIC JOB
+    static async getAllForJob(pool, job_id){
+        try{
+
+            const query = `
+                SELECT benefits.* 
+                FROM benefits 
+                WHERE benefits.is_custom = false
+                UNION
+                SELECT benefits.* 
+                FROM benefits 
+                JOIN job_benefits ON job_benefits.benefit_id = benefits.id
+                WHERE job_benefits.job_id = $1;
+            `; // Grabbing all non-custom benefits first and then joining with only the customs for the job.
+
+            const params = [job_id];
+            
+            const result = await pool.query(query, params);
 
             // Array of benefits
             return result.rows;
