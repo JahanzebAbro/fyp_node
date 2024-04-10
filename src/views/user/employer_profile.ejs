@@ -1,6 +1,11 @@
 <!-- NAVBAR -->
 <%- include('../partials/employer_navbar.ejs') %>
 
+<div class="page_title">
+    <img src="/img/line.png" class="page_title_line">
+    <span class="page_title_text">PROFILE PAGE</span>
+</div>
+
 <!-- If something went wrong with builder form -->
 <% if(messages.build_msg) {%>
     <%= messages.build_msg %>

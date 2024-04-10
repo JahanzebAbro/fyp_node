@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const pool = require('./config/db/db_config'); 
 const Seeker = require('./models/seekerModel');
 const Employer = require('./models/employerModel');
+const Job = require('./models/jobModel');
 const fs = require('fs');
 // ------------------Password Utilities
 
@@ -209,6 +210,7 @@ exports.allErrorHandler = function(req, res, next){
     next();
 }
 
+
 // Input date string from database and turn into DD-MM-YYYY
 exports.formatDateForDisplay = function(date_string){
     const date = new Date(date_string);
@@ -218,4 +220,16 @@ exports.formatDateForDisplay = function(date_string){
     const day = date.getDate().toString().padStart(2, '0');
 
     return `${day}/${month}/${year}`;
+}
+
+
+// Only allow employer users
+exports.isEmployerAuth = function(req, res, next){
+
+    if(req.user.user_type === 'employer'){ // Seeker cannot look at postings.
+        next();
+    }
+    else{
+        res.status(401).render("401", { url: req.originalUrl });
+    }
 }

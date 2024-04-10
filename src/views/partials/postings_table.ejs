@@ -1,9 +1,4 @@
 
-<div class="page_title">
-    <img src="/img/line.png" class="page_title_line">
-    <span class="page_title_text">POSTINGS</span>
-</div>
-
 <table>
     <tr>
         <th>Status</th>
@@ -89,8 +84,12 @@
                     </div>
                     <div>
                         <div class="table_hidden_btn">
-                            <button type="button" class="table_hidden_edit_btn">Edit</button>
-                            <button type="button" class="table_hidden_view_btn">View</button>
+                            <a href="#">
+                                <button type="button" class="table_hidden_edit_btn">Edit</button>
+                            </a>
+                            <a href="/user/job/postings/<%= post.id %>" >
+                                <button type="button" class="table_hidden_view_btn">View</button>
+                            </a>
                         </div>
 
                         <div class="hidden_row_title">Contact:</div>

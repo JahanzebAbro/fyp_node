@@ -1,0 +1,180 @@
+<%- include('../partials/employer_navbar.ejs') %>
+
+<div class="job_post_header">
+
+    <div class="page_title">
+        <img src="/img/line.png" class="page_title_line">
+        <span class="page_title_text">JOB</span>
+    </div>
+    
+    <div class="post_create_status">
+        <div>
+            <span>Created : </span>
+            <%= post.created_at %>
+        </div>
+        <div>
+            <span>Deadline: </span>
+            <%= post.deadline || 'None'%>
+        </div>
+        <div>
+            <span>Status: </span>
+            <%= post.status || 'None'%>
+        </div>
+    </div>
+
+</div>
+    
+<!-- job.status,
+    job.title,
+    job.openings,
+    job.description,
+    job.style,
+    job.address,
+    job.postcode,
+    job.min_pay,
+    job.max_pay,
+    job.deadline,
+    job.start_date,
+    job.created_at,
+    types
+    benefits
+    skills
+    
+    SCREENING DETAILS
+    job.cv_req,
+    questions-->
+
+<div class="post_container">
+    <div class="post_info">
+        
+        <div>
+            <span>
+                Title 
+            </span><br>
+            <%= post.title || 'None'%>
+        </div>
+
+        
+        
+        <div>
+            <span>
+                Openings 
+            </span><br>
+            <%= post.openings || 'None'%>
+        </div>
+
+        <div>
+            <span>
+                Job Type
+            </span><br>
+            <% if (post.job_types) { %>
+                    <%= post.job_types.map(function(type) { 
+                        return type.name; 
+                    }).join(", ") %>
+            <% } else { %>
+                None
+            <% } %>
+        </div>
+
+        <div>
+            <span>
+                Description
+            </span><br>
+            <%= post.description || 'None'%>
+        </div>
+
+        
+        <div>
+            <span>
+                Work Environment
+            </span><br>
+            <%= post.style || 'None'%>
+        </div>
+
+        <div>
+            <span>
+                Address
+            </span><br>
+            <%= post.address || 'None'%>
+        </div>
+
+        <div>
+            <span>
+                Salary Range
+            </span><br>
+            £<%= post.min_pay || '?'%> - £<%= post.max_pay || '?' %> (per month)
+        </div>
+
+        <div>
+            <span>
+                Start Date
+            </span><br>
+            <%= post.start_date || 'None'%>
+        </div>
+
+        <div>
+            <span>
+                Benefits
+            </span><br>
+            <% if (post.job_benefits.length > 0) { %>
+                    <%= post.job_benefits.map(function(benefit) { 
+                        return benefit.name; 
+                    }).join(", ") %>
+            <% } else { %>
+                None
+            <% } %>
+        </div>
+            
+        <div>
+            <span>
+                Skills
+            </span><br>
+            <% if (post.job_skills.length > 0) { %>
+                    <%= post.job_skills.map(function(skill) { 
+                        return skill.name; 
+                    }).join(", ") %>
+            <% } else { %>
+                None
+            <% } %>
+        </div>
+
+        <div>
+            <img src="/img/line.png" class="full_page_line">
+
+            <div>
+                <span>
+                    CV Required
+                </span><br>
+                <%= post.cv_req ? 'Yes' : 'No'%>
+            </div>
+            <div>
+
+                    <% if (post.job_questions.length > 0) { %>
+                        
+                        <% post.job_questions.forEach(function(question, index) { %>
+                            <span style="text-decoration: underline;">Question <%= index + 1%></span><br>
+                            <div>
+                                <span>Question: </span><%= question.question %><br>
+                                <span>Response Type: </span>
+                                <%= question.response_type === 'text' ? 'Text' : 
+                                    question.response_type === 'bool' ? 'Yes/No' : 
+                                    question.response_type === 'num' ? 'Number' : 'None'  %><br>
+                                <span>Required: </span><%= question.is_req ? 'Yes' : 'No' %>
+                            </div>
+                        <% }); %>
+                        
+                    <% } else { %>
+                        <span>Questions</span><br>
+                        None
+                    <% } %>
+
+            </div> 
+        </div>
+
+    </div>
+
+    <div class="post_btn">
+        <a href=""><button type="button" class="post_edit_btn">Edit</button></a>
+        <a href=""><button type="button" class="post_delete_btn">Delete</button></a>
+    </div>
+</div>
