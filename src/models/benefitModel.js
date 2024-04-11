@@ -10,6 +10,10 @@ class Benefit{
     static async createCustom(pool, names){
         try{
 
+            if (names.length === 0) {
+                return null;
+            }
+
             const positions = names.map((name, index) => `($${index + 1}, TRUE)`).join(', ');
 
             const query = `
@@ -108,6 +112,9 @@ class Benefit{
     static async deleteCustomByJob(pool, job_id) {
         try {
 
+             // Start a transaction block
+             await pool.query('START TRANSACTION');
+
             // Delete from the job_benefits linking table
             const delete_link_query = `
                 DELETE FROM job_benefits
@@ -129,14 +136,20 @@ class Benefit{
             const benefit_result = await pool.query(benefit_query);
 
             if (benefit_result.rows.length > 0){
+                 
+                await pool.query('COMMIT');
                 return benefit_result.rows[0].id;
             }
             else{
+
+                await pool.query('ROLLBACK');
                 return false; // could not delete benefit row.
             }
 
 
         } catch(err) {
+
+            await pool.query('ROLLBACK');
             throw err;
         }
     }
@@ -144,6 +157,9 @@ class Benefit{
 
     static async updateCustom(pool, job_id, names){
         try{
+
+            // Start a transaction block
+            await pool.query('START TRANSACTION');
 
             // Delete current customs links by a job_id
             await this.deleteCustomByJob(pool, job_id);            
@@ -153,18 +169,23 @@ class Benefit{
             let result = await this.createCustom(pool, names)
 
             if(result){
+
+                await pool.query('COMMIT');
                 return result;
             }else{
+
+                await pool.query('ROLLBACK');
                 return false;
             }
 
         }
         catch(err){
+            await pool.query('ROLLBACK');
             throw err;
         }
     }
 
-    // ============REMEMBER USER CAN ONLY MAKE 3 CUSTOM AND HAVE 5 BENEFITS ATTACHED TO A JOB=======================
+    // ============REMEMBER USER CAN ONLY MAKE 3 CUSTOM AND HAVE 5 DEFAULT BENEFITS ATTACHED TO A JOB=======================
 
 }
 

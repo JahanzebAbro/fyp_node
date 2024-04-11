@@ -30,12 +30,41 @@ $(document).ready(function(){
 });
 
 
+
+// DELETE JOB
 $(document).ready(function(){
 
-    // DELETE JOB
-    $('.delete_confirm_btn').click(function(){
+    
+    $("#job_delete_form").submit(function(e){
+        
+        e.preventDefault(); // Prevent form submission
+
+        
+        const form = new FormData(this);
+        // for (let [key, value] of form.entries()) {
+        //     console.log(`${key}: ${value}`);
+        // }
 
 
+
+
+        $.ajax({
+            url: "/user/job/delete",
+            type: "POST",
+            data: form,
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                console.log(response.message);
+                window.location.href = `/user/job/postings`; // Redirect the user
+            },
+            error: function(response) {
+
+                console.log(response);
+
+            }
+        
+        });
 
     });
 

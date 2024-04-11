@@ -207,7 +207,7 @@ function toggleEditMode(isEditMode, isSaved=false){
         
         
         // BIOGRAPHY
-        $('#bio_val').html(`<textarea name="bio" rows="5" cols="75" maxlength="800" 
+        $('#bio_val').html(`<textarea name="bio" rows="10" cols="100" maxlength="800" 
             placeholder="Let others know more about YOU with a short description of what you're all about!">${bio_old_val}</textarea>`);
 
 

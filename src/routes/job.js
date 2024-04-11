@@ -202,7 +202,6 @@ router.post("/update", isNotAuthReq, isEmployerAuth, getUserIcon, upload.none(),
     
     try{
 
-        const user_id = req.user.id;
         
         let { 
             job_id,
@@ -242,10 +241,10 @@ router.post("/update", isNotAuthReq, isEmployerAuth, getUserIcon, upload.none(),
             min_pay = min_pay.trim() || null;
             max_pay = max_pay.trim() || null;
             start_date = start_date.trim() || null;
-            benefits = benefits ? benefits.map(value => value.trim()) : null; // Map values can't work on null vals.
-            custom_benefits = custom_benefits ? custom_benefits.map(value => value.trim()) : null;
+            benefits = benefits ? benefits.map(value => value.trim()) : []; // Map values can't work on null vals.
+            custom_benefits = custom_benefits ? custom_benefits.map(value => value.trim()) : [];
             questions = questions ? questions.map(value => value.trim()) : null;
-            skills = skills ? skills.map(value => value.trim()) : null;
+            skills = skills ? skills.map(value => value.trim()) : [];
             deadline = deadline.trim() || null;
             
             const job_fields = {
@@ -271,30 +270,30 @@ router.post("/update", isNotAuthReq, isEmployerAuth, getUserIcon, upload.none(),
             // ADD JOB TYPE
             const type_result = await Job.updateTypes(pool, job_id, job_type);
             
-            console.log('Benefits:', benefits);
-            console.log('Custom Benefits:', custom_benefits);
 
             // UPDATE CUSTOM BENEFITS
             const custom_benefit_ids = custom_benefits ? await Benefit.updateCustom(pool, job_id, custom_benefits) : null; 
             
             
             // ADD BENEFITS 
-            benefits = benefits.concat(custom_benefit_ids);
-            const benefits_result = benefits ? await Job.updateBenefits(pool, job_id, benefits) : null;  
-            
+            if(custom_benefit_ids){
+                benefits = benefits.concat(custom_benefit_ids);
+            }
+
+            const benefits_result = await Job.updateBenefits(pool, job_id, benefits); 
             
             // ADD QUESTIONS, RESPONSE TYPE, AND REQ
             let questions_obj = questions ? questions.map((question, index) => ({ // Create array of question object for model create.
                 question: question,
                 response_type: response_types[index],
                 is_req: question_reqs[index]
-            })) : null;
+            })) : [];
             
-            const questions_result = questions_obj ? await Job.updateQuestions(pool, job_id, questions_obj) : null;
+            const questions_result = await Job.updateQuestions(pool, job_id, questions_obj);
             
             
             // ADD SKILL
-            const skills_result = skills ? await Job.updateSkills(pool, job_id, skills) : null;
+            const skills_result = await Job.updateSkills(pool, job_id, skills);
             
             
             res.status(200).json({ success: true, message: 'Job updated!'});
@@ -435,11 +434,37 @@ router.post("/create", isNotAuthReq, isEmployerAuth, getUserIcon, upload.none(),
         }
         catch(err){
 
-            console.error(error);
+            console.error(err);
             res.status(500).json({ success: false, message: 'An internal server error occurred' }); // 500 means internal server error
         }                                                                
 });
         
 
+// JOB DELETE SUBMISSION
+router.post("/delete", isNotAuthReq, isEmployerAuth, getUserIcon, upload.none(), async (req, res) => {
+
+    try{
+
+        const job_id = req.body.job_id;
+        console.log('DELETING JOB:', job_id);
+        
+        const result = await Job.deleteById(pool, job_id);
+
+
+        if (result){
+            res.status(200).json({ success: true, message: 'Job deleted!'});
+        }
+        else{
+            res.status(400).json({ success: false, message: 'An internal server error occurred' }); 
+        }
+    }
+    catch(err){
+        console.error(err);
+        res.status(500).json({ success: false, message: 'An internal server error occurred' }); 
+    }
+
+
+
+});
 
 module.exports = router;

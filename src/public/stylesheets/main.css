@@ -475,3 +475,72 @@ table .hidden_row {
     background: var(--red);
     color: #ffffff;
 }
+
+
+/* ==================================================MODAL POST DELETE=============================================== */
+
+.modal{
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 1px solid black;
+    border-radius: 1px;
+    z-index: 1000;
+    background-color: white;
+    font-family: 'Jost';
+    
+}
+
+.delete_post_modal {
+    width: 300px;
+    max-width: 50%;
+}
+
+.modal_header, .delete_post_header {
+    padding: 10px 0px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal_header_title{
+    margin-left: 10px;
+    font-family: 'Playfair Display';
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.modal_header_close {
+    border: 0;
+    outline: 0;
+    background: none;
+    color: black;
+    font-size: 1.5rem;
+}
+
+.modal_body, .delete_post_body {
+    padding: 0px 10px;
+    padding-bottom: 10px;
+}
+
+.modal_overlay{
+    opacity: 0;
+    pointer-events: none; /* Allow click events when overlay is off*/
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.modal_overlay_active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.delete_confirm_btn {
+    background-color: var(--red);
+}

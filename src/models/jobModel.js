@@ -172,25 +172,76 @@ class Job {
     }
 
 
-    // Delete a job with it's id
+    // Delete a job and its dependents with id
     static async deleteById(pool, id) {
         try {
-
-            const query = `
-                DELETE FROM jobs WHERE id = $1 RETURNING id;
+            
+            // Start a transaction block
+            await pool.query('START TRANSACTION');
+            // Dependent row deleted first
+            // Delete link between types and job table
+            const types_query = `
+                DELETE FROM jobs_job_types 
+                WHERE job_id = $1
             `;
             
+            // Delete questions linked to job
+            const questions_query = `
+                DELETE FROM job_questions 
+                WHERE job_id = $1
+            `;
+            
+            // Delete skills linked to job
+            const skills_query = `
+                DELETE FROM job_skills 
+                WHERE job_id = $1
+            `;
+
+            // Delete links between benefits and job table
+            const benefits_query = `
+                DELETE FROM job_benefits 
+                WHERE job_id = $1
+            `;
+
+            // Delete custom benefits that have no job link
+            const custom_benefits_query = `
+                DELETE FROM benefits
+                WHERE is_custom = true
+                AND id NOT IN (SELECT benefit_id FROM job_benefits);
+            `;
+
+            // Delete job
+            const job_query = `
+                DELETE FROM jobs 
+                WHERE id = $1 
+                RETURNING id;
+            `;
+
+            
             const params = [id];
-            const result = await pool.query(query, params);
+
+            // Dependents
+            await pool.query(types_query, params);
+            await pool.query(questions_query, params);
+            await pool.query(skills_query, params);
+            await pool.query(benefits_query, params);
+            await pool.query(custom_benefits_query);
+            // Job
+            const result = await pool.query(job_query, params);
 
             if (result.rows.length > 0) {
+
+                await pool.query('COMMIT');
                 return result.rows[0].id; 
             } else {
+
+                await pool.query('ROLLBACK');
                 return null;
             }
 
         } catch(err) {
 
+            await pool.query('ROLLBACK');
             throw err;
         }
     }
@@ -299,6 +350,9 @@ class Job {
 
         try{
 
+            // Start a transaction block
+            await pool.query('START TRANSACTION');
+
             const delete_query = `
                 DELETE FROM jobs_job_types 
                 WHERE job_id = $1
@@ -313,17 +367,18 @@ class Job {
             const result = await this.addTypes(pool, job_id, types);
 
             if (result){
-
+                await pool.query('COMMIT');
                 return result;
             }
             else{
+                await pool.query('ROLLBACK');
                 return false;
             }
 
-            
 
         }
         catch(err){
+            await pool.query('ROLLBACK');
             throw err;
         }
 
@@ -338,9 +393,8 @@ class Job {
 
             // Example Input: benefits = [1,3]
 
-            // Check if there are types to add
             if (benefits.length === 0) {
-                return "No benefits provided";
+                return "No benefits to add";
             }
 
              // Reference help: CHATGPT 4
@@ -404,6 +458,9 @@ class Job {
     static async updateBenefits (pool, job_id, benefits){
         try{
 
+            // Start a transaction block
+            await pool.query('START TRANSACTION');
+
             // Delete the links between the job and benefis table
             const delete_query = `
                 DELETE FROM job_benefits 
@@ -419,13 +476,18 @@ class Job {
             let result = await this.addBenefits(pool, job_id, benefits);
             
             if(result){
+                // Start a transaction block
+                await pool.query('COMMIT');
                 return result;
             }else{
+                // Start a transaction block
+                await pool.query('ROLLBACK');
                 return false;
             }
 
         }
         catch(err){
+            await pool.query('ROLLBACK');
             throw err;
         }
     }
@@ -440,6 +502,9 @@ class Job {
             //  questions = [{ question: 'Fake Question', reponse_type: 'text', is_req: 'true'}, 
             //               { question: 'Fake Question', reponse_type: 'text', is_req: 'true'}];
 
+            if (questions.length === 0) {
+                return "No questions to add";
+            }
 
             
             let query = `
@@ -512,6 +577,9 @@ class Job {
             // Example Input expectation:
             //  questions = [{ question: 'Fake Question', reponse_type: 'text', is_req: 'true'}, 
             //               { question: 'Fake Question', reponse_type: 'text', is_req: 'true'}];
+            
+            // Start a transaction block
+            await pool.query('START TRANSACTION');
 
             const delete_query = `
                 DELETE FROM job_questions 
@@ -527,15 +595,18 @@ class Job {
 
             if(result){
 
+                await pool.query('COMMIT');
                 return result;
             }
             else{
 
+                await pool.query('ROLLBACK');
                 return false;
             }
 
 
         }catch(err){
+            await pool.query('ROLLBACK');
             throw err;
         }
     }
@@ -551,7 +622,6 @@ class Job {
             // Example Input expectation:
             //  skills = [skill1, skill2];
 
-            // Check if there are types to add
             if (skills.length === 0) {
                 return "No skills provided";
             }
@@ -621,6 +691,9 @@ class Job {
             // Example Input expectation:
             //  skills = [skill1, skill2];
 
+            // Start a transaction block
+            await pool.query('START TRANSACTION');
+
             const delete_query = `
                 DELETE FROM job_skills 
                 WHERE job_id = $1
@@ -636,14 +709,19 @@ class Job {
 
             if (result){
 
+                await pool.query('COMMIT');
                 return result;
             }
             else{
+                
+                await pool.query('ROLLBACK');
                 return false;
             }
 
 
         }catch(err){
+
+            await pool.query('ROLLBACK');
             throw err;
         }
 

@@ -15,7 +15,7 @@
             <img class="notif_icon" src="/img/notif_bell_off.png">
         </a>
         <div class="user_dropdown">
-            <a class="user_dropdown_trigger">
+            <a href="/user/profile" class="user_dropdown_trigger">
 
                 <% if (locals.user_icon) { %>
                     <img class="user_icon" src="/uploads/<%= locals.user_icon%>">
@@ -25,7 +25,7 @@
 
                 <span class="user_drop_name">User</span>
             </a>
-            <div href="/user/profile" class="dropdown_content">
+            <div class="dropdown_content">
                 <a href="/user/profile">Profile</a>
                 <a href="/user/dashboard">Dashboard</a>
                 <a href="/user/job/create">Create Job</a>
