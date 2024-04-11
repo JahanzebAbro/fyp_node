@@ -1,3 +1,5 @@
+@import 'variables.css';
+
 select {
     min-width: 100px;
 }
@@ -349,15 +351,15 @@ table {
     font-weight: 400;
     border-collapse: collapse;
     table-layout: fixed;
-    border: 1px solid #FFF2DF;
-    background-color: #FEFAE0;
+    border: 1px solid var(--table_border);
+    background-color: var(--table_main);
     width: 95%;
     margin-left: auto;
     margin-right: auto;
 }
 
 th {
-    background-color: #FEFAE0;
+    background-color: var(--table_main);
     font-weight: 500;
 }
 
@@ -367,7 +369,7 @@ td, th {
 }
 
 tr:nth-child(even) {
-    background-color: #FDF6C7;
+    background-color: var(--table_alt);
 }
 
 table .hidden_row { 
@@ -412,8 +414,8 @@ table .hidden_row {
 }
 
 .table_hidden_edit_btn {
-    border: 2px solid #C59349;
-    background:#C59349;
+    border: 2px solid var(--table_edit);
+    background: var(--table_edit);
     color: #ffffff;
 }
 
@@ -470,6 +472,6 @@ table .hidden_row {
 }
 
 .post_delete_btn {
-    background:#dc4141;
+    background: var(--red);
     color: #ffffff;
 }
