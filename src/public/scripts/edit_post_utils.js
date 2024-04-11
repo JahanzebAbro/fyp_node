@@ -227,3 +227,86 @@ $(document).ready(function(){
     }) 
     
 });
+
+
+// Form submission 
+$(document).ready(function(){
+
+    $("#job_edit_form").submit(function(e){
+        
+        e.preventDefault(); // Prevent form submission
+
+        
+        const form = new FormData(this);
+        for (let [key, value] of form.entries()) {
+            console.log(`${key}: ${value}`);
+        }
+
+        
+        // Clear any previous error messages
+        $('#job_title_err').text(''); 
+        $('#openings_err').text(''); 
+        $('#job_type_err').text('');
+        $('#job_style_err').text(''); 
+        $('#description_err').text(''); 
+        $('#address_err').text('');
+        $('#postcode_err').text('');
+        $('#start_date_err').text('');
+        $('#pay_err').text(''); 
+        $('#benefits_err').text('');  
+        $('#custom_benefits_err').text('');
+        $('#question_err').text(''); 
+        $('#skill_err').text(''); 
+        $('#cv_req_err').text(''); 
+        $('#deadline_err').text(''); 
+        $('#status_err').text(''); 
+        $('#form_err').text('');
+
+
+
+        $.ajax({
+            url: "/user/job/update",
+            type: "POST",
+            data: form,
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                console.log(response.message);
+                // window.location.href = "/user/job/postings"; // Redirect the user
+            },
+            error: function(response) {
+
+                console.log(response);
+
+                // Display errors
+                if (response.responseJSON.errors && Object.keys(response.responseJSON.errors).length > 0){
+                const errors = response.responseJSON.errors; 
+                    if (errors) {
+
+                        $('#job_title_err').text(errors.job_title || ''); 
+                        $('#openings_err').text(errors.openings || ''); 
+                        $('#job_type_err').text(errors.job_type || '');
+                        $('#job_style_err').text(errors.job_style || ''); 
+                        $('#description_err').text(errors.description || ''); 
+                        $('#address_err').text(errors.address || '');
+                        $('#postcode_err').text(errors.postcode || '');
+                        $('#start_date_err').text(errors.start_date || '');
+                        $('#pay_err').text(errors.pay || ''); 
+                        $('#benefits_err').text(errors.benefits || '');
+                        $('#custom_benefits_err').text(errors.custom_benefits || '');  
+                        $('#question_err').text(errors.question || ''); 
+                        $('#skill_err').text(errors.skill || ''); 
+                        $('#cv_req_err').text(errors.cv_req || ''); 
+                        $('#deadline_err').text(errors.deadline || ''); 
+                        $('#status_err').text(errors.status || ''); 
+
+                        $('#form_err').text('There was an error. Please check your inputs!');
+                    }
+                }
+            }
+        
+        });
+
+    });
+
+});

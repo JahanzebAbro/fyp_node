@@ -130,7 +130,7 @@ class Job {
     }
 
 
-    // Update job details
+    // Update job details with job_id and fields object
     static async update(pool, id, fields) {
         try {
 
@@ -291,6 +291,57 @@ class Job {
     }
 
 
+    // To update jobs_job_type with job_id and new types.
+    static async updateTypes(pool, job_id, types){
+
+        // Example Input: types = [1,3]
+        // First we get rid of the olds one and replace with new ones.
+
+        try{
+
+            const delete_query = `
+                DELETE FROM jobs_job_types 
+                WHERE job_id = $1
+            `;
+
+            const delete_params = [job_id];
+
+            await pool.query(delete_query, delete_params);
+
+
+
+            let positions = types.map((type_id, index) => `($1, $${index + 2})`).join(", "); 
+            // Above, $1 is a constant so that doesn't get increased with each type.
+            // We are adding 2 indexes with every row added for type_id.
+
+            const query = `
+                INSERT INTO jobs_job_types (job_id, type_id)
+                VALUES ${positions}
+                RETURNING job_id, type_id;
+            `;
+
+            const params = [job_id].concat(types); // Joining arrays
+
+            
+            const result = await pool.query(query, params);
+
+            if (result){
+
+                return result;
+            }
+            else{
+                return false;
+            }
+
+            
+
+        }
+        catch(err){
+            throw err;
+        }
+
+    }
+
     // =======================================JOB BENEFITS=============================================================
 
 
@@ -374,10 +425,6 @@ class Job {
             //  questions = [{ question: 'Fake Question', reponse_type: 'text', is_req: 'true'}, 
             //               { question: 'Fake Question', reponse_type: 'text', is_req: 'true'}];
 
-            // Check if there are questions to add
-            if (questions.length === 0) {
-                throw new Error("No questions provided");
-            }
 
             
             let query = `
@@ -440,6 +487,40 @@ class Job {
 
         } catch(err) {
 
+            throw err;
+        }
+    }
+
+    static async updateQuestions(pool, job_id, questions){
+        try{
+
+            // Example Input expectation:
+            //  questions = [{ question: 'Fake Question', reponse_type: 'text', is_req: 'true'}, 
+            //               { question: 'Fake Question', reponse_type: 'text', is_req: 'true'}];
+
+            const delete_query = `
+                DELETE FROM job_questions 
+                WHERE job_id = $1
+            `;
+
+            const delete_params = [job_id];
+
+            await pool.query(delete_query, delete_params);
+            
+            
+            const result = await this.createQuestions(pool, job_id, questions);
+
+            if(result){
+
+                return result;
+            }
+            else{
+
+                return false;
+            }
+
+
+        }catch(err){
             throw err;
         }
     }
@@ -515,6 +596,61 @@ class Job {
             
             throw err;
         }
+    }
+
+    // Update skills for a job
+    static async updateSkills(pool, job_id, skills){
+
+        try{
+
+            // Example Input expectation:
+            //  skills = [skill1, skill2];
+
+            const delete_query = `
+                DELETE FROM job_skills 
+                WHERE job_id = $1
+            `;
+
+            const delete_params = [job_id];
+
+            await pool.query(delete_query, delete_params);
+
+            // Check if there are types to add
+            if (skills.length === 0) {
+                return "No skills provided";
+            }
+
+             // Reference help: CHATGPT 4
+            let positions = skills.map((skill, index) => `($1, $${index + 2})`).join(", "); 
+            // End reference
+            // Above, $1 is a constant so that doesn't get increased with each skill.
+            // We are adding 2 indexes with every row added for skill.
+
+            const query = `
+                INSERT INTO job_skills (job_id, name)
+                VALUES ${positions}
+                RETURNING id;
+            `;
+
+            const params = [job_id].concat(skills); // Joining arrays
+
+            
+            const result = await pool.query(query, params);
+
+            if (result){
+
+                return result;
+            }
+            else{
+                return false;
+            }
+
+
+        }catch(err){
+            throw err;
+        }
+
+
     }
 
 }

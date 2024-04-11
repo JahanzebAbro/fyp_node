@@ -250,6 +250,7 @@ $(document).ready(function(){
         $('#cv_req_err').text(''); 
         $('#deadline_err').text(''); 
         $('#status_err').text(''); 
+        $('#form_err').text('');
 
 
 
@@ -288,6 +289,8 @@ $(document).ready(function(){
                         $('#cv_req_err').text(errors.cv_req || ''); 
                         $('#deadline_err').text(errors.deadline || ''); 
                         $('#status_err').text(errors.status || ''); 
+
+                        $('#form_err').text('There was an error. Please check your inputs!');
 
                     }
                 }

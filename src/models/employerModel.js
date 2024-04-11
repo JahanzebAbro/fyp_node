@@ -110,7 +110,7 @@ class Employer {
     }
 
 
-        // Update employer rows partially with a fields object containing name and value for the entry.
+    // Update employer rows partially with a fields object containing name and value for the entry.
     static async update(pool, user_id, fields) {
         try {
 

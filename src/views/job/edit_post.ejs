@@ -5,28 +5,10 @@
     <span class="page_title_text">EDIT JOB</span>
 </div>
 
-<!-- job.status,
-    job.title,
-    job.openings,
-    job.description,
-    job.style,
-    job.address,
-    job.postcode,
-    job.min_pay,
-    job.max_pay,
-    job.deadline,
-    job.start_date,
-    job.created_at,
-    types
-    benefits
-    skills
-    
-    SCREENING DETAILS
-    job.cv_req,
-    questions-->
-
 
 <form action="/user/job/update" method="POST" id="job_edit_form" class="job_form">
+
+        <input type="hidden" name="job_id" value="<%= post.id %>">
 
         <label for="job_title">Title*</label><br>
         <input type="text" id="job_title" name="job_title" maxlength="50" value="<%= post.title %>"><br>
@@ -124,10 +106,10 @@
                     <%= benefit.name %></span> <!--array.some() checks an array for a value through a function-->
 
             <% }); %>
-        </div><br>
+        </div>
+        <span id="benefits_err" style="color: red;"></span><br><br>
 
-        <span>Custom Benefits</span><br>
-        <span id="benefits_err" style="color: red;"></span><br>
+        <span>Custom Benefits</span><br><br>
         <input type="text" id="custom_benefit" placeholder="Enter a benefit" maxlength="50">
         <button type="button" id="add_benefit_btn">Add Benefit</button><br>
         <div class="new_benefits">
@@ -225,18 +207,9 @@
     
     
         <button type="submit" value="Submit">Save Changes</button>
-        <a href="/user/job/postings/<%= post.id %>"><button type="button">Cancel</button></a>
-    </form>
-
-
-<script>
-    $(document).ready(function() {
+        <a href="/user/job/postings/<%= post.id %>"><button type="button">Cancel</button></a><br>
+        <span  id="form_err" style="color: red;"></span><br><br>
+</form>
         
 
-    
-    
-    });
-</script>
-        
-
-    <script type="module" src="/scripts/edit_post_utils.js"></script>
+<script type="module" src="/scripts/edit_post_utils.js"></script>

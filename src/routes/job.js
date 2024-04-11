@@ -204,7 +204,9 @@ router.post("/update", isNotAuthReq, isEmployerAuth, getUserIcon, upload.none(),
 
         const user_id = req.user.id;
         
-        let { job_title, 
+        let { 
+            job_id,
+            job_title, 
             openings,
             job_type, 
             job_style, 
@@ -222,10 +224,11 @@ router.post("/update", isNotAuthReq, isEmployerAuth, getUserIcon, upload.none(),
             skills, 
             cv_req, 
             deadline, 
-            status } = req.body;
+            status 
+        } = req.body;
             
             
-            console.log(req.body);
+            // console.log(req.body);
             
             
             // TRIMMING AND NULLING IF EMPTY STRING
@@ -245,27 +248,29 @@ router.post("/update", isNotAuthReq, isEmployerAuth, getUserIcon, upload.none(),
             skills = skills ? skills.map(value => value.trim()) : null;
             deadline = deadline.trim() || null;
             
+            const job_fields = {
+                status: status,
+                title: job_title,
+                openings: openings,
+                description: description,
+                style: job_style,
+                address: address,
+                postcode: postcode,
+                min_pay: min_pay,
+                max_pay: max_pay,
+                cv_req: cv_req,
+                deadline: deadline,
+                start_date: start_date
+            }; 
+
+            console.log(job_fields);
             
-            // // ADD JOB
-            // const job_id = await Job.create(
-            //     pool,
-            //     user_id,
-            //     status,
-            //     job_title,
-            //     openings,
-            //     description,
-            //     job_style,
-            //     address,
-            //     postcode,
-            //     min_pay,
-            //     max_pay,
-            //     cv_req,
-            //     deadline,  
-            // );
+            // UPDATE JOB
+            const job_result = await Job.update(pool, job_id, job_fields);
             
             
-            // // ADD JOB TYPE
-            // const type_result = await Job.addTypes(pool, job_id, job_type);
+            // ADD JOB TYPE
+            const type_result = await Job.updateTypes(pool, job_id, job_type);
             
             // // ADD CUSTOM BENEFITS
             // const custom_benefit_ids = custom_benefits ? await Benefit.createCustom(pool, custom_benefits) : null; 
@@ -276,18 +281,18 @@ router.post("/update", isNotAuthReq, isEmployerAuth, getUserIcon, upload.none(),
             // const custom_benefits_result = custom_benefits ? await Job.addBenefits(pool, job_id, custom_benefit_ids) : null;                        
             
             
-            // // ADD QUESTIONS, RESPONSE TYPE, AND REQ
-            // let questions_obj = questions ? questions.map((question, index) => ({ // Create array of question object for model create.
-            //     question: question,
-            //     response_type: response_types[index],
-            //     is_req: question_reqs[index]
-            // })) : null;
+            // ADD QUESTIONS, RESPONSE TYPE, AND REQ
+            let questions_obj = questions ? questions.map((question, index) => ({ // Create array of question object for model create.
+                question: question,
+                response_type: response_types[index],
+                is_req: question_reqs[index]
+            })) : null;
             
-            // const questions_result = questions_obj ? await Job.createQuestions(pool, job_id, questions_obj) : null;
+            const questions_result = questions_obj ? await Job.updateQuestions(pool, job_id, questions_obj) : null;
             
             
-            // // ADD SKILL
-            // const skills_result = skills ? await Job.createSkills(pool, job_id, skills) : null;
+            // ADD SKILL
+            const skills_result = skills ? await Job.updateSkills(pool, job_id, skills) : null;
             
             
             res.status(200).json({ success: true, message: 'Job updated!'});
@@ -295,7 +300,7 @@ router.post("/update", isNotAuthReq, isEmployerAuth, getUserIcon, upload.none(),
         }
         catch(err){
 
-            console.error(error);
+            console.error(err);
             res.status(500).json({ success: false, message: 'An internal server error occurred' }); // 500 means internal server error
         }                                                                
 });
@@ -392,7 +397,8 @@ router.post("/create", isNotAuthReq, isEmployerAuth, getUserIcon, upload.none(),
                 min_pay,
                 max_pay,
                 cv_req,
-                deadline,  
+                deadline,
+                start_date  
             );
             
             
