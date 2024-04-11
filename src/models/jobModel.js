@@ -310,20 +310,7 @@ class Job {
 
 
 
-            let positions = types.map((type_id, index) => `($1, $${index + 2})`).join(", "); 
-            // Above, $1 is a constant so that doesn't get increased with each type.
-            // We are adding 2 indexes with every row added for type_id.
-
-            const query = `
-                INSERT INTO jobs_job_types (job_id, type_id)
-                VALUES ${positions}
-                RETURNING job_id, type_id;
-            `;
-
-            const params = [job_id].concat(types); // Joining arrays
-
-            
-            const result = await pool.query(query, params);
+            const result = await this.addTypes(pool, job_id, types);
 
             if (result){
 
@@ -413,7 +400,35 @@ class Job {
 
     }
 
+    // Update benefits attached to a job with new ones given.
+    static async updateBenefits (pool, job_id, benefits){
+        try{
 
+            // Delete the links between the job and benefis table
+            const delete_query = `
+                DELETE FROM job_benefits 
+                WHERE job_id = $1
+            `;
+
+            const delete_params = [job_id];
+
+            await pool.query(delete_query, delete_params);
+
+            // Insert new links
+
+            let result = await this.addBenefits(pool, job_id, benefits);
+            
+            if(result){
+                return result;
+            }else{
+                return false;
+            }
+
+        }
+        catch(err){
+            throw err;
+        }
+    }
 
     // ======================================JOB QUESTIONS=============================================================
 
@@ -615,27 +630,9 @@ class Job {
 
             await pool.query(delete_query, delete_params);
 
-            // Check if there are types to add
-            if (skills.length === 0) {
-                return "No skills provided";
-            }
-
-             // Reference help: CHATGPT 4
-            let positions = skills.map((skill, index) => `($1, $${index + 2})`).join(", "); 
-            // End reference
-            // Above, $1 is a constant so that doesn't get increased with each skill.
-            // We are adding 2 indexes with every row added for skill.
-
-            const query = `
-                INSERT INTO job_skills (job_id, name)
-                VALUES ${positions}
-                RETURNING id;
-            `;
-
-            const params = [job_id].concat(skills); // Joining arrays
 
             
-            const result = await pool.query(query, params);
+            const result = await this.createSkills(pool, job_id, skills);
 
             if (result){
 

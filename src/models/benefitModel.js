@@ -105,39 +105,28 @@ class Benefit{
 
 
     // Delete a custom benefit with it's benefit.id and job.id
-    static async deleteCustomByJobId(pool, job_id, benefit_id) {
+    static async deleteCustomByJob(pool, job_id) {
         try {
 
             // Delete from the job_benefits linking table
             const delete_link_query = `
-                DELETE FROM job_benefits 
-                USING benefits 
-                WHERE 
-                    job_benefits.job_id = $1 
-                    AND job_benefits.benefit_id = $2 
-                    AND benefits.id = job_benefits.benefit_id 
-                    AND benefits.is_custom = true
-                RETURNING job_benefits.benefit_id;
-            `;
+                DELETE FROM job_benefits
+                WHERE job_id = $1
+                AND benefit_id IN (SELECT id FROM benefits WHERE is_custom = true);
+            `; // Makes sure we are only deleting a custom job.
 
-            const delete_link_result = await pool.query(delete_link_query, [job_id, benefit_id]);
+                
+            const delete_link_result = await pool.query(delete_link_query, [job_id]);
 
-
-            if (delete_link_result.rows.length === 0) {
-                // No row was found
-                return false;
-            }
 
             // Delete benefit from table since no longer linked to job
             const benefit_query = `
-                DELETE FROM benefits 
-                WHERE 
-                    id = $1 
-                    AND is_custom = true 
-                RETURNING id;
+                DELETE FROM benefits
+                WHERE is_custom = true
+                AND id NOT IN (SELECT benefit_id FROM job_benefits);
             `;
 
-            const benefit_result = await pool.query(benefit_query, [benefit_id]);
+            const benefit_result = await pool.query(benefit_query);
 
             if (benefit_result.rows.length > 0){
                 return benefit_result.rows[0].id;
@@ -152,6 +141,28 @@ class Benefit{
         }
     }
 
+
+    static async updateCustom(pool, job_id, names){
+        try{
+
+            // Delete current customs links by a job_id
+            await this.deleteCustomByJob(pool, job_id);            
+
+            // Insert the new customs
+
+            let result = await this.createCustom(pool, names)
+
+            if(result){
+                return result;
+            }else{
+                return false;
+            }
+
+        }
+        catch(err){
+            throw err;
+        }
+    }
 
     // ============REMEMBER USER CAN ONLY MAKE 3 CUSTOM AND HAVE 5 BENEFITS ATTACHED TO A JOB=======================
 

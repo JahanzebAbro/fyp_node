@@ -263,7 +263,6 @@ router.post("/update", isNotAuthReq, isEmployerAuth, getUserIcon, upload.none(),
                 start_date: start_date
             }; 
 
-            console.log(job_fields);
             
             // UPDATE JOB
             const job_result = await Job.update(pool, job_id, job_fields);
@@ -272,13 +271,16 @@ router.post("/update", isNotAuthReq, isEmployerAuth, getUserIcon, upload.none(),
             // ADD JOB TYPE
             const type_result = await Job.updateTypes(pool, job_id, job_type);
             
-            // // ADD CUSTOM BENEFITS
-            // const custom_benefit_ids = custom_benefits ? await Benefit.createCustom(pool, custom_benefits) : null; 
+            console.log('Benefits:', benefits);
+            console.log('Custom Benefits:', custom_benefits);
+
+            // UPDATE CUSTOM BENEFITS
+            const custom_benefit_ids = custom_benefits ? await Benefit.updateCustom(pool, job_id, custom_benefits) : null; 
             
             
-            // // ADD BENEFITS 
-            // const benefits_result = benefits ? await Job.addBenefits(pool, job_id, benefits) : null;  
-            // const custom_benefits_result = custom_benefits ? await Job.addBenefits(pool, job_id, custom_benefit_ids) : null;                        
+            // ADD BENEFITS 
+            benefits = benefits.concat(custom_benefit_ids);
+            const benefits_result = benefits ? await Job.updateBenefits(pool, job_id, benefits) : null;  
             
             
             // ADD QUESTIONS, RESPONSE TYPE, AND REQ
@@ -410,8 +412,8 @@ router.post("/create", isNotAuthReq, isEmployerAuth, getUserIcon, upload.none(),
             
             
             // ADD BENEFITS 
+            benefits = benefits.concat(custom_benefit_ids);
             const benefits_result = benefits ? await Job.addBenefits(pool, job_id, benefits) : null;  
-            const custom_benefits_result = custom_benefits ? await Job.addBenefits(pool, job_id, custom_benefit_ids) : null;                        
             
             
             // ADD QUESTIONS, RESPONSE TYPE, AND REQ

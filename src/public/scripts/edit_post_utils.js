@@ -236,11 +236,12 @@ $(document).ready(function(){
         
         e.preventDefault(); // Prevent form submission
 
+        const job_id = $('input[name="job_id"]').val();
         
         const form = new FormData(this);
-        for (let [key, value] of form.entries()) {
-            console.log(`${key}: ${value}`);
-        }
+        // for (let [key, value] of form.entries()) {
+        //     console.log(`${key}: ${value}`);
+        // }
 
         
         // Clear any previous error messages
@@ -272,7 +273,7 @@ $(document).ready(function(){
             processData: false,
             success: function(response) {
                 console.log(response.message);
-                // window.location.href = "/user/job/postings"; // Redirect the user
+                window.location.href = `/user/job/postings/${job_id}`; // Redirect the user
             },
             error: function(response) {
 
