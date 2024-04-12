@@ -5,6 +5,7 @@ $(document).ready(function(){
     // DISPLAY
     $('.post_delete_btn').click(function(){
 
+
         $('.delete_post_modal').show();
         $('.modal_overlay').addClass('modal_overlay_active');
 
@@ -20,7 +21,7 @@ $(document).ready(function(){
     });
 
     // HIDE
-    $('.delete_post_btn').click(function(){
+    $('.modal_cancel_btn').click(function(){
 
         $('.delete_post_modal').hide();
         $('.modal_overlay').removeClass('modal_overlay_active');
@@ -41,6 +42,7 @@ $(document).ready(function(){
 
         
         const form = new FormData(this);
+
         // for (let [key, value] of form.entries()) {
         //     console.log(`${key}: ${value}`);
         // }

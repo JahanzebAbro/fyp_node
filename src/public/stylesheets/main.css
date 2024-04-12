@@ -62,6 +62,30 @@ button:hover {
     height: 50px;
 }
 
+/* =======================================SCROLLBAR=============================================== */
+  
+  body::-webkit-scrollbar {
+    width: var(--sb-size)
+  }
+  
+  body::-webkit-scrollbar-track {
+    background: var(--sb-track-color);
+    border-radius: 1px;
+  }
+  
+  body::-webkit-scrollbar-thumb {
+    background: var(--sb-thumb-color);
+    border-radius: 1px;
+    
+  }
+  
+  @supports not selector(::-webkit-scrollbar) {
+    body {
+      scrollbar-color: var(--sb-thumb-color)
+                       var(--sb-track-color);
+    }
+  }
+
 /* =======================================PROFILE PAGE============================================ */
 
 .seeker-details {
@@ -552,4 +576,29 @@ table .hidden_row {
 
 .delete_confirm_btn {
     background-color: var(--red);
+}
+
+
+/* ==================================================MODAL POST DELETE=============================================== */
+
+
+.create_application_modal {
+    /* width: 90%; */
+    min-width: 50%;
+    max-height: 80%;
+    padding: 20px;
+     /* max-width: 70%; */
+     overflow-y: auto;
+}
+
+.create_application_btn {
+    border: 2px solid var(--green);
+    background-color: var(--green);
+}
+
+.create_application_modal textarea {
+    width: 100%;
+    box-sizing: border-box; 
+    padding: 10px;       
+    margin-bottom: 10px;   
 }

@@ -4,6 +4,7 @@ CREATE TYPE user_type_enum AS ENUM ('seeker', 'employer');
 CREATE TYPE job_style_enum AS ENUM ('Remote', 'In-person', 'Hybrid'); --Style is a SINGLE choice option
 CREATE TYPE response_type_enum as ENUM('text','num','bool');
 CREATE TYPE job_status_enum as ENUM('open','hidden','closed');
+CREATE TYPE application_status_enum AS ENUM('accepted','declined','reviewing','pending');
 
 CREATE TABLE IF NOT EXISTS users(
     id BIGSERIAL PRIMARY KEY,
@@ -68,6 +69,18 @@ CREATE TABLE IF NOT EXISTS jobs (
 );
 
 
+CREATE TABLE IF NOT EXISTS applications (
+    id BIGSERIAL PRIMARY KEY,
+    seeker_id BIGINT NOT NULL,
+    job_id BIGINT NOT NULL,
+    status application_status_enum DEFAULT 'pending' NOT NULL,
+    ct_email VARCHAR(100),
+    cv_file TEXT DEFAULT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE,
+    FOREIGN KEY (seeker_id) REFERENCES seekers(user_id) ON DELETE CASCADE
+);
+
 -- =======================================JOB TYPES========================================================
 
 
@@ -102,14 +115,14 @@ CREATE TABLE IF NOT EXISTS job_questions (
 );
 
 -- TO STORE ALL RESPONSES FROM SEEKERS TO JOB QUESTIONS 
--- CREATE TABLE IF NOT EXISTS question_responses (
---     id SERIAL PRIMARY KEY,
---     seeker_id BIGINT NOT NULL,  
---     question_id BIGINT NOT NULL, 
---     response TEXT NOT NULL,   
---     FOREIGN KEY (seeker_id) REFERENCES seeker(user_id) ON DELETE CASCADE,
---     FOREIGN KEY (question_id) REFERENCES job_questions(id) ON DELETE CASCADE
--- );
+CREATE TABLE IF NOT EXISTS responses (
+    id SERIAL PRIMARY KEY,
+    application_id BIGINT NOT NULL,  
+    question_id BIGINT NOT NULL, 
+    response VARCHAR(1000) DEFAULT NULL,   
+    FOREIGN KEY (application_id) REFERENCES applications(id) ON DELETE CASCADE,
+    FOREIGN KEY (question_id) REFERENCES job_questions(id) ON DELETE CASCADE
+);
 
 
 -- =======================================SKILLS=======================================================

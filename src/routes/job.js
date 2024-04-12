@@ -22,7 +22,10 @@ const { validateJobStatus,
         validateSkills,
         validateCVReq } = require('../validate_job');
 const { validateAddress,
-        validatePostcode } = require('../validate_utils');
+        validatePostcode,
+        validateEmail } = require('../validate_utils');
+const { validateAttachCV,
+        validateResponses } = require('../validate_application');
 
 
 // JOB SEARCH
@@ -39,11 +42,12 @@ router.get("/search", isNotAuthReq, isSeekerAuth, getUserIcon, async (req, res) 
             const job_id = job.id;
             const user_id = job.user_id;
 
-            const [employer, job_types, job_benefits, job_skills] = await Promise.all([ // Grabbing job details
+            const [employer, job_types, job_benefits, job_skills, job_questions] = await Promise.all([ // Grabbing job details
                 Employer.getById(pool, user_id),
                 Job.getTypesByJob(pool, job_id),
                 Job.getBenefitsByJob(pool, job_id),
                 Job.getSkillsByJob(pool, job_id),
+                Job.getQuestionsByJob(pool, job_id)
             ]);
 
             // Formatting dates
@@ -59,7 +63,8 @@ router.get("/search", isNotAuthReq, isSeekerAuth, getUserIcon, async (req, res) 
                 employer,
                 job_types,
                 job_benefits,
-                job_skills
+                job_skills,
+                job_questions
             }; // return an array value of a complete combined job object
 
         }));
@@ -486,7 +491,10 @@ router.post("/create", isNotAuthReq, isEmployerAuth, getUserIcon, upload.none(),
             
             
             // ADD BENEFITS 
-            benefits = benefits.concat(custom_benefit_ids);
+            if(custom_benefit_ids){
+                benefits = benefits.concat(custom_benefit_ids);
+            }
+
             const benefits_result = benefits ? await Job.addBenefits(pool, job_id, benefits) : null;  
             
             
@@ -539,6 +547,18 @@ router.post("/delete", isNotAuthReq, isEmployerAuth, getUserIcon, upload.none(),
     }
 
 
+
+});
+
+
+router.post("/application/create", isNotAuthReq, isSeekerAuth, getUserIcon, upload.none(),
+                                                                            validateAttachCV,
+                                                                            validateEmail,
+                                                                            validateResponses,
+                                                                            allErrorHandler, async (req, res) => {
+
+    console.log(req.body.responses);
+    // res.send('made it');
 
 });
 

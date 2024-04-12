@@ -1,5 +1,3 @@
-<h1>Jobs</h1>
-
 <table>
     <tr>
         <th>Company</th>
@@ -8,94 +6,206 @@
         <th>Type</th>
         <th>Salary Range</th>
         <th>
-            <div class="table_filter_icon">
-
-            </div>
+            <div class="table_filter_icon"></div>
         </th>
     </tr>
-    <tr id="job_row_1">
-        <td><%= employer.name || 'N/A'%></td>
-        <td><%= job.title || 'N/A'%></td>
-        <td><%= job.address || 'N/A'%></td>
-        <td><%= job_types[0].name || 'N/A'%></td>
-        <td>£<%= job.min_pay || 'N/A'%> - £<%= job.max_pay || 'N/A' %> / per month</td>
-        <td><div class="table_expand_icon" onclick="showHideRow('hidden_row1')"></div></td>
-    </tr>
-    <tr id="hidden_row1" class="hidden_row">
-        <td></td>
-        <td  colspan="5" >
-            <div class="hidden_row_title">Job Description:</div>
+    <% postings.forEach(function(post, index) { %>
+        <tr id="job_row_<%= index %>">
+            <td><%= post.employer.name || 'N/A' %></td>
+            <td><%= post.title || 'N/A' %></td>
+            <td><%= post.address || 'N/A' %></td>
 
-                <div class="hidden_row_content"><%= job.description || 'N/A'%></div>
+            <td>
+                <% if (post.job_types) { %>
+                    <div>
+                        <%= post.job_types.map(function(type) { 
+                            return type.name; 
+                        }).join(", ") %>
+                    </div>
+                <% } else { %>
+                    <div>N/A</div>
+                <% } %>
+            </td>
 
-            <div class="hidden_row_title">Openings:</div>
-                
-                <div class="hidden_row_content"><%= job.openings|| 'N/A'%> vacant</div>
+            <td>£<%= post.min_pay || 'N/A'%> - £<%= post.max_pay || 'N/A' %> (per month)</td>
+            <td><div class="table_expand_icon" onclick="toggleRow('hidden_row_<%= index %>')"></div></td>
+        </tr>
+        <tr id="hidden_row_<%= index %>" class="hidden_row">
+            <td></td>
+            <td colspan="5">
+                <div class="hidden_row_flex_box">
+                    <div class="hidden_row_info">
 
-            <div class="hidden_row_title">Working Environment:</div>
+                        <div class="hidden_row_title">Job Description:</div>
+                            <div class="hidden_row_content"><%= post.description || 'N/A'%></div>
 
-                <div class="hidden_row_content"><%= job.style || 'N/A'%></div>
+                        <div class="hidden_row_title">Start Date:</div>
+                            <div class="hidden_row_content"><%= post.start_date || 'N/A' %></div>
 
-            <div class="hidden_row_title">Address:</div>
+                        <div class="hidden_row_title">Salary range:</div>
+                            <div class="hidden_row_content">£<%= post.min_pay || 'N/A'%> - £<%= post.max_pay || 'N/A' %> (per month)</div>
 
-                <div class="hidden_row_content"><%= job.address || 'N/A' %></div>
 
-            <div class="hidden_row_title">Postcode:</div>
-            
-                <div class="hidden_row_content"><%= job.postcode || 'N/A' %></div>
-                
-            <div class="hidden_row_title">Contact:</div>
-                <div>Email: <%= employer.ct_email || 'N/A' %></div>
-                <div class="hidden_row_content">Phone: <%= employer.ct_phone || 'N/A' %></div>
-            
-        </td>
-    </tr>
+                        <div class="hidden_row_title">Working Environment:</div>
+                            <div class="hidden_row_content"><%= post.style || 'N/A'%></div>
 
+                        <div class="hidden_row_title">Address:</div>
+                            <div class="hidden_row_content"><%= post.address || 'N/A' %></div>
+
+                        <div class="hidden_row_title">Postcode:</div>
+                            <div class="hidden_row_content"><%= post.postcode || 'N/A' %></div>
+                            
+
+                        <div class="hidden_row_title">Benefits:</div>
+                            <% if (post.job_benefits.length > 0) { %>
+                                <div class="hidden_row_content">
+                                    <%= post.job_benefits.map(function(benefit) { 
+                                        return benefit.name; 
+                                    }).join(", ") %>
+                                </div>
+                            <% } else { %>
+                                <div class="hidden_row_content">None</div>
+                            <% } %>
+
+                            
+                        <div class="hidden_row_title">Skills:</div>
+                        <% if (post.job_skills.length > 0) { %>
+                            <div class="hidden_row_content">
+                                <%= post.job_skills.map(function(skill) { 
+                                    return skill.name; 
+                                }).join(", ") %>
+                            </div>
+                        <% } else { %>
+                            <div class="hidden_row_content">None</div>
+                        <% } %>
+
+
+                    </div>
+                    <div class="table_hidden_right_side">
+                        <div class="table_hidden_btn">
+                            <a href="#">
+                                <button type="button" class="table_hidden_save_btn">Save</button>
+                            </a>
+                            <a href="#" >
+                                <button type="button" class="table_hidden_apply_btn">Apply</button>
+                            </a>
+
+                            
+                        </div>
+                        
+                        <div class="hidden_row_content">
+                            <a href="/user/job/employer/<%= post.employer.user_id %>" >
+                                <button type="button" class="table_hidden_employer_btn">View Employer</button>
+                            </a>    
+                        </div>
+                            <div class="hidden_row_title">Industry:</div>
+                        <div class="hidden_row_content"><%= post.employer.industry || 'N/A' %></div>
+
+                        <div class="hidden_row_title">Contact:</div>
+                        <div>Email: <%= post.employer.ct_email || 'N/A' %></div>
+                        <div class="hidden_row_content">Phone: <%= post.employer.ct_phone || 'N/A' %></div>
+
+                        <div class="hidden_row_title">Openings:</div>
+                        <div class="hidden_row_content"><%= post.openings|| 'N/A'%> vacant</div>
+
+                        <div class="hidden_row_title">Deadline:</div>
+                        <div class="hidden_row_content"><%= post.deadline || 'N/A' %></div>
+                    </div>
+
+
+
+
+                    
+
+
+
+                    <div class="modal create_application_modal">
+                        <form class="job_application_form">
+
+                            <div class="modal_header create_application_header">
+                                <span class="modal_header_title">Job Application</span>
+                                <button type="button" class="modal_header_close">&times;</button>
+                            </div>
+
+                            <div class="modal_body create_application_body">
+                                <p>Applying for <%= post.title %> position at <%= post.employer.name %>?</p>
+
+                                <label>Contact email:</label>
+                                <input type="text" name="ct_email"><br>
+                                <span class="ct_email_err" style="color: red;"></span><br>
+
+                                <label>Attach CV?</label>
+                                <input type="checkbox" name="attach_cv"><br>
+                                <% if(post.cv_req) {%>
+                                    <span>(Note: A CV is required for this job)</span><br>
+                                <%}%>
+                                <span class="attach_cv_err" style="color: red;"></span>
+
+                                <div class="application_questions">
+                                <% if(post.job_questions.length > 0) {%>
+                                    <img src="/img/line.png" style="width: 100%; height: 50px;"><br>
+                                    <% post.job_questions.forEach(function(question, index) { %>
+                                        <span style="text-decoration: underline;">Question <%= index + 1%></span>
+                                        <span><%= question.is_req ? '*' : '' %></span><br>
+                                        <div>
+                                            <%= question.question %><br>
+    
+                                            <% if(question.response_type === 'text'){ %>
+                                                <textarea name="response_<%= index + 1%>" rows="10" maxlength="1000"></textarea><br>
+                                            <% } %>
+
+                                            <% if(question.response_type === 'bool'){ %>
+                                                <input type="radio" name="response_<%= index + 1%>" value="true">
+                                                <label>Yes</label>
+                                                <input type="radio" name="response_<%= index + 1%>" value="false" checked>
+                                                <label>No</label><br>
+                                            <% } %>
+
+                                            <% if(question.response_type === 'num'){ %>
+                                                <input type="number" name="response_<%= index + 1%>"><br>
+                                            <% } %>
+                                        </div>
+                                    <% }); %>
+
+                                    <span class="response_err" style="color: red;"></span><br>
+                                <%}%>
+                                </div><br>
+
+                                <input type="hidden" name="job_id" value="<%= post.id %>">
+                                <input type="hidden" name="cv_req" value="<%= post.cv_req %>">
+                                <input type="hidden" name="questions" value="<%= JSON.stringify(post.job_questions) %>">
+
+                                <div>
+                                    <button type="button" class="modal_cancel_btn">Cancel</button>
+                                    <button type="submit" class="create_application_btn">Apply</button>
+                                </div>
+                            </div>
+                            
+                        </form>
+
+                    </div>
+                    <div class="modal_overlay"></div>
+
+
+
+
+
+
+
+
+                </div>
+            </td>
+        </tr>
+    <% }) %>
 </table>
 
 
+
 <script type="text/javascript"> 
-    function showHideRow(row) { 
+    function toggleRow(row) { 
+        $(".hidden_row").not("#" + row).hide();
         $("#" + row).toggle(); 
     } 
-</script> 
+</script>
 
-
-<style>
-    table {
-      font-family: 'Jost';
-      font-weight: 400;
-      border-collapse: collapse;
-      border: 1px solid #FFF2DF;
-      background-color: #FEFAE0;
-      width: 100%;
-    }
-    
-    th {
-        background-color: #FEFAE0;
-        font-weight: 500;
-    }
-
-    td, th {
-      
-      text-align: left;
-      padding: 8px;
-    }
-    
-    tr:nth-child(even) {
-      background-color: #FDF6C7;
-    }
-
-    table .hidden_row { 
-            display: none; 
-    } 
-
-    .hidden_row_title{
-        margin-bottom: 5px;
-        text-decoration: underline;
-    }
-    
-    .hidden_row_content{
-        margin-bottom: 10px;
-    }
-</style>
+<script type="module" src="/scripts/jobs_table_utils.js"></script>

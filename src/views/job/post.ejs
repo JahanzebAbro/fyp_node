@@ -173,13 +173,13 @@
     <form id="job_delete_form">
         <div class="modal_header delete_post_header">
             <span class="modal_header_title">Delete Job Post</span>
-            <button class="modal_header_close">&times;</button>
+            <button type="button" class="modal_header_close">&times;</button>
         </div>
         <div class="modal_body delete_post_body">
             <p>Are you sure you want to delete this job?</p>
             <input type="hidden" name="job_id" value="<%= post.id %>">
-            <div class="delete_post_btn">
-                <button type="button" class="delete_cancel_btn">Cancel</button>
+            <div>
+                <button type="button" class="modal_cancel_btn">Cancel</button>
                 <button type="submit" class="delete_confirm_btn">Confirm</button>
             </div>
         </div>
