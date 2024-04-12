@@ -579,7 +579,7 @@ table .hidden_row {
 }
 
 
-/* ==================================================MODAL POST DELETE=============================================== */
+/* ==================================================MODAL CREATE APPLICATION=============================================== */
 
 
 .create_application_modal {
@@ -591,9 +591,14 @@ table .hidden_row {
      overflow-y: auto;
 }
 
-.create_application_btn {
+.create_application_btn, .table_hidden_applied_btn {
     border: 2px solid var(--green);
     background-color: var(--green);
+}
+
+.table_hidden_applied_btn {
+    cursor: not-allowed;  
+    pointer-events: none;
 }
 
 .create_application_modal textarea {

@@ -5,7 +5,10 @@ const multer = require('multer');
 const upload = multer(); // To help parse form in req.body
 const Job = require('../models/jobModel');
 const Employer = require('../models/employerModel');
+const Seeker = require('../models/seekerModel');
 const Benefit = require('../models/benefitModel');
+const Application = require('../models/applicationModel');
+const Response = require('../models/responseModel');
 const { isNotAuthReq, getUserIcon, allErrorHandler, formatDateForDisplay, isEmployerAuth, isSeekerAuth, formatDateForEdit, findIndustryName} = require('../utils');
 const { validateJobStatus,
         validateJobTitle,
@@ -33,6 +36,7 @@ router.get("/search", isNotAuthReq, isSeekerAuth, getUserIcon, async (req, res) 
     
     try{
 
+        const seeker_id = req.user.id;
         const all_jobs = await Job.getAllForView(pool);
         // const user_jobs = await Job.getJobsByUser(pool, user_id);
         // const employer = await Employer.getById(pool, user_id);
@@ -42,12 +46,13 @@ router.get("/search", isNotAuthReq, isSeekerAuth, getUserIcon, async (req, res) 
             const job_id = job.id;
             const user_id = job.user_id;
 
-            const [employer, job_types, job_benefits, job_skills, job_questions] = await Promise.all([ // Grabbing job details
+            const [employer, job_types, job_benefits, job_skills, job_questions, has_applied] = await Promise.all([ // Grabbing job details
                 Employer.getById(pool, user_id),
                 Job.getTypesByJob(pool, job_id),
                 Job.getBenefitsByJob(pool, job_id),
                 Job.getSkillsByJob(pool, job_id),
-                Job.getQuestionsByJob(pool, job_id)
+                Job.getQuestionsByJob(pool, job_id),
+                Application.hasApplied(pool, seeker_id, job_id)
             ]);
 
             // Formatting dates
@@ -57,6 +62,7 @@ router.get("/search", isNotAuthReq, isSeekerAuth, getUserIcon, async (req, res) 
 
             // Format industry
             employer.industry = employer.industry ? findIndustryName(employer.industry) : employer.industry;
+ 
 
             return {
                 ...job,
@@ -64,7 +70,8 @@ router.get("/search", isNotAuthReq, isSeekerAuth, getUserIcon, async (req, res) 
                 job_types,
                 job_benefits,
                 job_skills,
-                job_questions
+                job_questions,
+                has_applied
             }; // return an array value of a complete combined job object
 
         }));
@@ -155,7 +162,7 @@ router.get("/postings", isNotAuthReq, isEmployerAuth, getUserIcon, async (req, r
 
 });
 
-// SINGLE JOB POST
+// VIEW JOB POST
 router.get("/postings/:job_id", isNotAuthReq, isEmployerAuth, getUserIcon, async (req, res) => {
 
 
@@ -398,7 +405,7 @@ router.get("/create", isNotAuthReq, isEmployerAuth, getUserIcon, async (req, res
 });
 
 
-// CREATE SUBMISSION POINT 
+// JOB CREATION SUBMISSION POINT 
 router.post("/create", isNotAuthReq, isEmployerAuth, getUserIcon, upload.none(),
                                                                 validateJobTitle,
                                                                 validateOpenings,
@@ -551,15 +558,47 @@ router.post("/delete", isNotAuthReq, isEmployerAuth, getUserIcon, upload.none(),
 });
 
 
+// CREATE APPLICATION
 router.post("/application/create", isNotAuthReq, isSeekerAuth, getUserIcon, upload.none(),
                                                                             validateAttachCV,
                                                                             validateEmail,
                                                                             validateResponses,
                                                                             allErrorHandler, async (req, res) => {
 
-    console.log(req.body.responses);
-    // res.send('made it');
+    try{
+        
+        let {job_id, ct_email, cv_req, responses, attach_cv, questions} = req.body;
+        let cv_file = '';
+        const seeker_id = req.user.id;
+    
+        if(attach_cv){
+            const seeker = await Seeker.getById(pool, seeker_id);
+            cv_file = seeker.cv;
+        }
+        
+        // console.log(req.body);
 
+        questions = JSON.parse(questions);
+        const question_ids = questions.map(question => question.id); // Array of question ids 
+
+        const application_id = await Application.create(pool, seeker_id, job_id, ct_email, cv_file); 
+        const responses_result = await Response.create(pool, application_id, question_ids, responses); 
+
+
+        if(application_id){
+
+            res.status(200).json({ success: true, message: 'Application created!'});
+        }
+        else{
+            res.status(400).json({ success: false, message: 'An internal server error occurred' });
+        }
+
+    }
+    catch(err){
+        console.error(err);
+        res.status(500).json({ success: false, message: 'An internal server error occurred' }); // 500 means internal server error
+
+    }
 });
 
 module.exports = router;

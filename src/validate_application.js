@@ -18,7 +18,7 @@ exports.validateAttachCV = function(req, res, next){
         return next();
     }
 
-
+    req.body.attach_cv = attach_cv;
 
     next();
 }

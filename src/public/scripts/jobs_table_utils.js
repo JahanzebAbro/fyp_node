@@ -65,7 +65,7 @@ $(document).ready(function(){
             processData: false,
             success: function(response) {
                 console.log(response.message);
-                // window.location.href = `/user/job/applications`; // Redirect the user
+                jobApplied(); // Create applied button
             },
             error: function(response) {
 
@@ -91,3 +91,17 @@ $(document).ready(function(){
     });
 
 });
+
+
+function jobApplied(){
+
+    $('.table_hidden_apply_btn').text('Applied').removeClass('table_hidden_apply_btn').addClass('table_hidden_applied_btn'); 
+
+    $('.create_application_modal').hide();
+    $('.modal_overlay').removeClass('modal_overlay_active');
+
+    $('.attach_cv_err').text('');
+    $('.ct_email_err').text(''); 
+    $('.response_err').text('');
+
+}

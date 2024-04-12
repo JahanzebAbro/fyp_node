@@ -83,13 +83,16 @@
                     </div>
                     <div class="table_hidden_right_side">
                         <div class="table_hidden_btn">
-                            <a href="#">
-                                <button type="button" class="table_hidden_save_btn">Save</button>
-                            </a>
-                            <a href="#" >
-                                <button type="button" class="table_hidden_apply_btn">Apply</button>
-                            </a>
-
+                        
+                            <button type="button" class="table_hidden_save_btn">Save</button>
+                            
+                            <div class="row_apply_btn_container">
+                                <% if( post.has_applied) {%>
+                                    <button type="button" class="table_hidden_applied_btn">Applied</button>
+                                <% } else {%>
+                                    <button type="button" class="table_hidden_apply_btn">Apply</button>
+                                <% } %>
+                            </div>
                             
                         </div>
                         
@@ -151,18 +154,18 @@
                                             <%= question.question %><br>
     
                                             <% if(question.response_type === 'text'){ %>
-                                                <textarea name="response_<%= index + 1%>" rows="10" maxlength="1000"></textarea><br>
+                                                <textarea name="response_<%= index + 1%>" rows="10" maxlength="1000"></textarea><br><br>
                                             <% } %>
 
                                             <% if(question.response_type === 'bool'){ %>
                                                 <input type="radio" name="response_<%= index + 1%>" value="true">
                                                 <label>Yes</label>
                                                 <input type="radio" name="response_<%= index + 1%>" value="false" checked>
-                                                <label>No</label><br>
+                                                <label>No</label><br><br>
                                             <% } %>
 
                                             <% if(question.response_type === 'num'){ %>
-                                                <input type="number" name="response_<%= index + 1%>"><br>
+                                                <input type="number" name="response_<%= index + 1%>"><br><br>
                                             <% } %>
                                         </div>
                                     <% }); %>

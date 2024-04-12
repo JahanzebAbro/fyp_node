@@ -56,8 +56,8 @@ class Application {
             const params =
             [seeker_id];
 
-            let query_result = await pool.query(query, params);
-            let applications = query_result.rows[0];
+            let result = await pool.query(query, params);
+            let applications = result.rows[0];
 
             if (applications) {
                 // Returns array of applications
@@ -120,6 +120,32 @@ class Application {
     }
 
 
+    // Check to see if a seeker has applied to a job
+    static async hasApplied(pool, seeker_id, job_id){
+
+        try{
+
+            const query = 
+            `SELECT id FROM applications WHERE seeker_id = ($1) AND job_id = ($2)`;
+            
+            const params =
+            [seeker_id, job_id];
+
+            let result = await pool.query(query, params);
+
+            if(result.rows.length > 0){
+                return true;
+            }
+            else{
+                return false;
+            }
+
+        }catch(err){
+
+            throw err;
+        }
+
+    }
 
     
 }
