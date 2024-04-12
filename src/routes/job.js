@@ -6,7 +6,7 @@ const upload = multer(); // To help parse form in req.body
 const Job = require('../models/jobModel');
 const Employer = require('../models/employerModel');
 const Benefit = require('../models/benefitModel');
-const { isNotAuthReq, getUserIcon, allErrorHandler, formatDateForDisplay, isEmployerAuth, formatDateForEdit} = require('../utils');
+const { isNotAuthReq, getUserIcon, allErrorHandler, formatDateForDisplay, isEmployerAuth, isSeekerAuth, formatDateForEdit, findIndustryName} = require('../utils');
 const { validateJobStatus,
         validateJobTitle,
         validateOpenings,
@@ -24,6 +24,81 @@ const { validateJobStatus,
 const { validateAddress,
         validatePostcode } = require('../validate_utils');
 
+
+// JOB SEARCH
+router.get("/search", isNotAuthReq, isSeekerAuth, getUserIcon, async (req, res) => {
+    
+    try{
+
+        const all_jobs = await Job.getAllForView(pool);
+        // const user_jobs = await Job.getJobsByUser(pool, user_id);
+        // const employer = await Employer.getById(pool, user_id);
+
+        const postings = await Promise.all(all_jobs.map(async function(job){ 
+
+            const job_id = job.id;
+            const user_id = job.user_id;
+
+            const [employer, job_types, job_benefits, job_skills] = await Promise.all([ // Grabbing job details
+                Employer.getById(pool, user_id),
+                Job.getTypesByJob(pool, job_id),
+                Job.getBenefitsByJob(pool, job_id),
+                Job.getSkillsByJob(pool, job_id),
+            ]);
+
+            // Formatting dates
+            job.created_at = job.created_at ? formatDateForDisplay(job.created_at) : job.created_at;
+            job.start_date = job.start_date ? formatDateForDisplay(job.start_date) : job.start_date;
+            job.deadline = job.deadline ? formatDateForDisplay(job.deadline): job.deadline;
+
+            // Format industry
+            employer.industry = employer.industry ? findIndustryName(employer.industry) : employer.industry;
+
+            return {
+                ...job,
+                employer,
+                job_types,
+                job_benefits,
+                job_skills
+            }; // return an array value of a complete combined job object
+
+        }));
+
+        res.render("job/job_search", { postings: postings });
+
+            
+    }
+    catch(err){
+
+        console.error(err);
+        res.status(500).send("Internal Server Error");
+    }
+
+
+});
+
+// JOB EMPLOYER INFO
+router.get("/employer/:user_id", isNotAuthReq, isSeekerAuth, getUserIcon, async (req, res) => {
+    
+    try{
+
+        const user_id = req.params.user_id;
+        const employer = await Employer.getById(pool, user_id);
+        
+        employer.industry = employer.industry ? findIndustryName(employer.industry) : employer.industry;
+
+        res.render("job/employer_view", { profile: employer });
+
+            
+    }
+    catch(err){
+
+        console.error(err);
+        res.status(500).send("Internal Server Error");
+    }
+
+
+});
 
 // JOB POSTINGS
 router.get("/postings", isNotAuthReq, isEmployerAuth, getUserIcon, async (req, res) => {

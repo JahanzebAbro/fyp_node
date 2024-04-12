@@ -96,6 +96,39 @@ class Job {
     }
 
 
+    // Retrieve all jobs that are open
+    static async getAllForView(pool){
+        try {
+            const query = `
+                SELECT * FROM jobs WHERE status='open';
+            `;
+            
+            const result = await pool.query(query);
+
+            // Returns array of Jobs
+            return result.rows.map(job => new Job(
+                job.id,
+                job.user_id,
+                job.status,
+                job.title,
+                job.openings,
+                job.description,
+                job.style,
+                job.address,
+                job.postcode,
+                job.min_pay,
+                job.max_pay,
+                job.cv_req,
+                job.deadline,
+                job.start_date,
+                job.created_at
+            ));
+        } catch(err) {
+            throw err;
+        }
+    }
+
+
     // Retrieve all jobs for a user id
     static async getJobsByUser(pool, user_id) {
         try {

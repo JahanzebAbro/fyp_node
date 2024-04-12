@@ -238,7 +238,18 @@ exports.formatDateForEdit = function(date_string){
 // Only allow employer users
 exports.isEmployerAuth = function(req, res, next){
 
-    if(req.user.user_type === 'employer'){ // Seeker cannot look at postings.
+    if(req.user.user_type === 'employer'){ 
+        next();
+    }
+    else{
+        res.status(401).render("401", { url: req.originalUrl });
+    }
+}
+
+// Only allow seeker users
+exports.isSeekerAuth = function(req, res, next){
+
+    if(req.user.user_type === 'seeker'){ 
         next();
     }
     else{

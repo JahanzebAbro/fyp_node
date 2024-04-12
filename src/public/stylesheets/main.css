@@ -320,7 +320,7 @@ button:hover {
 }
 
 
-/* ===================================JOB TABLE======================================= */
+/* ===================================JOB/POSTINGS TABLE======================================= */
 
 .table_filter_icon{
     margin: auto;
@@ -393,6 +393,7 @@ table .hidden_row {
     text-decoration: underline;
 }
 
+
 .hidden_row_info{
     margin-right: 10%;
 }
@@ -402,21 +403,29 @@ table .hidden_row {
 }
 
 .table_hidden_btn {
-    margin-right: 20px;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     display: flex;
+    column-gap: 10px;
 }
 
 .table_hidden_btn button {
     padding: 5px 20px;
-    margin-right: 10px;
-    
+    margin-right: 0px;
 }
 
-.table_hidden_edit_btn {
+.table_hidden_edit_btn, .table_hidden_save_btn {
     border: 2px solid var(--table_edit);
     background: var(--table_edit);
     color: #ffffff;
+}
+
+.table_hidden_right_side {
+    margin-right: 20px;
+}
+
+
+.table_hidden_employer_btn {
+    width: 100%;
 }
 
 .table_hidden_edit_btn:hover, .table_hidden_view_btn:hover {
