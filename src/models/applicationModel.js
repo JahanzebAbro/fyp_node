@@ -147,6 +147,33 @@ class Application {
 
     }
 
+
+    static async changeStatus(pool, application_id, new_status){
+
+        try{
+
+            const query = `
+                UPDATE applications
+                SET status = $1
+                WHERE id = $2
+                RETURNING id;
+            `;
+
+            const params = [new_status, application_id];
+
+            const result = await pool.query(query, params);
+
+            if (result.rows.length > 0) {
+
+                return result.rows[0]; 
+            }
+
+        }
+        catch(err){
+            throw err;
+        }
+
+    }
     
 }
 

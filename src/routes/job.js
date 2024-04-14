@@ -743,4 +743,26 @@ router.get("/applicants/profile/:user_id", isNotAuthReq, isEmployerAuth, getUser
 
 });
 
+
+router.post("/applicants/status", isNotAuthReq, isEmployerAuth, getUserIcon, upload.none(), async (req, res) => {
+
+    try{
+
+        const { application_id, new_status } = req.body;
+
+        const result = await Application.changeStatus(pool, application_id, new_status);
+
+        if(result){
+            return res.json({ success: true, message: 'Status updated!'});
+        }
+
+    }
+    catch(err){
+        console.error(err);
+        return res.status(500).json({ success: false, message: 'An internal server error occurred' }); // 500 means internal server error
+    }
+
+
+});
+
 module.exports = router;

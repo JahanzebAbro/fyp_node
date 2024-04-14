@@ -84,13 +84,13 @@
                                         <button type="button" class="table_hidden_review_btn">Review</button>
                                     </a>
                                     <div class="dropdown_content">
-                                        <div class="dropdown_content_item" id="accept">Accept 
+                                        <div class="dropdown_content_item" data-application_id="<%= applicant.application.id %>" id="accepted">Accept 
                                             <img src="/img/check.png">
                                         </div>
-                                        <div class="dropdown_content_item" id="decline">Decline 
+                                        <div class="dropdown_content_item" data-application_id="<%= applicant.application.id %>" id="declined">Decline 
                                             <img src="/img/cross.png">
                                         </div>
-                                        <div class="dropdown_content_item" id="considering">Considering 
+                                        <div class="dropdown_content_item" data-application_id="<%= applicant.application.id %>" id="reviewing">Reviewing 
                                             <img src="/img/question_circle.png">
                                         </div>
                                     </div>
@@ -116,3 +116,6 @@
         $("#" + row).toggle(); 
     } 
 </script> 
+
+
+<script type="module" src="/scripts/applicants_utils.js"></script>
