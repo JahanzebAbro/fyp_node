@@ -1,0 +1,91 @@
+<%- include('../partials/employer_navbar.ejs') %>
+
+<div class="page_title">
+    <img src="/img/line.png" class="page_title_line">
+    <span class="page_title_text">PROFILE</span>
+</div>
+
+
+<div class="seeker-details">
+                
+
+    <div class="profile_info_section">
+
+        <p class="f_name"><strong>First Name</strong><br>
+            <span id="f_name_val"><%= profile.f_name || 'None' %></span><br>
+        </p>
+        
+        <p class="l_name"><strong>Last Name</strong><br>
+            <span id="l_name_val"><%= profile.l_name || 'None' %></span><br>
+        </p>
+
+        <p class="bio"><strong>Bio</strong><br>
+            <span id="bio_val"><%= profile.bio || 'None' %></span><br>
+        </p>
+
+        <p class="gender"><strong>Gender</strong><br>
+            <span id="gender_val"><%= profile.gender || 'None' %></span><br> 
+        </p>
+
+        <p class="d_o_b"><strong>Date of Birth</strong><br>
+            <span id="d_o_b_val"><%= profile.d_o_b || 'None' %></span><br> 
+        </p>
+
+        
+
+        <!-- EXTERNAL LINK FOR CV -->
+        <% if (profile.cv) { %>
+            <p class="cv">
+                <strong>CV</strong><br>
+                <span id="cv_val">
+                    <a href="/uploads/<%= profile.cv %>" target="_blank" rel="noopener noreferrer"><%= profile.cv %></a>
+                </span>
+            </p>
+        <% } else { %>
+            <p class="cv"><strong>CV</strong><br>None</p>
+        <% } %>
+
+
+        <p class="address"><strong>Address</strong><br>
+            <span id="address_val"><%= profile.address || 'None' %></span><br>
+        </p>
+
+        <p class="postcode"><strong>Postcode</strong><br>
+            <span id="postcode_val"><%= profile.postcode || 'None' %></span><br>
+        </p>
+
+        <p class="ct_phone"><strong>Phone</strong><br>
+            <span id="ct_phone_val"><%= profile.ct_phone || 'None' %></span><br>
+        </p>
+
+        <p class="ct_email"><strong>Email</strong><br>
+            <span id="ct_email_val"><%= profile.ct_email || 'None' %></span><br>
+        </p>
+
+        <p class="industry"><strong>Industry</strong><br>
+            <span id="industry_val"><%= profile.industry || 'None' %></span>
+        </p>
+
+        <p class="industry"><strong>Industry</strong><br>
+            <span id="industry_val"><%= profile.work_status ? 'Ready to Work' : 'Not Ready to Work' %></span>
+        </p>
+
+    </div>
+
+
+    <div class="profile_picture_section">
+        <!-- DISPLAYING PROFILE PICTURE -->
+        <% if (profile.profile_pic) { %>
+            <div class="profile_pic_container">
+                <img id="profile_pic_val" src="/uploads/<%= profile.profile_pic %>" alt="Profile Picture">
+            </div>
+        <% } else { %>
+            <div class="profile_pic_container">
+                <img id="profile_pic_val" src="/img/no_profile_pic.png" alt="Profile Picture">
+            </div>
+        <% } %>
+
+    </div>
+    
+    
+</div>    

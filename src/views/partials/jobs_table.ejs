@@ -86,13 +86,16 @@
                         
                             <button type="button" class="table_hidden_save_btn">Save</button>
                             
-                            <div class="row_apply_btn_container">
-                                <% if( post.has_applied) {%>
-                                    <button type="button" class="table_hidden_applied_btn">Applied</button>
-                                <% } else {%>
+                
+                            <% if( post.has_applied) {%>
+                                <button type="button" class="table_hidden_applied_btn">Applied</button>
+                            <% } else {%>
+                                <% if (!locals.profile) { %>
+                                    <button onclick="profilePrompt()">Apply</button>
+                                <% } else { %>
                                     <button type="button" class="table_hidden_apply_btn">Apply</button>
                                 <% } %>
-                            </div>
+                            <% } %>
                             
                         </div>
                         
@@ -134,7 +137,7 @@
                                 <p>Applying for <%= post.title %> position at <%= post.employer.name %>?</p>
 
                                 <label>Contact email:</label>
-                                <input type="text" name="ct_email"><br>
+                                <input type="text" name="ct_email" required><br>
                                 <span class="ct_email_err" style="color: red;"></span><br>
 
                                 <label>Attach CV?</label>
@@ -209,6 +212,11 @@
         $(".hidden_row").not("#" + row).hide();
         $("#" + row).toggle(); 
     } 
+
+    function profilePrompt() {
+        alert("You need to set up your profile to apply. \n Click OK to go to the profile setup page.");
+        window.location.href = 'http://localhost:3000/user/profile'; // Replace with your actual profile setup URL
+    }
 </script>
 
 <script type="module" src="/scripts/jobs_table_utils.js"></script>

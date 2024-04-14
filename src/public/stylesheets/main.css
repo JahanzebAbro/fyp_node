@@ -45,6 +45,18 @@ button:hover {
     margin-left: 20px;
 }
 
+.page_err_text {
+    position: absolute;   
+    text-align: center;
+    font-family: 'Jost';
+    font-weight: 300;
+    font-size: 2em;
+    top: 50%;             
+    left: 50%;            
+    transform: translate(-50%, -50%); 
+    width: 100%;
+    text-align: center; 
+}
 .page_title {
     display: flex;
     align-items: center;
@@ -298,8 +310,36 @@ button:hover {
     display: block;
 }
 
+.dropdown_content_item {
+    font-family: 'Jost';
+    font-weight: 300;
+    display: flex;
+    font-size: 1.1em;
+    padding: 5px;
+    align-items: center; 
+    justify-content: space-between; 
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.dropdown_content_item img{
+    margin-left: 15px;
+    width: 25px; 
+    height: auto
+}
+
 .user_dropdown_trigger:hover + .dropdown_content {
     display: block;
+}
+
+.dropdown_trigger:hover + .dropdown_content {
+    display: block;
+}
+
+.dropdown_content_item:hover {
+    font-weight: 400;
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 
@@ -438,8 +478,8 @@ table .hidden_row {
 }
 
 .table_hidden_edit_btn, .table_hidden_save_btn {
-    border: 2px solid var(--table_edit);
-    background: var(--table_edit);
+    border: 2px solid var(--orange);
+    background: var(--orange);
     color: #ffffff;
 }
 
@@ -448,8 +488,13 @@ table .hidden_row {
 }
 
 
-.table_hidden_employer_btn {
+.table_hidden_employer_btn, .table_hidden_applicant_btn {
     width: 100%;
+}
+
+.table_hidden_applicant_btn {
+    background-color: var(--green);
+    border: 2px solid var(--green);
 }
 
 .table_hidden_edit_btn:hover, .table_hidden_view_btn:hover {
@@ -514,6 +559,7 @@ table .hidden_row {
 
 .modal{
     display: none;
+    min-width: 30%;
     position: fixed;
     top: 50%;
     left: 50%;
@@ -606,4 +652,35 @@ table .hidden_row {
     box-sizing: border-box; 
     padding: 10px;       
     margin-bottom: 10px;   
+}
+
+
+/* ==================================================APPLICANT TABLE=============================================== */
+
+.applicant_total{
+    font-family: 'Jost';
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+.applicant_status_btn {
+    width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px;
+}
+
+.applicant_status_btn button{
+    background-color: white;
+    color:black;
+    margin-top: 10px;
+}
+
+.applicant_status_btn button:hover{
+    background-color: black;
+    color: white;
+}
+
+.table_hidden_review_btn {
+    border: 2px solid var(--orange);
+    background-color: var(--orange);
 }

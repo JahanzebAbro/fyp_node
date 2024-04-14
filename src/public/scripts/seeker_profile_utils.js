@@ -155,7 +155,7 @@ $(document).ready(function(){
 
                 // Display errors
                 if (response.responseJSON.errors && Object.keys(response.responseJSON.errors).length > 0){
-                const errors = response.responseJSON.errors; 
+                    const errors = response.responseJSON.errors; 
                     if (errors) {
 
                         $('#f_name_err').text(errors.f_name || '');

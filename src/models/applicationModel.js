@@ -57,11 +57,11 @@ class Application {
             [seeker_id];
 
             let result = await pool.query(query, params);
-            let applications = result.rows[0];
+            let applications = result.rows;
 
             if (applications) {
                 // Returns array of applications
-                return applications.rows.map(application => new Application(
+                return applications.map(application => new Application(
                     application.id,
                     application.seeker_id,
                     application.job_id,
@@ -93,12 +93,12 @@ class Application {
             const params =
             [job_id];
 
-            let query_result = await pool.query(query, params);
-            let applications = query_result.rows[0];
+            let result = await pool.query(query, params);
 
-            if (applications) {
+
+            if (result) {
                 // Returns array of applications
-                return applications.rows.map(application => new Application(
+                return result.rows.map(application => new Application(
                     application.id,
                     application.seeker_id,
                     application.job_id,

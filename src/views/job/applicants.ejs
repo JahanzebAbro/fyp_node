@@ -1,0 +1,19 @@
+<!-- NAVBAR -->
+<%- include('../partials/employer_navbar.ejs') %>
+
+<div class="page_title">
+    <img src="/img/line.png" class="page_title_line">
+    <span class="page_title_text">JOB APPLICANTS</span>
+</div>
+
+<% if (applicants.length > 0) { %>
+
+    <%- include('../partials/applicants_table.ejs') %>
+
+<% } else { %>
+    <div class="page_err_text">
+        <img src="/img/leaf.png" style ="width: 100px; height: auto;"><br>
+        <span >No applicants here yet.</span><br>
+    </div>
+<% } %>
+

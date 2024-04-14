@@ -331,9 +331,10 @@ router.post("/profile/builder/seeker", isNotAuthReq, seekerUpload, validateFirst
 
         let cv_file = '';
         if (req.files['cv_file'] && req.files['cv_file'][0]){ // Check if a file was given
-            cv_file = req.files['cv'][0].filename;
+            cv_file = req.files['cv_file'][0].filename;
         }
         
+
         let profile_pic_file = '';
         if (req.files['profile_pic_file'] && req.files['profile_pic_file'][0]){ // Check if a file was given
             profile_pic_file = req.files['profile_pic_file'][0].filename;

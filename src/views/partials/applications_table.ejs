@@ -1,0 +1,174 @@
+<table>
+    <tr>
+        <th>Status</th>
+        <th>Date Applied</th>
+        <th>Company</th>
+        <th>Title</th>
+        <th>Address</th>
+        <th>
+            <div class="table_filter_icon"></div>
+        </th>
+    </tr>
+    <% applications.forEach(function(application, index) { %>
+        <tr id="job_row_<%= index %>">
+            <td><%= application.status || 'N/A' %></td>
+            <td><%= application.created_at || 'N/A' %></td>
+            <td><%= application.employer.name || 'N/A' %></td>
+            <td><%= application.job.title || 'N/A' %></td>
+            <td><%= application.job.address || 'N/A' %></td>
+
+            <td><div class="table_expand_icon" onclick="toggleRow('hidden_row_<%= index %>')"></div></td>
+        </tr>
+        <tr id="hidden_row_<%= index %>" class="hidden_row">
+            <td></td>
+            <td colspan="5">
+                <div class="hidden_row_flex_box">
+                    <div class="hidden_row_info">
+
+                        <div class="hidden_row_title">Job Description:</div>
+                            <div class="hidden_row_content"><%= application.job.description || 'N/A'%></div>
+
+                        <div class="hidden_row_title">Start Date:</div>
+                            <div class="hidden_row_content"><%= application.job.start_date || 'N/A' %></div>
+
+                        <div class="hidden_row_title">Salary range:</div>
+                            <div class="hidden_row_content">£<%= application.job.min_pay || 'N/A'%> - £<%= application.job.max_pay || 'N/A' %> (per month)</div>
+
+
+                        <div class="hidden_row_title">Job Type:</div>
+                        <div class="hidden_row_content">
+                            
+                                <% if (application.job_types.length > 0) { %>
+                                        <%= application.job_types.map(function(type) { 
+                                            return type.name; 
+                                        }).join(", ") %>
+                                <% } else { %>
+                                    <span>N/A</span>
+                                <% } %>
+                        </div>
+
+                        <div class="hidden_row_title">Working Environment:</div>
+                            <div class="hidden_row_content"><%= application.job.style || 'N/A'%></div>
+
+                        <div class="hidden_row_title">Address:</div>
+                            <div class="hidden_row_content"><%= application.job.address || 'N/A' %></div>
+
+                        <div class="hidden_row_title">Postcode:</div>
+                            <div class="hidden_row_content"><%= application.job.postcode || 'N/A' %></div>
+                            
+
+                        <div class="hidden_row_title">Benefits:</div>
+                            <% if (application.job_benefits.length > 0) { %>
+                                <div class="hidden_row_content">
+                                    <%= application.job_benefits.map(function(benefit) { 
+                                        return benefit.name; 
+                                    }).join(", ") %>
+                                </div>
+                            <% } else { %>
+                                <div class="hidden_row_content">None</div>
+                            <% } %>
+
+                            
+                        <div class="hidden_row_title">Skills:</div>
+                        <% if (application.job_skills.length > 0) { %>
+                            <div class="hidden_row_content">
+                                <%= application.job_skills.map(function(skill) { 
+                                    return skill.name; 
+                                }).join(", ") %>
+                            </div>
+                        <% } else { %>
+                            <div class="hidden_row_content">None</div>
+                        <% } %>
+
+
+                    </div>
+                    <div class="table_hidden_right_side">
+                        <div class="table_hidden_btn">
+                        
+                            <button type="button" >Clear</button>  
+                               
+                            <button type="button" class="table_hidden_submission_btn">Submission</button>
+                            
+                            
+                        </div>
+                        
+                        <div class="hidden_row_content">
+                            <a href="/user/job/employer/<%= application.employer.user_id %>" >
+                                <button type="button" class="table_hidden_employer_btn">View Employer</button>
+                            </a>    
+                        </div>
+                            <div class="hidden_row_title">Industry:</div>
+                        <div class="hidden_row_content"><%= application.employer.industry || 'N/A' %></div>
+
+                        <div class="hidden_row_title">Contact:</div>
+                        <div>Email: <%= application.employer.ct_email || 'N/A' %></div>
+                        <div class="hidden_row_content">Phone: <%= application.employer.ct_phone || 'N/A' %></div>
+
+                        <div class="hidden_row_title">Openings:</div>
+                        <div class="hidden_row_content"><%= application.job.openings|| 'N/A'%> vacant</div>
+
+                        <div class="hidden_row_title">Deadline:</div>
+                        <div class="hidden_row_content"><%= application.job.deadline || 'N/A' %></div>
+                    </div>
+
+
+
+                    <div class="modal submission_modal">
+
+                        <div class="modal_header submission_header">
+                            <span class="modal_header_title">Your Application</span>
+                            <button type="button" class="modal_header_close">&times;</button>
+                        </div>
+
+                        <div class="modal_body submission_body">
+                            <p>Applied for <strong><%= application.job.title %></strong> position at <strong><%= application.employer.name %></strong>.</p>
+
+                            <label>Contact email: </label>
+                            <span><%= application.ct_email || 'Not provided' %></span><br>
+
+                            <label>Attached CV: </label>
+                            <span><%= application.cv_file || 'Not provided' %></span><br>
+                    
+
+                            <div class="application_questions">
+                            <% if(application.job_questions.length > 0) {%>
+                                <img src="/img/line.png" style="width: 100%; height: 50px;"><br>
+                                <% application.job_questions.forEach(function(question, index) { %>
+                                    <div>
+                                        <span style="text-decoration: underline;"><%= question.question %></span><br>
+
+                                        <%= application.responses[index].response || 'Not provided'%><br>
+                                    </div><br>
+                                <% }); %>
+
+                                
+                            <%}%>
+                            </div><br>
+
+
+                            <div>
+                                <button type="button" class="modal_cancel_btn">Cancel</button>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal_overlay"></div>
+
+
+
+                </div>
+            </td>
+        </tr>
+    <% }) %>
+</table>
+
+
+
+<script type="text/javascript"> 
+    function toggleRow(row) { 
+        $(".hidden_row").not("#" + row).hide();
+        $("#" + row).toggle(); 
+    } 
+</script>
+
+<script type="module" src="/scripts/applications_utils.js"></script>

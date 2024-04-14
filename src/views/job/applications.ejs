@@ -1,0 +1,17 @@
+<!-- NAVBAR -->
+<%- include('../partials/seeker_navbar.ejs') %>
+
+<div class="page_title">
+    <img src="/img/line.png" class="page_title_line">
+    <span class="page_title_text">APPLICATIONS</span>
+</div>
+
+<% if (applications.length > 0) { %>
+<%- include('../partials/applications_table.ejs') %>
+<% } else { %>
+    <div class="page_err_text">
+        <img src="/img/leaf.png" style ="width: 100px; height: auto;"><br>
+        <span >No applications made yet.</span><br>
+        <span >Why don't you <a href="/user/job/search">search</a> to get started!</span><br> 
+    </div>
+<% } %>

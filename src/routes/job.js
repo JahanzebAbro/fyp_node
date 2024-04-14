@@ -9,7 +9,15 @@ const Seeker = require('../models/seekerModel');
 const Benefit = require('../models/benefitModel');
 const Application = require('../models/applicationModel');
 const Response = require('../models/responseModel');
-const { isNotAuthReq, getUserIcon, allErrorHandler, formatDateForDisplay, isEmployerAuth, isSeekerAuth, formatDateForEdit, findIndustryName} = require('../utils');
+const { isProfileBuilt, 
+        isNotAuthReq, 
+        getUserIcon, 
+        allErrorHandler, 
+        formatDateForDisplay, 
+        isEmployerAuth, 
+        isSeekerAuth, 
+        formatDateForEdit, 
+        findIndustryName} = require('../utils');
 const { validateJobStatus,
         validateJobTitle,
         validateOpenings,
@@ -32,14 +40,12 @@ const { validateAttachCV,
 
 
 // JOB SEARCH
-router.get("/search", isNotAuthReq, isSeekerAuth, getUserIcon, async (req, res) => {
+router.get("/search", isProfileBuilt, isNotAuthReq, isSeekerAuth, getUserIcon, async (req, res) => {
     
     try{
 
         const seeker_id = req.user.id;
         const all_jobs = await Job.getAllForView(pool);
-        // const user_jobs = await Job.getJobsByUser(pool, user_id);
-        // const employer = await Employer.getById(pool, user_id);
 
         const postings = await Promise.all(all_jobs.map(async function(job){ 
 
@@ -89,6 +95,7 @@ router.get("/search", isNotAuthReq, isSeekerAuth, getUserIcon, async (req, res) 
 
 });
 
+
 // JOB EMPLOYER INFO
 router.get("/employer/:user_id", isNotAuthReq, isSeekerAuth, getUserIcon, async (req, res) => {
     
@@ -111,6 +118,7 @@ router.get("/employer/:user_id", isNotAuthReq, isSeekerAuth, getUserIcon, async 
 
 
 });
+
 
 // JOB POSTINGS
 router.get("/postings", isNotAuthReq, isEmployerAuth, getUserIcon, async (req, res) => {
@@ -161,6 +169,7 @@ router.get("/postings", isNotAuthReq, isEmployerAuth, getUserIcon, async (req, r
 
 
 });
+
 
 // VIEW JOB POST
 router.get("/postings/:job_id", isNotAuthReq, isEmployerAuth, getUserIcon, async (req, res) => {
@@ -558,8 +567,67 @@ router.post("/delete", isNotAuthReq, isEmployerAuth, getUserIcon, upload.none(),
 });
 
 
+// GET APPLICATIONS FOR USER
+router.get("/applications", isNotAuthReq, isSeekerAuth, getUserIcon, async (req, res) => {
+
+    try{
+
+        const seeker_id = req.user.id;
+        let all_applications = await Application.getBySeeker(pool, seeker_id);
+
+
+        const job_applications = await Promise.all(all_applications.map(async function(application){ 
+
+            const job_id = application.job_id;
+            const job = await Job.getById(pool, job_id);
+            const employer_id = job.user_id;
+
+            const [employer, job_types, job_benefits, job_skills, job_questions, responses] = await Promise.all([ // Grabbing job details
+                Employer.getById(pool, employer_id),
+                Job.getTypesByJob(pool, job_id),
+                Job.getBenefitsByJob(pool, job_id),
+                Job.getSkillsByJob(pool, job_id),
+                Job.getQuestionsByJob(pool, job_id),
+                Response.getByApplication(pool, application.id)
+            ]);
+
+            // Formatting dates
+            application.created_at = application.created_at ? formatDateForDisplay(application.created_at) : application.created_at;
+            job.created_at = job.created_at ? formatDateForDisplay(job.created_at) : job.created_at;
+            job.start_date = job.start_date ? formatDateForDisplay(job.start_date) : job.start_date;
+            job.deadline = job.deadline ? formatDateForDisplay(job.deadline): job.deadline;
+
+            // Format industry
+            employer.industry = employer.industry ? findIndustryName(employer.industry) : employer.industry;
+ 
+
+            return {
+                ...application,
+                job,
+                employer,
+                job_types,
+                job_benefits,
+                job_skills,
+                job_questions,
+                responses
+            }; // return an array value of a complete combined job object
+
+        }));
+
+        // res.send(job_applications);
+        res.render("job/applications", {applications : job_applications});
+
+    }
+    catch(err){
+        console.error(err);
+        res.status(500).send("Internal Server Error");
+    }
+
+});
+
+
 // CREATE APPLICATION
-router.post("/application/create", isNotAuthReq, isSeekerAuth, getUserIcon, upload.none(),
+router.post("/application/create", isProfileBuilt, isNotAuthReq, isSeekerAuth, getUserIcon, upload.none(),
                                                                             validateAttachCV,
                                                                             validateEmail,
                                                                             validateResponses,
@@ -581,24 +649,98 @@ router.post("/application/create", isNotAuthReq, isSeekerAuth, getUserIcon, uplo
         questions = JSON.parse(questions);
         const question_ids = questions.map(question => question.id); // Array of question ids 
 
-        const application_id = await Application.create(pool, seeker_id, job_id, ct_email, cv_file); 
-        const responses_result = await Response.create(pool, application_id, question_ids, responses); 
+        let application_id = null;
+
+        if(Object.keys(req.validation_errors).length === 0){
+
+            application_id = await Application.create(pool, seeker_id, job_id, ct_email, cv_file); 
+            const responses_result = await Response.create(pool, application_id, question_ids, responses);
+        }
+         
 
 
         if(application_id){
 
-            res.status(200).json({ success: true, message: 'Application created!'});
-        }
-        else{
-            res.status(400).json({ success: false, message: 'An internal server error occurred' });
+            return res.json({ success: true, message: 'Application created!'});
         }
 
     }
     catch(err){
         console.error(err);
-        res.status(500).json({ success: false, message: 'An internal server error occurred' }); // 500 means internal server error
+        return res.status(500).json({ success: false, message: 'An internal server error occurred' }); // 500 means internal server error
 
     }
+
+});
+
+
+// GET APPLICANT FOR JOB
+router.get("/applicants/:job_id", isNotAuthReq, isEmployerAuth, getUserIcon, async (req, res) => {
+
+    try{
+
+        // Info to send:
+        // All applications for a job.
+        // Seeker info for application.
+        // Get questions for job
+        // Get responses for application
+
+        const job_id = req.params.job_id;
+        
+        let all_applications = await Application.getForJob(pool, job_id);
+        const job_questions = await Job.getQuestionsByJob(pool, job_id);
+
+        const applicants = await Promise.all(all_applications.map(async function(application){ 
+
+
+            const [seeker, responses] = await Promise.all([
+                Seeker.getById(pool, application.seeker_id), 
+                Response.getByApplication(pool, application.id)
+            ]);
+
+            // Formatting dates
+            application.created_at = application.created_at ? formatDateForDisplay(application.created_at) : application.created_at;
+
+
+            return {
+                application,
+                seeker,
+                job_questions,
+                responses
+            }; 
+
+        }));
+
+        res.render("job/applicants", {applicants: applicants});
+
+    }
+    catch(err){
+        console.error(err);
+        res.status(500).send("Internal Server Error");
+    }
+
+});
+
+// VIEW APPLICANT PROFILE
+router.get("/applicants/profile/:user_id", isNotAuthReq, isEmployerAuth, getUserIcon, async (req, res) => {
+
+    try{
+
+        const user_id = req.params.user_id;
+        const seeker = await Seeker.getById(pool, user_id);
+        
+        seeker.industry = seeker.industry ? findIndustryName(seeker.industry) : seeker.industry;
+    
+        res.render("job/seeker_view", { profile: seeker });
+
+            
+    }
+    catch(err){
+
+        console.error(err);
+        res.status(500).send("Internal Server Error");
+    }
+
 });
 
 module.exports = router;

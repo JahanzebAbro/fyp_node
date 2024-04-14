@@ -82,7 +82,7 @@
 
 
                     </div>
-                    <div>
+                    <div  class="table_hidden_right_side">
                         <div class="table_hidden_btn">
                             <a href="/user/job/postings/edit/<%= post.id %>">
                                 <button type="button" class="table_hidden_edit_btn">Edit</button>
@@ -90,6 +90,12 @@
                             <a href="/user/job/postings/<%= post.id %>" >
                                 <button type="button" class="table_hidden_view_btn">View</button>
                             </a>
+                        </div>
+
+                        <div class="hidden_row_content">
+                            <a href="/user/job/applicants/<%= post.id %>" >
+                                <button type="button" class="table_hidden_applicant_btn">View Applicants</button>
+                            </a>    
                         </div>
 
                         <div class="hidden_row_title">Contact:</div>
@@ -112,6 +118,7 @@
 
 <script type="text/javascript"> 
     function toggleRow(row) { 
+        $(".hidden_row").not("#" + row).hide();
         $("#" + row).toggle(); 
     } 
 </script> 

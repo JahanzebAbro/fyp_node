@@ -52,6 +52,37 @@ class Response {
     }
 
 
+    // Get responses for an application
+    static async getByApplication(pool, application_id){
+        try{
+
+            const query = 
+            `SELECT * FROM responses WHERE application_id = ($1);`;
+            
+            const params =
+            [application_id];
+
+            let result = await pool.query(query, params);
+
+            if (result) {
+                // Returns array of applications
+                return result.rows.map(response => new Response(
+                    response.id,
+                    response.application_id,
+                    response.question_id,
+                    response.response
+                ));
+
+            } else {
+                return null;
+            }
+        }
+        catch(err){
+            // console.log('Query problem');
+            throw err;
+        }
+
+    }
 
 
 

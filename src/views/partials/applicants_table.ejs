@@ -1,0 +1,118 @@
+
+
+<div class="applicant_status_btn">
+    <div class="applicant_total">
+        <span>Total: <%= applicants.length %></span>
+    </div>
+    <button>All</button>
+    <button>Pending</button>
+    <button>Considering</button>
+    <button>Declined</button>
+    <button>Accepted</button>
+</div>
+
+
+
+<table>
+
+    <tr>
+        <th>Status</th>
+        <th>Name</th>
+        <th>Applied</th>
+        <th>Email</th>
+        <th>Skills</th>
+        <th>
+            <div class="table_filter_icon"></div>
+        </th>
+    </tr>
+    <% applicants.forEach(function(applicant, index) { %>
+        <tr id="job_row_<%= index %>">
+            <td><%= applicant.application.status || 'N/A' %></td>
+            <td><%= applicant.seeker.f_name + ' ' + applicant.seeker.l_name || 'N/A' %></td>
+            <td><%= applicant.application.created_at || 'N/A' %></td>
+            <td><%= applicant.application.ct_email || 'N/A' %></td>
+            <td>skills</td>
+
+            <td><div class="table_expand_icon" onclick="toggleRow('hidden_row_<%= index %>')"></div></td>
+        </tr>
+        <tr id="hidden_row_<%= index %>" class="hidden_row">
+            <td></td>
+            <td colspan="5">
+                <div class="hidden_row_flex_box">
+                    <div class="hidden_row_info">
+
+                        <div class="hidden_row_title">CV:</div>
+
+                        <% if(applicant.application.cv_file ) { %>
+                            <div class="hidden_row_content">
+                                <a href="/uploads/<%= applicant.application.cv_file %>" 
+                                    target="_blank" rel="noopener noreferrer"><%= applicant.application.cv_file %>
+                                </a>
+                            </div><br>
+                        <% } else {%>
+                            <div class="hidden_row_content">None</div><br>
+                        <% } %>
+
+                            
+                        <div class="hidden_row_title"></div>
+                            <div class="hidden_row_content">
+                                <% if(applicant.job_questions.length > 0) {%>
+    
+                                    <% applicant.job_questions.forEach(function(question, index) { %>
+                                        <div>
+                                            <span style="text-decoration: underline;">Q: <%= question.question %></span><br>
+    
+                                            <%= applicant.responses[index].response || 'Not provided'%><br>
+                                        </div><br>
+                                    <% }); %>
+    
+                                    
+                                <%} else { %>
+                                    <span>None</span>
+                                <% } %>
+                            </div><br>
+                            
+
+
+                    </div>
+                    <div  class="table_hidden_right_side">
+                        <div class="table_hidden_btn">
+                            <a href="">
+
+                                <div class="user_dropdown">
+                                    <a class="dropdown_trigger">
+                                        <button type="button" class="table_hidden_review_btn">Review</button>
+                                    </a>
+                                    <div class="dropdown_content">
+                                        <div class="dropdown_content_item" id="accept">Accept 
+                                            <img src="/img/check.png">
+                                        </div>
+                                        <div class="dropdown_content_item" id="decline">Decline 
+                                            <img src="/img/cross.png">
+                                        </div>
+                                        <div class="dropdown_content_item" id="considering">Considering 
+                                            <img src="/img/question_circle.png">
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="/user/job/applicants/profile/<%= applicant.seeker.user_id%>" >
+                                <button type="button" class="table_hidden_view_btn">View Profile</button>
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            </td>
+        </tr>
+        
+    <% }) %>
+</table>
+
+
+<script type="text/javascript"> 
+    function toggleRow(row) { 
+        $(".hidden_row").not("#" + row).hide();
+        $("#" + row).toggle(); 
+    } 
+</script> 

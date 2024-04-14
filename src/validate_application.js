@@ -78,6 +78,11 @@ exports.validateResponses = function(req, res, next){
                         req.validation_errors.response = `Question ${index + 1} has an invalid response.`;
                         return next();
                     }
+                    else{
+                        if(responses[index] === 'true') { responses[index] = 'Yes'}
+                        if(responses[index] === 'false') { responses[index] = 'No'}
+                        // Changing bool to yes/no strings
+                    }
                 }
                 
             }
@@ -87,7 +92,7 @@ exports.validateResponses = function(req, res, next){
         });
 
 
-        req.body.responses = valid_responses; 
+        req.body.responses = valid_responses; // Gone through validation check
         return next();
         
     }

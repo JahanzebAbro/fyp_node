@@ -47,9 +47,9 @@ $(document).ready(function(){
 
         const form = new FormData(this);
 
-        for (let [key, value] of form.entries()) {
-            console.log(`${key}: ${value}`);
-        }
+        // for (let [key, value] of form.entries()) {
+        //     console.log(`${key}: ${value}`);
+        // }
 
 
         $('.attach_cv_err').text('');
@@ -95,7 +95,7 @@ $(document).ready(function(){
 
 function jobApplied(){
 
-    $('.table_hidden_apply_btn').text('Applied').removeClass('table_hidden_apply_btn').addClass('table_hidden_applied_btn'); 
+    $('.table_hidden_apply_btn:visible').text('Applied').removeClass('table_hidden_apply_btn').addClass('table_hidden_applied_btn'); 
 
     $('.create_application_modal').hide();
     $('.modal_overlay').removeClass('modal_overlay_active');
