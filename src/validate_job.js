@@ -2,9 +2,9 @@ const Job = require('./models/jobModel');
 const Benefit = require('./models/benefitModel');
 const pool = require("./config/db/db_config");
 
-const title_regex = /[^a-zA-Z\s]+/; // Only letters and spaces.
+const title_regex = /^[a-zA-Z\s-]+$/; // Only letters and spaces.
 
-const description_regex = /^$|^[a-zA-Z0-9 .,!?;:'"“”‘’\-_\n]+$/;
+const description_regex = /^$|^[a-zA-Z0-9 .,!?;:'"“”‘’+\-_\n]+$/;
 
 // Reference: https://stackoverflow.com/questions/22061723/regex-date-validation-for-yyyy-mm-dd
 const date_regex = 
@@ -32,7 +32,7 @@ exports.validateJobTitle = function(req, res, next) {
     else if(job_title.length > 50){
         req.validation_errors.job_title = "Title cannot exceed 50 characters.";
     }
-    else if (title_regex.test(job_title)) {
+    else if (!title_regex.test(job_title)) {
         req.validation_errors.job_title = "Title can only contain letters.";
     }
 
@@ -604,7 +604,7 @@ exports.validateSkills = function(req, res, next){
                 return next();
             }
             
-            if (title_regex.test(skill)) { // Same regex pattern so reusing title regex.
+            if (!title_regex.test(skill)) { // Same regex pattern so reusing title regex.
                 req.validation_errors.skill = `Skill ${i} should only contain letters.`;
                 return next();
             }

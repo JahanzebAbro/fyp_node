@@ -9,7 +9,7 @@ CREATE TYPE application_status_enum AS ENUM('accepted','declined','reviewing','p
 CREATE TABLE IF NOT EXISTS users(
     id BIGSERIAL PRIMARY KEY,
     email VARCHAR(319) UNIQUE NOT NULL,
-    password VARCHAR(50) NOT NULL,
+    password VARCHAR(100) NOT NULL,
     user_type user_type_enum NOT NULL  
 );
 
@@ -136,13 +136,13 @@ CREATE TABLE IF NOT EXISTS job_skills (
     FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE
 );
 
--- LINKING TABLE FOR SEEKERS AND THEIR SKILLS
-CREATE TABLE IF NOT EXISTS seeker_skills (
-    id BIGSERIAL PRIMARY KEY,
-    seeker_id BIGINT NOT NULL,
-    name VARCHAR(50) NOT NULL,
-    FOREIGN KEY (seeker_id) REFERENCES seeker(user_id) ON DELETE CASCADE
-);
+-- -- LINKING TABLE FOR SEEKERS AND THEIR SKILLS
+-- CREATE TABLE IF NOT EXISTS seeker_skills (
+--     id BIGSERIAL PRIMARY KEY,
+--     seeker_id BIGINT NOT NULL,
+--     name VARCHAR(50) NOT NULL,
+--     FOREIGN KEY (seeker_id) REFERENCES seeker(user_id) ON DELETE CASCADE
+-- );
 
 
 -- =======================================BENEFITS=====================================================
