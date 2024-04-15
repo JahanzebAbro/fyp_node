@@ -8,6 +8,7 @@ const expressLayouts = require('express-ejs-layouts');
 const bodyParser = require('body-parser');
 const pool = require("./config/db/db_config");
 const session = require('express-session');
+const Job = require('./models/jobModel');
 const pgSession = require('connect-pg-simple')(session);
 const initializePassport = require('./config/passport_config');
 var passport = require('passport');
@@ -74,6 +75,12 @@ app.use("/user", userRouter);
 // Job paths
 const jobRouter = require("./routes/job");
 app.use("/user/job", jobRouter);
+
+
+// Updates job status every 24 hours
+setInterval(async function(){ 
+    await Job.checkDeadline(pool);
+}, 1000 * 60 * 60 * 24); // 24 hours in ms.
 
 
 app.use(errorHandler);

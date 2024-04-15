@@ -63,6 +63,7 @@ class Job {
             `;
             
             const params = [id];
+
             const result = await pool.query(query, params);
 
             if (result.rows.length > 0) {
@@ -202,6 +203,37 @@ class Job {
 
             throw err;
         }
+    }
+
+
+    // Check whether job is over deadline and if so set status to closed automatically.
+    static async checkDeadline(pool) {
+        
+        try{
+
+            const curr_date = new Date();
+
+            const query = `
+                UPDATE jobs
+                SET status = 'closed'
+                WHERE deadline < $1 AND status != 'closed'
+                RETURNING id;
+            `;
+
+            const params = [curr_date];
+
+            const result = await pool.query(query, params);
+
+            if(result){
+                // console.log('UPDATED STATUS FOR DEADLINE');
+                return result.rows;
+            }
+
+        }catch(err){
+
+            throw err;
+        }
+
     }
 
 
