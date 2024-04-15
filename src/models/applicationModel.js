@@ -1,3 +1,5 @@
+const { application } = require("express");
+
 class Application {
 
     constructor(id, seeker_id, job_id, status, ct_email, cv_file, created_at) {
@@ -44,6 +46,40 @@ class Application {
     }
 
 
+    // Get an application with it's id
+    static async getById(pool, id){
+        try{
+
+            const query = 
+            `SELECT * FROM applications WHERE id = ($1);`;
+            
+            const params = [id];
+
+            const result = await pool.query(query, params);
+
+            if (result.rows.length > 0) {
+                // Returns array of an application
+                const application = result.rows[0];
+
+                return new Application(
+                    application.id,
+                    application.seeker_id,
+                    application.job_id,
+                    application.status,
+                    application.ct_email,
+                    application.cv_file,
+                    application.created_at
+                );
+
+            } else {
+                return null;
+            }
+        }
+        catch(err){
+            // console.log('Query problem');
+            throw err;
+        }
+    }
 
 
     // Get applications by seeker user_id
@@ -175,6 +211,56 @@ class Application {
 
     }
     
+    // Delete an application and all its dependents.
+    static async deleteById(pool, application_id){
+
+        try{
+            
+            // Start a transaction block
+            await pool.query('START TRANSACTION');
+            // Depedenet tables get deleted first
+
+            // Delete reponses
+            const responses_query = `
+                DELETE FROM responses
+                WHERE application_id = $1
+            `;
+
+            // Delete application
+            const application_query = `
+                DELETE FROM applications 
+                WHERE id = $1 
+                RETURNING id;
+            `;
+
+            
+            const params = [application_id];
+
+            // Dependents
+            await pool.query(responses_query, params);
+            // Application
+            const result = await pool.query(application_query, params);
+
+
+            if (result.rows.length > 0) {
+
+                await pool.query('COMMIT');
+                return result.rows[0].id; 
+            } else {
+
+                await pool.query('ROLLBACK');
+                return null;
+            }
+
+
+        }
+        catch(err){
+            
+            await pool.query('ROLLBACK');
+            throw err;
+        }
+    }
+
 }
 
 module.exports = Application;

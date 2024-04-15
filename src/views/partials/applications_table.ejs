@@ -85,7 +85,7 @@
                     <div class="table_hidden_right_side">
                         <div class="table_hidden_btn">
                         
-                            <button type="button" >Clear</button>  
+                            <button type="button" class="table_hidden_clear_btn" >Clear</button>  
                                
                             <button type="button" class="table_hidden_submission_btn">Submission</button>
                             
@@ -151,6 +151,30 @@
                             </div>
                         </div>
 
+                    </div>
+
+                    <div class="modal clear_application_modal">
+                        <form id="application_delete_form">
+
+                            <div class="modal_header submission_header">
+                                <span class="modal_header_title">Delete Application</span>
+                                <button type="button" class="modal_header_close">&times;</button>
+                            </div>
+                            
+                            <div class="modal_body clear_application_body">
+                                <p>Applied for <strong><%= application.job.title %></strong> position at <strong><%= application.employer.name %></strong>.</p>
+                                
+                                <p>Are you sure you want to <span style="color: var(--red)">delete</span> your application?</p>
+                                <p style="font-style: italic;">(This means the employer won't be able to view your submission anymore.)</p><br>
+                                
+                                <input type="hidden" name="application_id" value="<%= application.id %>">
+                                <div>
+                                    <button type="button" class="modal_cancel_btn">Cancel</button>
+                                    <button type="submit" class="modal_application_delete_btn">Delete</button>
+                                </div>
+                            </div>
+                            
+                        </form>
                     </div>
                     <div class="modal_overlay"></div>
 

@@ -502,6 +502,9 @@ table .hidden_row {
     color: #000000;
 }
 
+.table_hidden_clear_btn {
+    background-color: var(--red);
+}
 
 /* ===================================JOB POST VIEW======================================= */
 
@@ -683,4 +686,11 @@ table .hidden_row {
 .table_hidden_review_btn {
     border: 2px solid var(--orange);
     background-color: var(--orange);
+}
+
+
+/* ===================================================MODEL DELETE APPLICATION=================================== */
+
+.modal_application_delete_btn {
+    background-color: var(--red);
 }

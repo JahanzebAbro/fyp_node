@@ -626,6 +626,7 @@ router.get("/applications", isNotAuthReq, isSeekerAuth, getUserIcon, async (req,
 });
 
 
+
 // CREATE APPLICATION
 router.post("/application/create", isProfileBuilt, isNotAuthReq, isSeekerAuth, getUserIcon, upload.none(),
                                                                             validateAttachCV,
@@ -663,6 +664,40 @@ router.post("/application/create", isProfileBuilt, isNotAuthReq, isSeekerAuth, g
 
             return res.json({ success: true, message: 'Application created!'});
         }
+
+    }
+    catch(err){
+        console.error(err);
+        return res.status(500).json({ success: false, message: 'An internal server error occurred' }); // 500 means internal server error
+
+    }
+
+});
+
+
+// DELETE APPLICATION
+router.post("/application/delete", isNotAuthReq, isSeekerAuth, getUserIcon, upload.none(), async (req, res) => {
+
+    try{
+    
+        // First need to check if seeker is deleting their own application.
+
+        const { application_id } = req.body;
+
+        const application = await Application.getById(pool, application_id);
+
+        if(req.user.id == application.seeker_id){ // Checks if current user matches id of application
+
+            const result = await Application.deleteById(pool, application_id);
+
+            if(result){
+
+                return res.json({ success: true, message: 'Application deleted!'});
+            }
+        }
+
+        
+        return res.status(400).json({ success: false, message: 'An internal server error occurred' }); 
 
     }
     catch(err){
@@ -743,7 +778,7 @@ router.get("/applicants/profile/:user_id", isNotAuthReq, isEmployerAuth, getUser
 
 });
 
-
+// UPDATE APPLICANT STATUS
 router.post("/applicants/status", isNotAuthReq, isEmployerAuth, getUserIcon, upload.none(), async (req, res) => {
 
     try{
