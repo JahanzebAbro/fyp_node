@@ -430,6 +430,8 @@ th {
 td, th {
     text-align: center;
     padding: 10px;
+    padding-top: 20px;
+    padding-bottom: 20px;
 }
 
 tr:nth-child(even) {
@@ -469,11 +471,12 @@ table .hidden_row {
 .table_hidden_btn {
     margin-bottom: 15px;
     display: flex;
+    justify-content: space-between;
     column-gap: 10px;
 }
 
 .table_hidden_btn button {
-    padding: 5px 20px;
+    padding: 5px 30px;
     margin-right: 0px;
 }
 
@@ -686,6 +689,25 @@ table .hidden_row {
 .table_hidden_review_btn {
     border: 2px solid var(--orange);
     background-color: var(--orange);
+}
+
+.status_label {
+    padding: 2px 10px;
+    color: white;
+    background-color: black;
+    border-radius: 5px;
+}
+
+.declined, .closed {
+    background-color: var(--red);
+}
+
+.reviewing {
+    background-color: var(--orange);
+}
+
+.accepted, .open {
+    background-color: var(--green);
 }
 
 

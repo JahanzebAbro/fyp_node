@@ -12,7 +12,7 @@
     </tr>
     <% postings.forEach(function(post, index) { %>
         <tr id="job_row_<%= index %>">
-            <td><%= post.status || 'N/A' %></td>
+            <td><span class="status_label <%= post.status %>"><%= post.status %></span></td>
             <td><%= post.title || 'N/A' %></td>
             <td><%= post.address || 'N/A' %></td>
 

@@ -27,7 +27,7 @@
     </tr>
     <% applicants.forEach(function(applicant, index) { %>
         <tr id="job_row_<%= index %>">
-            <td><%= applicant.application.status || 'N/A' %></td>
+            <td><span class="status_label <%= applicant.application.status %>"><%= applicant.application.status %></span></td>
             <td><%= applicant.seeker.f_name + ' ' + applicant.seeker.l_name || 'N/A' %></td>
             <td><%= applicant.application.created_at || 'N/A' %></td>
             <td><%= applicant.application.ct_email || 'N/A' %></td>

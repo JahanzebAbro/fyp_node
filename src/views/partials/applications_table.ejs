@@ -11,7 +11,7 @@
     </tr>
     <% applications.forEach(function(application, index) { %>
         <tr id="job_row_<%= index %>">
-            <td><%= application.status || 'N/A' %></td>
+            <td><span class="status_label <%= application.status %>"><%= application.status %></span></td>
             <td><%= application.created_at || 'N/A' %></td>
             <td><%= application.employer.name || 'N/A' %></td>
             <td><%= application.job.title || 'N/A' %></td>
