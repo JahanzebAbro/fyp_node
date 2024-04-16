@@ -32,7 +32,7 @@ const storage = multer.diskStorage({
         cb(null, 'uploads');
     },
     filename: function (req, file, cb) {
-        cb(null, file.originalname);
+        cb(null, new Date().getTime().toString() + '-' + file.originalname); // Appending time since Jan 1970 midnight
     }
 });
   
@@ -180,7 +180,7 @@ router.post("/update-profile/seeker", isNotAuthReq, seekerUpload, validateFirstN
         let result = await Seeker.update(pool, req.user.id, updates);
         
         
-        res.json({ success: true, message: 'Profile updated successfully' });
+        res.json({ success: true, cv_file: updates.cv_file, message: 'Profile updated successfully' });
 
 
     } catch (error) {

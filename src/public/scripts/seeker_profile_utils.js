@@ -7,7 +7,8 @@ let l_name_old_val = $('#l_name_val').text().trim();
 let gender_old_val = $('#gender_val').text().trim();
 let d_o_b_old_val = $('#d_o_b_val').text().trim();
 let bio_old_val = $('#bio_val').text().trim();
-let cv_old_val = $('#cv_val a').text().trim();
+let cv_old_val = $('a[data-cv-file]').data('cv-file').trim();
+let cv_old_display = $('#cv_val a').text().trim();
 let address_old_val = $('#address_val').text().trim();
 let postcode_old_val = $('#postcode_val').text().trim();
 let ct_phone_old_val = $('#ct_phone_val').text().trim();
@@ -27,6 +28,7 @@ ct_email_old_val = emptyFieldToNullString(ct_email_old_val);
 
 let profile_pic_new = ''; // To help display changes of images in after edit mode
 let cv_new = '';
+let cv_new_display = '';
 let is_pic_cleared = false;
 let is_cv_cleared = false;
 
@@ -111,11 +113,12 @@ $(document).ready(function(){
         let cv_input = $('input[name="cv"]')[0]; // Access the DOM element directly
         if (cv_input.files && cv_input.files[0]) {
             form.append('cv_file', cv_input.files[0]); // Append the file to FormData
-            cv_new = cv_input.files[0].name;
+            cv_new_display = cv_input.files[0].name;
         }
         else if (is_cv_cleared) {
             // No file has been selected and the CV is marked for clearing
             cv_new = '';
+            cv_new_display = '';
         } 
         else{
             form.append('cv_file', '');
@@ -145,8 +148,11 @@ $(document).ready(function(){
             processData: false, 
             contentType: false,
             success: function(response) {
-                console.log(response.message);
-                toggleEditMode(false, true); // Turn off edit mode and fix input values into display
+                if(response){
+                    console.log(response.message);
+                    cv_new = response.cv_file;
+                    toggleEditMode(false, true); // Turn off edit mode and fix input values into display
+                }
                 
             },
             error: function(response) {
@@ -207,6 +213,7 @@ $(document).ready(function(){
         is_cv_cleared = true;
         $('#cv_val').html(`<a>None</a>`);
         cv_new = '';
+        cv_new_display = '';
         $(this).hide(); // hide the clear button
     });
 });
@@ -223,8 +230,10 @@ function toggleEditMode(isEditMode, isSaved=false){
     if(isEditMode){
         
         // CV needs to update every time edit mode is toggled.
-        cv_old_val = $('#cv_val a').text().trim();
-        cv_old_val = emptyFieldToNullString($('#cv_val a').text().trim());
+        cv_old_val = $('a[data-cv-file]').data('cv-file').trim();
+        cv_old_val = emptyFieldToNullString($('a[data-cv-file]').data('cv-file').trim());
+        cv_old_display = $('#cv_val a').text().trim();
+
         
         // -----------UPDATE FORM
         
@@ -266,12 +275,12 @@ function toggleEditMode(isEditMode, isSaved=false){
 
 
         // CV
-
+        
         if(cv_old_val){ // if a cv exists
             $('.cv').html(`
                     <strong>Current CV</strong><br>
                     <span id="cv_val">
-                        <a href="/uploads/${cv_old_val}" target="_blank" rel="noopener noreferrer">${cv_old_val}</a>
+                        <a href="/uploads/${cv_old_val}" target="_blank" rel="noopener noreferrer" data-cv-file="${cv_old_val}">${cv_old_display}</a>
                     </span>
                     <button type="buttton" id="clear-cv-btn" class="clear_btn" name="clear_cv">x</button>
                     <br><br>
@@ -393,15 +402,22 @@ function toggleEditMode(isEditMode, isSaved=false){
                 $('.cv').html(`
                             <strong>CV</strong><br>
                             <span id="cv_val">
-                                <a href="/uploads/${cv_new}" target="_blank" rel="noopener noreferrer">${cv_new}</a>
+                                <a href="/uploads/${cv_new}" target="_blank" rel="noopener noreferrer" data-cv-file="${cv_new}">${cv_new_display}</a>
                             </span>`);
 
             }
-            else{
+            else if(is_cv_cleared){
                 $('.cv').html(`
                 <strong>CV</strong><br>
                 <span id="cv_val">
-                    <a>None</a>
+                    <a data-cv-file="None">None</a>
+                </span>`);
+            }
+            else {
+                $('.cv').html(`
+                <strong>CV</strong><br>
+                <span id="cv_val">
+                    <a href="/uploads/${cv_old_val}" target="_blank" rel="noopener noreferrer" >${cv_old_display}</a>
                 </span>`);
             }
 
@@ -454,14 +470,14 @@ function toggleEditMode(isEditMode, isSaved=false){
                 $('.cv').html(`
                                 <strong>CV</strong><br>
                                 <span id="cv_val">
-                                    <a href="/uploads/${cv_old_val}" target="_blank" rel="noopener noreferrer">${cv_old_val}</a>
+                                    <a href="/uploads/${cv_old_val}" target="_blank" rel="noopener noreferrer" data-cv-file="${cv_old_val}">${cv_old_display}</a>
                                 </span>`);
             }
             else{
                 $('.cv').html(`
                             <strong>CV</strong><br>
                             <span id="cv_val">
-                                <a>None</a>
+                                <a data-cv-file="None">None</a>
                             </span>`);
             }
             $('#address_val').text(address_old_val || 'None');

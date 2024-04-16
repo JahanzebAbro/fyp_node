@@ -54,11 +54,16 @@
                 <p class="cv">
                     <strong>CV</strong><br>
                     <span id="cv_val">
-                        <a href="/uploads/<%= profile.cv %>" target="_blank" rel="noopener noreferrer"><%= profile.cv %></a>
+                        <a href="/uploads/<%= profile.cv %>" target="_blank" rel="noopener noreferrer" data-cv-file="<%= profile.cv %>"><%= profile.cv_display %></a>
                     </span>
                 </p>
             <% } else { %>
-                <p class="cv"><strong>CV</strong><br>None</p>
+                <p class="cv">
+                    <strong>CV</strong><br>
+                    <span id="cv_val">
+                        <a data-cv-file="None">None</a>
+                    </span>
+                </p>
             <% } %>
             <span  id="cv_err" style="color: red;"></span>
 

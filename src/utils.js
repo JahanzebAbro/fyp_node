@@ -115,6 +115,10 @@ exports.findIndustryName = function(code){
     return industry;
 }
 
+// Gets rid of timestamp at start of name for diplay purposes.
+exports.cleanCVName = function(file_name){
+    return file_name.substring(file_name.indexOf('-') + 1); 
+}
 
 // Determine if profile built and for which user type.
 exports.isProfileBuilt = async function (req, res, next) {
@@ -128,6 +132,7 @@ exports.isProfileBuilt = async function (req, res, next) {
             const seeker = await Seeker.getById(pool, req.user.id);
             if (seeker && seeker.industry) {
                 seeker.industry_name = exports.findIndustryName(seeker.industry);
+                seeker.cv_display = exports.cleanCVName(seeker.cv);
             }
             profile = seeker;
 

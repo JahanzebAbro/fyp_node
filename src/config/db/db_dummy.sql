@@ -10,11 +10,11 @@
 
 -- FAKE DATA REFERED FROM CHAT GPT
 
-INSERT INTO seekers (user_id, f_name, l_name, gender, d_o_b, bio, address, postcode, ct_phone, ct_email, industry, work_status) VALUES 
-    (1, 'John', 'Doe', 'Male', '1990-05-15', 'Experienced software developer with a strong background in computer science.', '123 Main St', 'N1 1AA', '07123456789', 'johndoe@example.com', 'IT', TRUE),
-    (2, 'Jane', 'Smith', 'Female', '1985-08-20', 'Marketing expert with over 10 years of experience in digital marketing.', '456 Elm St', 'W1A 1AA', '07234567890', 'janesmith@example.com', 'ADV', TRUE),
-    (3, 'Alice', 'Johnson', 'Female', '1992-11-30', 'Creative graphic designer with a passion for branding and design.', '789 Oak St', 'EC1A 1BB', '07345678901', 'alicejohnson@example.com', 'ART', TRUE),
-    (4, 'Bob', 'Brown', 'Male', '1988-02-10', 'Certified public accountant with expertise in financial analysis and auditing.', '101 Pine St', 'SW1A 1AA', '07456789012', 'bobbrown@example.com', 'FIN', TRUE);
+INSERT INTO seekers (user_id, f_name, l_name, gender, d_o_b, bio, cv_file, address, postcode, ct_phone, ct_email, industry, work_status) VALUES 
+    (1, 'John', 'Doe', 'Male', '1990-05-15', 'Experienced software developer with a strong background in computer science.','john_doe_cv.pdf', '123 Main St', 'N1 1AA', '07123456789', 'johndoe@example.com', 'IT', TRUE),
+    (2, 'Jane', 'Smith', 'Female', '1985-08-20', 'Marketing expert with over 10 years of experience in digital marketing.','jane_smith_cv.pdf', '456 Elm St', 'W1A 1AA', '07234567890', 'janesmith@example.com', 'ADV', TRUE),
+    (3, 'Alice', 'Johnson', 'Female', '1992-11-30', 'Creative graphic designer with a passion for branding and design.','alice_johnson_cv.pdf', '789 Oak St', 'EC1A 1BB', '07345678901', 'alicejohnson@example.com', 'ART', TRUE),
+    (4, 'Bob', 'Brown', 'Male', '1988-02-10', 'Certified public accountant with expertise in financial analysis and auditing.','bob_brown_cv.pdf', '101 Pine St', 'SW1A 1AA', '07456789012', 'bobbrown@example.com', 'FIN', TRUE);
 
 
 INSERT INTO employers (user_id, name, size, bio, website, address, postcode, ct_phone, ct_email, industry) VALUES 
