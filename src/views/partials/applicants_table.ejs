@@ -46,7 +46,7 @@
                         <% if(applicant.application.cv_file ) { %>
                             <div class="hidden_row_content">
                                 <a href="/uploads/<%= applicant.application.cv_file %>" 
-                                    target="_blank" rel="noopener noreferrer"><%= applicant.application.cv_file %>
+                                    target="_blank" rel="noopener noreferrer"><%= applicant.application.cv_display %>
                                 </a>
                             </div><br>
                         <% } else {%>

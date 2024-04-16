@@ -49,7 +49,6 @@ $(document).ready(function(){
             };
 
             reader.readAsDataURL(this.files[0]); // Reads file and then performs onload function
-            profile_pic_new = this.files[0].name; // For display after saving.
             is_pic_cleared = false;
                 
         }
@@ -122,8 +121,11 @@ $(document).ready(function(){
             processData: false, 
             contentType: false,
             success: function(response) {
-                console.log(response.message);
-                toggleEditMode(false, true); // Turn off edit mode and fix input values into display
+                if(response){
+                    console.log(response.message);
+                    profile_pic_new = response.profile_pic_file;
+                    toggleEditMode(false, true); // Turn off edit mode and fix input values into display
+                }
                 
             },
             error: function(response) {
@@ -332,6 +334,7 @@ function toggleEditMode(isEditMode, isSaved=false){
         }
         else{
 
+            is_pic_cleared = false;
 
             // =============CANCEL EDIT
 

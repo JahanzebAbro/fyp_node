@@ -127,7 +127,11 @@
                             <span><%= application.ct_email || 'Not provided' %></span><br>
 
                             <label>Attached CV: </label>
-                            <span><%= application.cv_file || 'Not provided' %></span><br>
+                            <span>
+                                <a href="/uploads/<%= application.cv_file %>" 
+                                    target="_blank" rel="noopener noreferrer"><%= application.cv_display %>
+                                </a>
+                            </span><br>
                     
 
                             <div class="application_questions">
@@ -135,7 +139,7 @@
                                 <img src="/img/line.png" style="width: 100%; height: 50px;"><br>
                                 <% application.job_questions.forEach(function(question, index) { %>
                                     <div>
-                                        <span style="text-decoration: underline;"><%= question.question %></span><br>
+                                        <span style="text-decoration: underline;"><%= question.question %></span><br><br>
 
                                         <%= application.responses[index].response || 'Not provided'%><br>
                                     </div><br>

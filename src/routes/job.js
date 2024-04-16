@@ -17,7 +17,8 @@ const { isProfileBuilt,
         isEmployerAuth, 
         isSeekerAuth, 
         formatDateForEdit, 
-        findIndustryName} = require('../utils');
+        findIndustryName,
+        cleanCVName } = require('../utils');
 const { validateJobStatus,
         validateJobTitle,
         validateOpenings,
@@ -597,8 +598,9 @@ router.get("/applications", isNotAuthReq, isSeekerAuth, getUserIcon, async (req,
             job.start_date = job.start_date ? formatDateForDisplay(job.start_date) : job.start_date;
             job.deadline = job.deadline ? formatDateForDisplay(job.deadline): job.deadline;
 
-            // Format industry
+            // Format industry and cv for display
             employer.industry = employer.industry ? findIndustryName(employer.industry) : employer.industry;
+            application.cv_display = application.cv_file ? cleanCVName(application.cv_file) : 'None';
  
 
             return {
@@ -735,7 +737,7 @@ router.get("/applicants/:job_id", isNotAuthReq, isEmployerAuth, getUserIcon, asy
 
             // Formatting dates
             application.created_at = application.created_at ? formatDateForDisplay(application.created_at) : application.created_at;
-
+            application.cv_display = application.cv_file ? cleanCVName(application.cv_file) : 'None';
 
             return {
                 application,
@@ -765,6 +767,7 @@ router.get("/applicants/profile/:user_id", isNotAuthReq, isEmployerAuth, getUser
         const seeker = await Seeker.getById(pool, user_id);
         
         seeker.industry = seeker.industry ? findIndustryName(seeker.industry) : seeker.industry;
+        seeker.cv_display = seeker.cv ? cleanCVName(seeker.cv) : 'None';
     
         res.render("job/seeker_view", { profile: seeker });
 

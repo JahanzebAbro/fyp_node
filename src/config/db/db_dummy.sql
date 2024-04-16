@@ -10,18 +10,18 @@
 
 -- FAKE DATA REFERED FROM CHAT GPT
 
-INSERT INTO seekers (user_id, f_name, l_name, gender, d_o_b, bio, cv_file, address, postcode, ct_phone, ct_email, industry, work_status) VALUES 
-    (1, 'John', 'Doe', 'Male', '1990-05-15', 'Experienced software developer with a strong background in computer science.','john_doe_cv.pdf', '123 Main St', 'N1 1AA', '07123456789', 'johndoe@example.com', 'IT', TRUE),
-    (2, 'Jane', 'Smith', 'Female', '1985-08-20', 'Marketing expert with over 10 years of experience in digital marketing.','jane_smith_cv.pdf', '456 Elm St', 'W1A 1AA', '07234567890', 'janesmith@example.com', 'ADV', TRUE),
-    (3, 'Alice', 'Johnson', 'Female', '1992-11-30', 'Creative graphic designer with a passion for branding and design.','alice_johnson_cv.pdf', '789 Oak St', 'EC1A 1BB', '07345678901', 'alicejohnson@example.com', 'ART', TRUE),
-    (4, 'Bob', 'Brown', 'Male', '1988-02-10', 'Certified public accountant with expertise in financial analysis and auditing.','bob_brown_cv.pdf', '101 Pine St', 'SW1A 1AA', '07456789012', 'bobbrown@example.com', 'FIN', TRUE);
+INSERT INTO seekers (user_id, f_name, l_name, gender, d_o_b, bio, cv_file, profile_pic_file, address, postcode, ct_phone, ct_email, industry, work_status) VALUES 
+    (1, 'John', 'Doe', 'Male', '1990-05-15', 'Experienced software developer with a strong background in computer science.','1713277542134-john_doe_cv.pdf', '1713280764728-john-doe-pic.jpg', '123 Main St', 'N1 1AA', '07123456789', 'johndoe@example.com', 'IT', TRUE),
+    (2, 'Jane', 'Smith', 'Female', '1985-08-20', 'Marketing expert with over 10 years of experience in digital marketing.','1713277656325-jane_smith_cv.pdf', '1713286421442-jane-smith-pic.png', '456 Elm St', 'W1A 1AA', '07234567890', 'janesmith@example.com', 'ADV', TRUE),
+    (3, 'Alice', 'Johnson', 'Female', '1992-11-30', 'Creative graphic designer with a passion for branding and design.','1713277705836-alice_johnson_cv.pdf', '1713286544917-alice-johnson-pic.jpg', '789 Oak St', 'EC1A 1BB', '07345678901', 'alicejohnson@example.com', 'ART', TRUE),
+    (4, 'Bob', 'Brown', 'Male', '1988-02-10', 'Certified public accountant with expertise in financial analysis and auditing.','1713277745267-bob_brown_cv.pdf', '', '101 Pine St', 'SW1A 1AA', '07456789012', 'bobbrown@example.com', 'FIN', TRUE);
 
 
-INSERT INTO employers (user_id, name, size, bio, website, address, postcode, ct_phone, ct_email, industry) VALUES 
-    (5, 'Tech Solutions Ltd', 200, 'Leading provider of IT solutions and services worldwide.', 'http://www.techsolutions.com', '100 Tech Way', 'E1 1EE', '07567890123', 'contact@techsolutions.com', 'IT'),
-    (6, 'Market Pros', 50, 'Innovative marketing agency that helps brands connect with their audience.', 'http://www.marketpros.com', '200 Market Ave', 'NW1 4AQ', '07678901234', 'info@marketpros.com', 'ADV'),
-    (7, 'Design Hub Inc', 75, 'Creative agency specializing in web design, branding, and user experience.', 'http://www.designhub.com', '300 Design Ln', 'SE1 9SG', '07789012345', 'hello@designhub.com', 'ART'),
-    (8, 'Finance Plus', 150, 'Trusted financial consulting firm with a track record of excellence.', 'http://www.financeplus.com', '400 Finance St', 'W1J 7NT', '07890123456', 'support@financeplus.com', 'FIN');
+INSERT INTO employers (user_id, name, size, bio, website, profile_pic_file, address, postcode, ct_phone, ct_email, industry) VALUES 
+    (5, 'Tech Solutions Ltd', 200, 'Leading provider of IT solutions and services worldwide.', 'http://www.techsolutions.com', '1713287695746-tech-solutions-pic.jpeg', '100 Tech Way', 'E1 1EE', '07567890123', 'contact@techsolutions.com', 'IT'),
+    (6, 'Market Pros', 50, 'Innovative marketing agency that helps brands connect with their audience.', 'http://www.marketpros.com', '', '200 Market Ave', 'NW1 4AQ', '07678901234', 'info@marketpros.com', 'ADV'),
+    (7, 'Design Hub Inc', 75, 'Creative agency specializing in web design, branding, and user experience.', 'http://www.designhub.com', '', '300 Design Ln', 'SE1 9SG', '07789012345', 'hello@designhub.com', 'ART'),
+    (8, 'Finance Plus', 150, 'Trusted financial consulting firm with a track record of excellence.', 'http://www.financeplus.com', '', '400 Finance St', 'W1J 7NT', '07890123456', 'support@financeplus.com', 'FIN');
 
 
 INSERT INTO benefits (name, is_custom) VALUES
@@ -208,50 +208,93 @@ INSERT INTO job_benefits (job_id, benefit_id) VALUES
 
 
 INSERT INTO applications (seeker_id, job_id, status, ct_email, cv_file, created_at) VALUES
-    (1, 1, 'pending', 'johndoe@example.com', 'john_doe_cv.pdf', '2023-10-01 08:30:00'),
-    (1, 5, 'accepted', 'johndoe@example.com', 'john_doe_cv.pdf', '2023-10-02 09:00:00'),
-    (1, 10, 'pending', 'johndoe@example.com', 'john_doe_cv.pdf', '2023-10-03 10:15:00'),
-    (1, 15, 'declined', 'johndoe@example.com', 'john_doe_cv.pdf', '2023-10-13 20:00:00'),
-    (2, 2, 'pending', 'janesmith@example.com', 'jane_smith_cv.pdf', '2023-10-04 11:00:00'),
-    (2, 6, 'pending', 'janesmith@example.com', 'jane_smith_cv.pdf', '2023-10-05 12:00:00'),
-    (2, 11, 'accepted', 'janesmith@example.com', 'jane_smith_cv.pdf', '2023-10-06 13:30:00'),
-    (2, 16, 'accepted', 'janesmith@example.com', 'jane_smith_cv.pdf', '2023-10-14 21:00:00'),
-    (3, 3, 'reviewing', 'alicejohnson@example.com', 'alice_johnson_cv.pdf', '2023-10-07 14:30:00'),
-    (3, 7, 'reviewing', 'alicejohnson@example.com', 'alice_johnson_cv.pdf', '2023-10-08 15:00:00'),
-    (3, 12, 'reviewing', 'alicejohnson@example.com', 'alice_johnson_cv.pdf', '2023-10-09 16:00:00'),
-    (3, 17, 'accepted', 'alicejohnson@example.com', 'alice_johnson_cv.pdf', '2023-10-15 22:00:00'),
-    (4, 4, 'declined', 'bobbrown@example.com', 'bob_brown_cv.pdf', '2023-10-10 17:00:00'),
-    (4, 8, 'pending', 'bobbrown@example.com', 'bob_brown_cv.pdf', '2023-10-11 18:30:00'),
-    (4, 13, 'pending', 'bobbrown@example.com', 'bob_brown_cv.pdf', '2023-10-12 19:30:00'),
-    (4, 18, 'pending', 'bobbrown@example.com', 'bob_brown_cv.pdf', '2023-10-16 23:00:00');
+    (1, 1, 'pending', 'johndoe@example.com', '1713277542134-john_doe_cv.pdf', '2023-10-01 08:30:00'),
+    (1, 5, 'accepted', 'johndoe@example.com', '1713277542134-john_doe_cv.pdf', '2023-10-02 09:00:00'),
+    (1, 10, 'pending', 'johndoe@example.com', '1713277542134-john_doe_cv.pdf', '2023-10-03 10:15:00'),
+    (1, 15, 'declined', 'johndoe@example.com', '1713277542134-john_doe_cv.pdf', '2023-10-13 20:00:00'),
+    (1, 14, 'pending', 'johndoe@example.com', '1713277542134-john_doe_cv.pdf', '2023-10-20 08:00:00'),
+    (2, 2, 'pending', 'janesmith@example.com', '1713277656325-jane_smith_cv.pdf', '2023-10-04 11:00:00'),
+    (2, 6, 'pending', 'janesmith@example.com', '1713277656325-jane_smith_cv.pdf', '2023-10-05 12:00:00'),
+    (2, 11, 'accepted', 'janesmith@example.com', '1713277656325-jane_smith_cv.pdf', '2023-10-06 13:30:00'),
+    (2, 16, 'accepted', 'janesmith@example.com', '1713277656325-jane_smith_cv.pdf', '2023-10-14 21:00:00'),
+    (2, 19, 'pending', 'janesmith@example.com', '1713277656325-jane_smith_cv.pdf', '2023-10-21 09:00:00'),
+    (3, 3, 'reviewing', 'alicejohnson@example.com', '1713277705836-alice_johnson_cv.pdf', '2023-10-07 14:30:00'),
+    (3, 7, 'reviewing', 'alicejohnson@example.com', '1713277705836-alice_johnson_cv.pdf', '2023-10-08 15:00:00'),
+    (3, 12, 'reviewing', 'alicejohnson@example.com', '1713277705836-alice_johnson_cv.pdf', '2023-10-09 16:00:00'),
+    (3, 17, 'accepted', 'alicejohnson@example.com', '1713277705836-alice_johnson_cv.pdf', '2023-10-15 22:00:00'),
+    (3, 20, 'pending', 'alicejohnson@example.com', '1713277705836-alice_johnson_cv.pdf', '2023-10-22 10:00:00'),
+    (4, 4, 'declined', 'bobbrown@example.com', '1713277745267-bob_brown_cv.pdf', '2023-10-10 17:00:00'),
+    (4, 8, 'pending', 'bobbrown@example.com', '1713277745267-bob_brown_cv.pdf', '2023-10-11 18:30:00'),
+    (4, 9,  'pending', 'bobbrown@example.com', '1713277745267-bob_brown_cv.pdf', '2023-10-23 11:00:00'),
+    (4, 13, 'pending', 'bobbrown@example.com', '1713277745267-bob_brown_cv.pdf', '2023-10-12 19:30:00'),
+    (4, 18, 'pending', 'bobbrown@example.com', '1713277745267-bob_brown_cv.pdf', '2023-10-16 23:00:00');
 
 
 INSERT INTO responses (application_id, question_id, response) VALUES
-    (1, 1, 'I prioritize tasks based on urgency and delegate when necessary.'),
-    (1, 2, 'true'),
-    (2, 3, 'I have extensive experience using JIRA and Trello for project management.'),
-    (2, 4, '8'),
-    (3, 5, 'I follow Agile methodologies to ensure flexibility and continuous improvement in my development process.'),
-    (4, 6, 'I am familiar with both local and international financial regulations including GDPR and Sarbanes-Oxley.'),
-    (4, 7, '500000'),
-    (4, 8, 'false'), 
-    (5, 9, 'I resolved a multi-threading issue that was causing data corruption in real-time transaction processing.'),
-    (6, 10, 'My content marketing approach focuses on SEO and audience engagement.'),
-    (6, 11, '450'),
-    (7, 12, 'Adobe Photoshop and Illustrator are my primary tools.'),
-    (7, 13, 'true'),
-    (8, 14, 'Effective communication and regular feedback are key to my management strategy.'),
-    (8, 15, '12'), 
-    (9, 16, 'true'),
-    (10, 17, 'I use a severity and date-based system to prioritize support tickets.'),
-    (11, 18, 'I start with competitor analysis followed by consumer behavior studies to gather market insights.'),
-    (12, 19, 'Balancing supply chain efficiency and cost has been a significant challenge, especially during global disruptions.'),
-    (13, 20, 'Regular training and strict adherence to health codes are essential for maintaining food safety.'),
-    (14, 21, 'I focus on personalized service and timely problem resolution to enhance guest experiences.'),
-    (15, 22, 'My experience includes coordinating all aspects of live production from rehearsals to the final performance.'),
-    (16, 23, 'I am experienced with sustainable farming techniques and integrated pest management.'),
-    (17, 24, 'Clear communication with all stakeholders and flexible project planning are crucial for handling delays.'),
-    (18, 25, 'My role involved direct client engagements and meeting sales targets in a competitive market.'),
-    (19, 26, 'Redundancy strategies and regular system updates are part of my approach to managing network integrity.'),
-    (20, 27, 'Engaging through local cultural initiatives and global social media campaigns.'),
-    (20, 28, '5'); 
+    -- Responses for application 1 to job 1
+    (1, 1, 'I prioritize urgent tasks and set clear milestones.'),
+    (1, 2, 'Yes'),
+
+    -- Responses for application 2 to job 5
+    (2, 9, 'I debugged a memory leak in an enterprise application.'),
+
+    -- Responses for application 3 to job 10
+    (3, 17, 'I systematically assess each ticket based on impact and urgency.'),
+
+    -- Responses for application 4 to job 15
+    (4, 15, 'I utilize a mix of digital tools and traditional methods for stage management.'),
+
+    -- Responses for application 5 to job 14
+    (5, 14, 'I focus on guest interaction and feedback to enhance service quality.'),
+
+    -- Responses for application 6 to job 2
+    (6, 3, 'I am proficient in using Atlassian JIRA and Microsoft Project.'),
+    (6, 4, '9'),
+
+    -- Responses for application 7 to job 6
+    (7, 10, 'I use targeted content strategies to boost engagement and track KPIs.'),
+    (7, 11, '350'),
+
+    -- Responses for application 8 to job 11
+    (8, 18, 'I use statistical tools and market trends to perform detailed market analysis.'),
+
+    -- Responses for application 9 to job 16
+    (9, 23, 'I am familiar with contemporary agricultural techniques including hydroponics.'),
+
+    -- Responses for application 10 to job 19
+    (10, 19, 'I implement failover systems and regular audits to prevent network failures.'),
+
+    -- Responses for application 11 to job 3
+    (11, 5, 'I use Agile methodologies to enhance software development processes.'),
+
+    -- Responses for application 12 to job 7
+    (12, 12, 'My proficiency lies in Adobe XD and Figma for UI/UX design.'),
+    (12, 13, 'Yes'),
+
+    -- Responses for application 13 to job 12
+    (13, 19, 'Dealing with international shipping regulations has been challenging.'),
+
+    -- Responses for application 14 to job 17
+    (14, 24, 'I manage delays by maintaining flexible resource allocations and timelines.'),
+
+    -- Responses for application 15 to job 20
+    (15, 27, 'I use digital marketing and local insights to engage a global audience.'),
+    (15, 28, '7'),
+
+    -- Responses for application 16 to job 4
+    (16, 6, 'I ensure compliance with financial regulations through continuous training.'),
+    (16, 7, 'Approximately $1.2 million'),
+    (16, 8, 'No'),
+
+    -- Responses for application 17 to job 8
+    (17, 14, 'My strategy includes weekly team meetings and transparent communication.'),
+    (17, 15, '20'),
+
+    -- Responses for application 18 to job 9
+    (18, 16, 'Yes, I have extensive experience with Salesforce CRM.'),
+
+    -- Responses for application 19 to job 13
+    (19, 20, 'I ensure all food handlers are certified and adhere to health codes.'),
+
+    -- Responses for application 20 to job 18
+    (20, 25, 'I focus on relationship building and in-depth product knowledge.');

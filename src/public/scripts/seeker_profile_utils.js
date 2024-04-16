@@ -56,7 +56,6 @@ $(document).ready(function(){
             };
 
             reader.readAsDataURL(this.files[0]); // Reads file and then performs onload function
-            profile_pic_new = this.files[0].name; // For display after saving.
             is_pic_cleared = false;
                 
         }
@@ -151,6 +150,7 @@ $(document).ready(function(){
                 if(response){
                     console.log(response.message);
                     cv_new = response.cv_file;
+                    profile_pic_new = response.profile_pic_file;
                     toggleEditMode(false, true); // Turn off edit mode and fix input values into display
                 }
                 
@@ -398,7 +398,7 @@ function toggleEditMode(isEditMode, isSaved=false){
             bio_old_val = $('textarea[name="bio"]').val();
             $('#bio_val').text(bio_old_val || 'None');
 
-            if(cv_new){
+            if(cv_new && cv_new_display){
                 $('.cv').html(`
                             <strong>CV</strong><br>
                             <span id="cv_val">
@@ -417,7 +417,7 @@ function toggleEditMode(isEditMode, isSaved=false){
                 $('.cv').html(`
                 <strong>CV</strong><br>
                 <span id="cv_val">
-                    <a href="/uploads/${cv_old_val}" target="_blank" rel="noopener noreferrer" >${cv_old_display}</a>
+                    <a href="/uploads/${cv_old_val}" target="_blank" rel="noopener noreferrer" data-cv-file="${cv_old_val}">${cv_old_display}</a>
                 </span>`);
             }
 

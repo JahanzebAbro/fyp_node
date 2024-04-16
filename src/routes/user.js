@@ -180,7 +180,7 @@ router.post("/update-profile/seeker", isNotAuthReq, seekerUpload, validateFirstN
         let result = await Seeker.update(pool, req.user.id, updates);
         
         
-        res.json({ success: true, cv_file: updates.cv_file, message: 'Profile updated successfully' });
+        res.json({ success: true, cv_file: updates.cv_file, profile_pic_file: updates.profile_pic_file, message: 'Profile updated successfully' });
 
 
     } catch (error) {
@@ -263,7 +263,7 @@ router.post("/update-profile/employer", isNotAuthReq, employerUpload, validateCo
         let result = await Employer.update(pool, req.user.id, updates);
 
 
-        res.json({ success: true, message: 'Profile updated successfully' });
+        res.json({ success: true, profile_pic_file: updates.profile_pic_file, message: 'Profile updated successfully' });
     }
     catch(error){
         console.error(error);
