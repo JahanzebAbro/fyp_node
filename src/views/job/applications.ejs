@@ -6,8 +6,9 @@
     <span class="page_title_text">APPLICATIONS</span>
 </div>
 
+<%- include('../partials/search_bars/application_search_bar.ejs') %>
 <% if (applications.length > 0) { %>
-<%- include('../partials/applications_table.ejs') %>
+    <%- include('../partials/applications_table.ejs') %>
 <% } else { %>
     <div class="page_err_text">
         <img src="/img/leaf.png" style ="width: 100px; height: auto;"><br>

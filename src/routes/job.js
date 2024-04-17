@@ -46,15 +46,18 @@ router.get("/search", isProfileBuilt, isNotAuthReq, isSeekerAuth, getUserIcon, a
     try{
 
         const seeker_id = req.user.id;
-        const all_jobs = await Job.getAllForView(pool);
+
+        const search_query = req.query.search;
+
+        const all_jobs = await Job.getAllForView(pool, search_query);
 
         const postings = await Promise.all(all_jobs.map(async function(job){ 
 
             const job_id = job.id;
-            const user_id = job.user_id;
+            const employer_id = job.user_id;
 
             const [employer, job_types, job_benefits, job_skills, job_questions, has_applied] = await Promise.all([ // Grabbing job details
-                Employer.getById(pool, user_id),
+                Employer.getById(pool, employer_id),
                 Job.getTypesByJob(pool, job_id),
                 Job.getBenefitsByJob(pool, job_id),
                 Job.getSkillsByJob(pool, job_id),
@@ -574,7 +577,10 @@ router.get("/applications", isNotAuthReq, isSeekerAuth, getUserIcon, async (req,
     try{
 
         const seeker_id = req.user.id;
-        let all_applications = await Application.getBySeeker(pool, seeker_id);
+
+        const search_query = req.query.search;
+
+        let all_applications = await Application.getBySeeker(pool, seeker_id, search_query);
 
 
         const job_applications = await Promise.all(all_applications.map(async function(application){ 

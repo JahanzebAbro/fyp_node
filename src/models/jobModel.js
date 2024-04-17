@@ -98,13 +98,41 @@ class Job {
 
 
     // Retrieve all jobs that are open
-    static async getAllForView(pool){
+    static async getAllForView(pool, search_query){
         try {
-            const query = `
-                SELECT * FROM jobs WHERE status='open';
-            `;
+
+            let query = '';
+            let result = '';
+
+            if(search_query){ // if a query is given look through search vectors
+
+                query = `
+                    SELECT DISTINCT
+                        j.*,
+                        ts_rank((j.search || js.search || e.search), plainto_tsquery('english', $1)) as rank
+                    FROM jobs j
+                    INNER JOIN employers e ON j.user_id = e.user_id
+                    LEFT JOIN job_skills js ON j.id = js.job_id
+                    WHERE
+                        (j.search @@ plainto_tsquery('english', $1) OR
+                        js.search @@ plainto_tsquery('english', $1) OR
+                        e.search @@ plainto_tsquery('english', $1))
+                        AND j.status = 'open'
+                    ORDER BY rank desc;
+                `;
+                const params = [search_query]
+                result = await pool.query(query, params);
+            }
+            else{
+
+                query = `
+                    SELECT * from jobs where status = 'open';
+                `;
+                result = await pool.query(query);
+            }
             
-            const result = await pool.query(query);
+            
+            
 
             // Returns array of Jobs
             return result.rows.map(job => new Job(

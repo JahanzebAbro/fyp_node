@@ -189,3 +189,42 @@ CREATE TABLE IF NOT EXISTS job_benefits (
 --     FOREIGN KEY (seeker_id) REFERENCES seeker(user_id) ON DELETE CASCADE
 -- );
 
+
+
+-- =======================================FULL TEXT SEARCH===================================================
+
+-- Creating search vector columns
+
+-- For employers
+ALTER TABLE employers
+DROP COLUMN IF EXISTS search;
+ALTER TABLE employers
+ADD COLUMN search tsvector GENERATED ALWAYS AS (
+    setweight(to_tsvector('english', coalesce(name, '')), 'A')
+) STORED;
+
+-- For jobs
+ALTER TABLE jobs
+DROP COLUMN IF EXISTS search;
+ALTER TABLE jobs
+ADD COLUMN search tsvector GENERATED ALWAYS AS (
+    setweight(to_tsvector('english', coalesce(title, '')), 'A') ||
+    setweight(to_tsvector('english', coalesce(description, '')), 'B')
+) STORED;
+
+-- For job_skills
+ALTER TABLE job_skills
+DROP COLUMN IF EXISTS search;
+ALTER TABLE job_skills
+ADD COLUMN search tsvector GENERATED ALWAYS AS (
+    setweight(to_tsvector('english', coalesce(name, '')), 'B')
+) STORED;
+
+
+-- Indexing search vector columns
+CREATE INDEX IF NOT EXISTS employer_search_idx ON employers USING GIN (search);
+
+CREATE INDEX IF NOT EXISTS job_search_idx ON jobs USING GIN (search);
+
+CREATE INDEX IF NOT EXISTS skill_search_idx ON job_skills USING GIN (search);
+

@@ -83,16 +83,47 @@ class Application {
 
 
     // Get applications by seeker user_id
-    static async getBySeeker(pool, seeker_id){
+    static async getBySeeker(pool, seeker_id, search_query){
         try{
 
-            const query = 
-            `SELECT * FROM applications WHERE seeker_id = ($1);`;
-            
-            const params =
-            [seeker_id];
+            let query = '';
+            let result = '';
+            let params = '';
 
-            let result = await pool.query(query, params);
+            if(search_query){ // if a query is given look through search vectors
+
+                query = `
+                    SELECT DISTINCT
+                        a.*,
+                        ts_rank((j.search || js.search || e.search), plainto_tsquery('english', $1)) as rank
+                    FROM jobs j
+                    INNER JOIN employers e ON j.user_id = e.user_id
+                    INNER JOIN applications a ON j.id = a.job_id
+                    LEFT JOIN job_skills js ON j.id = js.job_id
+                    WHERE
+                        (j.search @@ plainto_tsquery('english', $1) OR
+                        js.search @@ plainto_tsquery('english', $1) OR
+                        e.search @@ plainto_tsquery('english', $1))
+                        AND j.status = 'open'
+                        AND a.seeker_id = $2
+                    ORDER BY rank desc;
+                `;
+
+                params = [search_query, seeker_id];
+                result = await pool.query(query, params);
+            }
+            else{
+
+                query = 
+                    `SELECT * FROM applications WHERE seeker_id = ($1);
+                `;
+
+                params = [seeker_id];
+                result = await pool.query(query, params);
+            }
+
+        
+            
             let applications = result.rows;
 
             if (applications) {
