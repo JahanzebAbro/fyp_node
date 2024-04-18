@@ -47,7 +47,7 @@ router.get("/search", isProfileBuilt, isNotAuthReq, isSeekerAuth, getUserIcon, a
     try{
 
         const filters  = req.query;
-        
+
         filters.work_style = toArray(filters.work_style);
         filters.job_type = toArray(filters.job_type);
         
@@ -582,11 +582,15 @@ router.get("/applications", isNotAuthReq, isSeekerAuth, getUserIcon, async (req,
 
     try{
 
+        let filters = req.query;
+
+        filters.work_style = toArray(filters.work_style);
+        filters.job_type = toArray(filters.job_type);
+        // console.log(filters);
+
         const seeker_id = req.user.id;
 
-        const search_query = req.query.search;
-
-        let all_applications = await Application.getBySeeker(pool, seeker_id, search_query);
+        let all_applications = await Application.getBySeeker(pool, seeker_id, filters);
 
 
         const job_applications = await Promise.all(all_applications.map(async function(application){ 
@@ -629,7 +633,7 @@ router.get("/applications", isNotAuthReq, isSeekerAuth, getUserIcon, async (req,
         }));
 
         // res.send(job_applications);
-        res.render("job/applications", {applications : job_applications, search_query: search_query});
+        res.render("job/applications", {applications : job_applications, filters: filters});
 
     }
     catch(err){

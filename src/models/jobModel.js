@@ -107,20 +107,20 @@ class Job {
             // type
             // min_pay
             let query = `
-                    SELECT DISTINCT
-                        j.*,
-                        ts_rank((j.search || js.search || e.search), plainto_tsquery('english', $1)) as rank
-                    FROM jobs j
-                    INNER JOIN employers e ON j.user_id = e.user_id
-                    LEFT JOIN job_skills js ON j.id = js.job_id
-                    LEFT JOIN (
-                        SELECT jjt.job_id, STRING_AGG(name, ' ') AS types
-                            FROM job_types t
-                            INNER JOIN jobs_job_types jjt ON t.id = jjt.type_id
-                            GROUP BY jjt.job_id
-                        ) jt ON j.id = jt.job_id
-                    WHERE 
-                        j.status = 'open'
+                SELECT DISTINCT
+                    j.*,
+                    ts_rank((j.search || js.search || e.search), plainto_tsquery('english', $1)) as rank
+                FROM jobs j
+                INNER JOIN employers e ON j.user_id = e.user_id
+                LEFT JOIN job_skills js ON j.id = js.job_id
+                LEFT JOIN (
+                    SELECT jjt.job_id, STRING_AGG(name, ' ') AS types
+                        FROM job_types t
+                        INNER JOIN jobs_job_types jjt ON t.id = jjt.type_id
+                        GROUP BY jjt.job_id
+                    ) jt ON j.id = jt.job_id
+                WHERE 
+                    j.status = 'open'
             `;
 
 
