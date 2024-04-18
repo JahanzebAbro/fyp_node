@@ -195,11 +195,33 @@ class Application {
     static async getForJob(pool, job_id, filters){
         try{
 
-            let query = 
-            `SELECT * FROM applications a WHERE job_id = ($1)`;
+            let query = `SELECT DISTINCT
+                    a.*,
+                    ts_rank(s.search, plainto_tsquery('simple', $2)) as rank
+                FROM applications a
+                INNER JOIN seekers s ON a.seeker_id = s.user_id
+                WHERE
+                    a.job_id = $1
+                `;
+            
+                
 
             const params = [job_id];
             let params_index = 2;
+
+
+            // Check SEARCH
+            if (filters.search) {
+
+                query += ` AND s.search @@ plainto_tsquery('simple', $${params_index})`;
+                params.push(filters.search);
+                params_index++;
+            }
+            else{
+                params.push(''); // In order to run ts rank 
+                params_index++;
+            }
+
 
             // Check STATUS
             if (filters.status.length > 0) { // Example ['pending', 'declined']

@@ -93,7 +93,7 @@ router.get("/search", isProfileBuilt, isNotAuthReq, isSeekerAuth, getUserIcon, a
         }));
 
 
-        res.render("job/job_search", { postings: postings, filters: filters, search_endpoint: 'search', table_total: postings.length });
+        res.render("job/job_search", { postings: postings, filters: filters, search_endpoint: 'search', table_total: postings.length, search_placeholder: ""});
 
             
     }
@@ -171,7 +171,7 @@ router.get("/postings", isNotAuthReq, isEmployerAuth, getUserIcon, async (req, r
 
         }));
 
-        res.render("job/postings", { postings: postings, filters: filters, search_endpoint: 'postings', table_total: postings.length });
+        res.render("job/postings", { postings: postings, filters: filters, search_endpoint: 'postings', table_total: postings.length, search_placeholder: "" });
 
             
     }
@@ -638,7 +638,7 @@ router.get("/applications", isNotAuthReq, isSeekerAuth, getUserIcon, async (req,
 
         // res.send(job_applications);
         res.render("job/applications", {applications : job_applications, filters: filters, search_endpoint: 'applications', 
-                                        table_total: job_applications.length});         
+                                        table_total: job_applications.length, search_placeholder: ""});         
 
     }
     catch(err){
