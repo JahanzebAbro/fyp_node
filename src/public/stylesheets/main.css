@@ -385,6 +385,29 @@ input[type=search]:focus::placeholder {
 }
 
 
+.filter_dropdown_content{
+    left: -50%;
+}
+
+.dropdown_filter_item {
+    font-family: 'Jost';
+    font-weight: 300;
+    display: flex;
+    font-size: 1.1em;
+    padding: 5px;
+    align-items: center; 
+    justify-content: left; 
+    margin-left: 10px;
+    margin-right: 10px;
+    gap: 20px;
+}
+
+.dropdown_filter_item:hover {
+    font-weight: 400;
+    cursor: pointer;
+}
+
+
 /* ===================================JOB CREATE==================================== */
 
 .job_form {

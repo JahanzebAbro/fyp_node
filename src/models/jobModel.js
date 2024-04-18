@@ -101,6 +101,15 @@ class Job {
     static async getAllForView(pool, search_query){
         try {
 
+            // Possible filters:
+            // search
+            // full-time
+            // Part-time
+            // temporary
+            // min_pay
+            // applied
+
+
             let query = '';
             let result = '';
 

@@ -6,7 +6,37 @@
         <th>Type</th>
         <th>Salary Range</th>
         <th>
-            <div class="table_filter_icon"></div>
+            
+            <div class="user_dropdown">
+                <a class="dropdown_trigger">
+                    <div class="table_filter_icon"></div>
+                </a>
+                <div class="dropdown_content filter_dropdown_content">
+                    <form action="/user/job/search" method="GET">
+                        <div class="dropdown_filter_item">
+                            <input type="checkbox" name="full-time" value="true">
+                            <label> Full-Time</label><br>
+                        </div>
+                        <div class="dropdown_filter_item">
+                            <input type="checkbox" name="part-time" value="true">
+                            <label> Part-Time</label><br>
+                        </div>
+                        <div class="dropdown_filter_item">
+                            <input type="checkbox" name="temporary" value="true">
+                            <label> Temporary</label><br>
+                        </div>
+                        <div  class="dropdown_filter_item">
+                            <label>Min-Pay: </label>
+                            <input type="number" name="min_pay" placeholder="£ Enter amount">
+                        </div>
+
+                        <div class="dropdown_filter_item">
+                            <button type="submit">Filter</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
         </th>
     </tr>
     <% postings.forEach(function(post, index) { %>

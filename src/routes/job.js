@@ -45,6 +45,9 @@ router.get("/search", isProfileBuilt, isNotAuthReq, isSeekerAuth, getUserIcon, a
     
     try{
 
+        const filters  = req.query;
+        console.log(filters);
+
         const seeker_id = req.user.id;
 
         const search_query = req.query.search;
@@ -86,7 +89,7 @@ router.get("/search", isProfileBuilt, isNotAuthReq, isSeekerAuth, getUserIcon, a
 
         }));
 
-        res.render("job/job_search", { postings: postings });
+        res.render("job/job_search", { postings: postings, search_query: search_query });
 
             
     }
@@ -623,7 +626,7 @@ router.get("/applications", isNotAuthReq, isSeekerAuth, getUserIcon, async (req,
         }));
 
         // res.send(job_applications);
-        res.render("job/applications", {applications : job_applications});
+        res.render("job/applications", {applications : job_applications, search_query: search_query});
 
     }
     catch(err){
