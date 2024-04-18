@@ -18,7 +18,8 @@ const { isProfileBuilt,
         isSeekerAuth, 
         formatDateForEdit, 
         findIndustryName,
-        cleanCVName } = require('../utils');
+        cleanCVName,
+        toArray } = require('../utils');
 const { validateJobStatus,
         validateJobTitle,
         validateOpenings,
@@ -46,13 +47,15 @@ router.get("/search", isProfileBuilt, isNotAuthReq, isSeekerAuth, getUserIcon, a
     try{
 
         const filters  = req.query;
-        console.log(filters);
-
+        
+        filters.work_style = toArray(filters.work_style);
+        filters.job_type = toArray(filters.job_type);
+        
         const seeker_id = req.user.id;
+        
+        // console.log(filters);
 
-        const search_query = req.query.search;
-
-        const all_jobs = await Job.getAllForView(pool, search_query);
+        const all_jobs = await Job.getAllForView(pool, filters);
 
         const postings = await Promise.all(all_jobs.map(async function(job){ 
 
@@ -89,7 +92,7 @@ router.get("/search", isProfileBuilt, isNotAuthReq, isSeekerAuth, getUserIcon, a
 
         }));
 
-        res.render("job/job_search", { postings: postings, search_query: search_query });
+        res.render("job/job_search", { postings: postings, filters: filters });
 
             
     }

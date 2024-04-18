@@ -73,6 +73,12 @@ exports.isNotAuthReq = function (req, res, next){
 }
 
 
+// Convert values single or null values into arrays
+exports.toArray = function(val) {
+    if (!val) return [];
+    return Array.isArray(val) ? val : [val];
+}
+
 
 // To redirect logged in users away from login and register page.
 exports.isAuthReq = function (req, res, next){

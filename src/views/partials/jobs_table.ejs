@@ -14,20 +14,44 @@
                 <div class="dropdown_content filter_dropdown_content">
                     <form action="/user/job/search" method="GET">
                         <div class="dropdown_filter_item">
-                            <input type="checkbox" name="full-time" value="true">
+                            <input type="checkbox" name="work_style" value="In-person"
+                            <% if(filters.work_style.includes('In-person')) {%>
+                                checked
+                            <% } %>>
+                            <label> In-person</label><br>
+                            <input type="checkbox" name="job_type" value="Full-time"
+                            <% if(filters.job_type.includes('Full-time')) {%>
+                                checked
+                            <% } %>>
                             <label> Full-Time</label><br>
                         </div>
                         <div class="dropdown_filter_item">
-                            <input type="checkbox" name="part-time" value="true">
+                            <input type="checkbox" name="work_style" value="Remote"
+                            <% if(filters.work_style.includes('Remote')) {%>
+                                checked
+                            <% } %>>
+                            <label> Remote</label><br>
+                            <input type="checkbox" name="job_type" value="Part-time"
+                            <% if(filters.job_type.includes('Part-time')) {%>
+                                checked
+                            <% } %>>
                             <label> Part-Time</label><br>
                         </div>
                         <div class="dropdown_filter_item">
-                            <input type="checkbox" name="temporary" value="true">
+                            <input type="checkbox" name="work_style" value="Hybrid"
+                            <% if(filters.work_style.includes('Hybrid')) {%>
+                                checked
+                            <% } %>>
+                            <label> Hybrid</label><br>
+                            <input type="checkbox" name="job_type" value="Temporary"
+                            <% if(filters.job_type.includes('Temporary')) {%>
+                                checked
+                            <% } %>>
                             <label> Temporary</label><br>
                         </div>
                         <div  class="dropdown_filter_item">
                             <label>Min-Pay: </label>
-                            <input type="number" name="min_pay" placeholder="£ Enter amount">
+                            <input type="number" name="min_pay" placeholder="£ Enter amount" value="<%= filters.min_pay || '' %>">
                         </div>
 
                         <div class="dropdown_filter_item">

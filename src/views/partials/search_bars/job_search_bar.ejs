@@ -4,7 +4,7 @@
     <div style="width: 90%;">
         <form action="/user/job/search" method="GET">
             <label for="search"></label>
-            <input type="search" id="search" name="search" placeholder="job title, company, skills" value="<%= search_query || '' %>">
+            <input type="search" id="search" name="search" placeholder="job title, company, skills" value="<%= filters.search || '' %>">
             <button class="search_icon_btn" type="submit"><i class="fa fa-search"></i></button>
         </form>
     </div>

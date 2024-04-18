@@ -98,49 +98,86 @@ class Job {
 
 
     // Retrieve all jobs that are open
-    static async getAllForView(pool, search_query){
+    static async getAllForView(pool, filters){
         try {
 
             // Possible filters:
             // search
-            // full-time
-            // Part-time
-            // temporary
+            // style
+            // type
             // min_pay
-            // applied
-
-
-            let query = '';
-            let result = '';
-
-            if(search_query){ // if a query is given look through search vectors
-
-                query = `
+            let query = `
                     SELECT DISTINCT
                         j.*,
                         ts_rank((j.search || js.search || e.search), plainto_tsquery('english', $1)) as rank
                     FROM jobs j
                     INNER JOIN employers e ON j.user_id = e.user_id
                     LEFT JOIN job_skills js ON j.id = js.job_id
-                    WHERE
-                        (j.search @@ plainto_tsquery('english', $1) OR
-                        js.search @@ plainto_tsquery('english', $1) OR
-                        e.search @@ plainto_tsquery('english', $1))
-                        AND j.status = 'open'
-                    ORDER BY rank desc;
+                    LEFT JOIN (
+                        SELECT jjt.job_id, STRING_AGG(name, ' ') AS types
+                            FROM job_types t
+                            INNER JOIN jobs_job_types jjt ON t.id = jjt.type_id
+                            GROUP BY jjt.job_id
+                        ) jt ON j.id = jt.job_id
+                    WHERE 
+                        j.status = 'open'
+            `;
+
+
+            let params = [];
+            let params_index = 1; 
+
+            // Check SEARCH
+            if (filters.search) {
+
+                query += ` AND (j.search @@ plainto_tsquery('english', $${params_index}) OR
+                    js.search @@ plainto_tsquery('english', $${params_index}) OR
+                    e.search @@ plainto_tsquery('english', $${params_index}))
                 `;
-                const params = [search_query]
-                result = await pool.query(query, params);
+                params.push(filters.search);
+                params_index++;
             }
             else{
-
-                query = `
-                    SELECT * from jobs where status = 'open';
-                `;
-                result = await pool.query(query);
+                params.push(''); // In order to run ts rank 
+                params_index++;
             }
+
+
+            // Check MIN PAY
+            if (filters.min_pay) {
+
+                query += ` AND j.min_pay >= $${params_index}`;
+                params.push(filters.min_pay);
+                params_index++;
+            }
+
+           
+            // Check STYLE
+            if (filters.work_style.length > 0) { // Example ['Hybrid', 'Remote']
+                const placeholders = filters.work_style.map((style, index) => `$${params_index + index}`).join(', ');
+
+                query += ` AND j.style IN (${placeholders})`;
+                params.push(...filters.work_style);
+                params_index += filters.work_style.length;
+            }
+
+
+            // Check TYPE
+            if (filters.job_type.length > 0) { // Example ['Full-Time', 'Part-Time']
+
+                const placeholders = filters.job_type.map((style, index) =>  `jt.types LIKE $${params_index + index}`).join(' OR ');;
+
+                query += ` AND (${placeholders})`;
+                params.push(...filters.job_type.map(type => `%${type}%`));
+                params_index += filters.job_type.length;
+            }
+           
+        
             
-            
+            // Rank by search or creation
+            query += filters.search ? ` ORDER BY rank DESC` : ` ORDER BY j.created_at DESC`;
+
+            const result = await pool.query(query, params);
             
 
             // Returns array of Jobs

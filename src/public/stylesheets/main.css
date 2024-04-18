@@ -402,8 +402,7 @@ input[type=search]:focus::placeholder {
     gap: 20px;
 }
 
-.dropdown_filter_item:hover {
-    font-weight: 400;
+.dropdown_filter_item input:hover {
     cursor: pointer;
 }
 
