@@ -1,18 +1,4 @@
 
-
-<div class="applicant_status_btn">
-    <div class="applicant_total">
-        <span>Total: <%= applicants.length %></span>
-    </div>
-    <button>All</button>
-    <button>Pending</button>
-    <button>Considering</button>
-    <button>Declined</button>
-    <button>Accepted</button>
-</div>
-
-
-
 <table>
 
     <tr>
@@ -22,7 +8,7 @@
         <th>Email</th>
         <th>Skills</th>
         <th>
-            <div class="table_filter_icon"></div>
+            <%- include('../partials/filters/applicants_filter.ejs') %>   
         </th>
     </tr>
     <% applicants.forEach(function(applicant, index) { %>

@@ -192,14 +192,25 @@ class Application {
 
 
     // Get applications by job_id
-    static async getForJob(pool, job_id){
+    static async getForJob(pool, job_id, filters){
         try{
 
-            const query = 
-            `SELECT * FROM applications WHERE job_id = ($1);`;
+            let query = 
+            `SELECT * FROM applications a WHERE job_id = ($1)`;
+
+            const params = [job_id];
+            let params_index = 2;
+
+            // Check STATUS
+            if (filters.status.length > 0) { // Example ['pending', 'declined']
+                const placeholders = filters.status.map((style, index) => `$${params_index + index}`).join(', ');
+
+                query += ` AND a.status IN (${placeholders})`;
+                params.push(...filters.status);
+                params_index += filters.status.length;
+            }
             
-            const params =
-            [job_id];
+            
 
             let result = await pool.query(query, params);
 

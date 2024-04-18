@@ -276,6 +276,11 @@ input[type=search]:focus::placeholder {
     font-size: 1.8em;
 }
 
+.logo a {
+    text-decoration: none;
+    color: #000000;
+}
+
 .nav_center a,
 .nav_left a {
     text-decoration: none;
@@ -725,29 +730,6 @@ table .hidden_row {
 
 
 /* ==================================================APPLICANT TABLE=============================================== */
-
-.applicant_total{
-    font-family: 'Jost';
-    font-size: 2rem;
-    margin-bottom: 20px;
-}
-.applicant_status_btn {
-    width: 95%;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 20px;
-}
-
-.applicant_status_btn button{
-    background-color: white;
-    color:black;
-    margin-top: 10px;
-}
-
-.applicant_status_btn button:hover{
-    background-color: black;
-    color: white;
-}
 
 .table_hidden_review_btn {
     border: 2px solid var(--orange);

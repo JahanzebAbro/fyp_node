@@ -743,9 +743,13 @@ router.get("/applicants/:job_id", isNotAuthReq, isEmployerAuth, getUserIcon, asy
         // Get questions for job
         // Get responses for application
 
+        let filters = req.query;
+        filters.status = toArray(filters.status);
+
+
         const job_id = req.params.job_id;
         
-        let all_applications = await Application.getForJob(pool, job_id);
+        let all_applications = await Application.getForJob(pool, job_id, filters);
         const job_questions = await Job.getQuestionsByJob(pool, job_id);
 
         const applicants = await Promise.all(all_applications.map(async function(application){ 
@@ -769,7 +773,10 @@ router.get("/applicants/:job_id", isNotAuthReq, isEmployerAuth, getUserIcon, asy
 
         }));
 
-        res.render("job/applicants", {applicants: applicants});
+        const search_endpoint = 'applicants/' + job_id;
+
+        res.render("job/applicants", {applicants: applicants, filters: filters, search_endpoint: search_endpoint, 
+                                        table_total: applicants.length, search_placeholder: "Applicant's name"});
 
     }
     catch(err){

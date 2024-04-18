@@ -1,7 +1,4 @@
 
--- ALTER TABLE employers DROP search;
--- ALTER TABLE jobs DROP search;
--- ALTER TABLE job_skills DROP search;
 
 
 -- DROP TABLE IF EXISTS seeker_skills CASCADE;
@@ -29,3 +26,4 @@ DROP TYPE IF EXISTS user_type_enum;
 DROP INDEX IF EXISTS employer_search_idx;
 DROP INDEX IF EXISTS job_search_idx;
 DROP INDEX IF EXISTS skill_search_idx;
+DROP INDEX IF EXISTS seeker_search_idx;

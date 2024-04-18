@@ -195,7 +195,6 @@ CREATE TABLE IF NOT EXISTS job_benefits (
 
 -- Creating search vector columns
 
--- For employers
 ALTER TABLE employers
 DROP COLUMN IF EXISTS search;
 ALTER TABLE employers
@@ -203,7 +202,7 @@ ADD COLUMN search tsvector GENERATED ALWAYS AS (
     setweight(to_tsvector('english', coalesce(name, '')), 'A')
 ) STORED;
 
--- For jobs
+
 ALTER TABLE jobs
 DROP COLUMN IF EXISTS search;
 ALTER TABLE jobs
@@ -212,7 +211,7 @@ ADD COLUMN search tsvector GENERATED ALWAYS AS (
     setweight(to_tsvector('english', coalesce(description, '')), 'B')
 ) STORED;
 
--- For job_skills
+
 ALTER TABLE job_skills
 DROP COLUMN IF EXISTS search;
 ALTER TABLE job_skills
@@ -221,10 +220,22 @@ ADD COLUMN search tsvector GENERATED ALWAYS AS (
 ) STORED;
 
 
+ALTER TABLE seekers
+DROP COLUMN IF EXISTS search;
+ALTER TABLE seekers
+ADD COLUMN search tsvector GENERATED ALWAYS AS (
+    to_tsvector('simple', coalesce(f_name, '')) ||
+    to_tsvector('simple', coalesce(l_name, ''))
+) STORED;
+
+
+
 -- Indexing search vector columns
 CREATE INDEX IF NOT EXISTS employer_search_idx ON employers USING GIN (search);
 
 CREATE INDEX IF NOT EXISTS job_search_idx ON jobs USING GIN (search);
 
 CREATE INDEX IF NOT EXISTS skill_search_idx ON job_skills USING GIN (search);
+
+CREATE INDEX IF NOT EXISTS seeker_search_idx ON seekers USING GIN (search);
 

@@ -1,0 +1,42 @@
+<div class="user_dropdown">
+    <a class="dropdown_trigger">
+        <div class="table_filter_icon"></div>
+    </a>
+    <div class="dropdown_content">
+        <form action="/user/job/<%= search_endpoint %>" method="GET">
+            <div class="dropdown_filter_item">
+                <input type="checkbox" name="status" value="accepted"
+                <% if(filters.status.includes('accepted')) {%>
+                    checked
+                <% } %>>
+                <label> Accepted</label><br>
+            </div>
+            <div class="dropdown_filter_item">
+                <input type="checkbox" name="status" value="declined"
+                <% if(filters.status.includes('declined')) {%>
+                    checked
+                <% } %>>
+                <label> Declined</label><br>
+            </div>
+            <div class="dropdown_filter_item">
+                <input type="checkbox" name="status" value="reviewing"
+                <% if(filters.status.includes('reviewing')) {%>
+                    checked
+                <% } %>>
+                <label> Reviewing</label><br>
+            </div>
+            <div class="dropdown_filter_item">
+                <input type="checkbox" name="status" value="pending"
+                <% if(filters.status.includes('pending')) {%>
+                    checked
+                <% } %>>
+                <label> Pending</label><br>
+            </div>
+
+
+            <div class="dropdown_filter_item">
+                <button type="submit">Filter</button>
+            </div>
+        </form>
+    </div>
+</div>
