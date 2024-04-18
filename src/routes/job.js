@@ -92,7 +92,8 @@ router.get("/search", isProfileBuilt, isNotAuthReq, isSeekerAuth, getUserIcon, a
 
         }));
 
-        res.render("job/job_search", { postings: postings, filters: filters });
+
+        res.render("job/job_search", { postings: postings, filters: filters, search_endpoint: 'search', table_total: postings.length });
 
             
     }
@@ -134,12 +135,15 @@ router.get("/employer/:user_id", isNotAuthReq, isSeekerAuth, getUserIcon, async 
 router.get("/postings", isNotAuthReq, isEmployerAuth, getUserIcon, async (req, res) => {
 
         
-    const user_id = req.user.id;
-
-    
     try{
+        
+        const user_id = req.user.id;
 
-        const user_jobs = await Job.getJobsByUser(pool, user_id);
+        let filters = req.query;
+        filters.status = toArray(filters.status);
+        
+
+        const user_jobs = await Job.getJobsByUser(pool, user_id, filters);
         const employer = await Employer.getById(pool, user_id);
 
         const postings = await Promise.all(user_jobs.map(async function(job){ 
@@ -167,7 +171,7 @@ router.get("/postings", isNotAuthReq, isEmployerAuth, getUserIcon, async (req, r
 
         }));
 
-        res.render("job/postings", { postings: postings });
+        res.render("job/postings", { postings: postings, filters: filters, search_endpoint: 'postings', table_total: postings.length });
 
             
     }
@@ -633,7 +637,8 @@ router.get("/applications", isNotAuthReq, isSeekerAuth, getUserIcon, async (req,
         }));
 
         // res.send(job_applications);
-        res.render("job/applications", {applications : job_applications, filters: filters});
+        res.render("job/applications", {applications : job_applications, filters: filters, search_endpoint: 'applications', 
+                                        table_total: job_applications.length});         
 
     }
     catch(err){

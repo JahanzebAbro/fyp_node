@@ -389,6 +389,10 @@ input[type=search]:focus::placeholder {
     left: -50%;
 }
 
+.postings_filter_dropdown_content{
+    left: -50px;
+}
+
 .dropdown_filter_item {
     font-family: 'Jost';
     font-weight: 300;

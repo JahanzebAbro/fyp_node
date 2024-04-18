@@ -7,7 +7,7 @@
         <th>Type</th>
         <th>Created</th>
         <th>
-            <div class="table_filter_icon"></div>
+            <%- include('../partials/postings_filter.ejs') %>    
         </th>
     </tr>
     <% postings.forEach(function(post, index) { %>

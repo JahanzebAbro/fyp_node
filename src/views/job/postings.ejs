@@ -5,4 +5,16 @@
     <span class="page_title_text">POSTINGS</span>
 </div>
 
-<%- include('../partials/postings_table.ejs') %>
+
+<%- include('../partials/search_bar.ejs') %>
+
+<% if (postings.length > 0) { %>
+    <%- include('../partials/postings_table.ejs') %>  
+<% } else { %>
+    <div class="page_err_text">
+        <img src="/img/leaf.png" style ="width: 100px; height: auto;"><br>
+        <span >No jobs found sorry.</span><br>
+    </div>
+<% } %>
+
+

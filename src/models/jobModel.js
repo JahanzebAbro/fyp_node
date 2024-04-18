@@ -97,7 +97,7 @@ class Job {
     }
 
 
-    // Retrieve all jobs that are open
+    // Retrieve all jobs that are open and filter option
     static async getAllForView(pool, filters){
         try {
 
@@ -205,13 +205,71 @@ class Job {
 
 
     // Retrieve all jobs for a user id
-    static async getJobsByUser(pool, user_id) {
+    static async getJobsByUser(pool, user_id, filters) {
         try {
-            const query = `
-                SELECT * FROM jobs WHERE user_id = $1;
+
+            let query = `
+                SELECT DISTINCT
+                    j.*,
+                    ts_rank((j.search || js.search || e.search), plainto_tsquery('english', $2)) as rank
+                FROM jobs j
+                INNER JOIN employers e ON j.user_id = e.user_id
+                LEFT JOIN job_skills js ON j.id = js.job_id
+                LEFT JOIN (
+                    SELECT jjt.job_id, STRING_AGG(name, ' ') AS types
+                        FROM job_types t
+                        INNER JOIN jobs_job_types jjt ON t.id = jjt.type_id
+                        GROUP BY jjt.job_id
+                    ) jt ON j.id = jt.job_id
+                WHERE 
+                    j.user_id = $1
             `;
+
+
+            let params = [user_id];
+            let params_index = 2; 
+
+            // Check SEARCH
+            if (filters.search) {
+
+                query += ` AND (j.search @@ plainto_tsquery('english', $${params_index}) OR
+                    js.search @@ plainto_tsquery('english', $${params_index}) OR
+                    e.search @@ plainto_tsquery('english', $${params_index}))
+                `;
+                params.push(filters.search);
+                params_index++;
+            }
+            else{
+                params.push(''); // In order to run ts rank 
+                params_index++;
+            }
+
+
+           
+            // Check STATUS
+            if (filters.status.length > 0) { // Example ['open', 'hidden', 'closed']
+                const placeholders = filters.status.map((style, index) => `$${params_index + index}`).join(', ');
+
+                query += ` AND j.status IN (${placeholders})`;
+                params.push(...filters.status);
+                params_index += filters.status.length;
+            }
+
+
+            // Check DEADLINE
+            if (filters.deadline) { 
+
+                query += ` ORDER BY j.deadline ASC`;
+            }
+            else{
+                // Rank by search or creation
+                query += filters.search ? ` ORDER BY rank DESC` : ` ORDER BY j.created_at DESC`;
+            }
+           
+        
             
-            const params = [user_id];
+
+            
             const result = await pool.query(query, params);
 
             // Returns array of Jobs

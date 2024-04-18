@@ -1,0 +1,41 @@
+<div class="user_dropdown">
+    <a class="dropdown_trigger">
+        <div class="table_filter_icon"></div>
+    </a>
+    <div class="dropdown_content postings_filter_dropdown_content">
+        <form action="/user/job/<%= search_endpoint %>" method="GET">
+            <div class="dropdown_filter_item">
+                <input type="checkbox" name="status" value="open"
+                <% if(filters.status.includes('open')) {%>
+                    checked
+                <% } %>>
+                <label> Open</label><br>
+            </div>
+            <div class="dropdown_filter_item">
+                <input type="checkbox" name="status" value="closed"
+                <% if(filters.status.includes('closed')) {%>
+                    checked
+                <% } %>>
+                <label> Closed</label><br>
+            </div>
+            <div class="dropdown_filter_item">
+                <input type="checkbox" name="status" value="hidden"
+                <% if(filters.status.includes('hidden')) {%>
+                    checked
+                <% } %>>
+                <label> Hidden</label><br>
+            </div>
+            <div  class="dropdown_filter_item">
+                <input type="checkbox" name="deadline" value="deadline"
+                <% if(filters.deadline) {%>
+                    checked
+                <% } %>>
+                <label> Closest deadline</label><br>
+            </div>
+
+            <div class="dropdown_filter_item">
+                <button type="submit">Filter</button>
+            </div>
+        </form>
+    </div>
+</div>
