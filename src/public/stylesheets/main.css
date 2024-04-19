@@ -200,6 +200,21 @@ input[type=search]:focus::placeholder {
 }
 
 
+.builder_form{
+    font-family: 'Jost';
+    margin-left: 20px;
+}
+
+.builder_btn{
+    margin-left: 20px;
+}
+
+.builder_btn_container{
+    margin-left: 20px; 
+    font-family: 'Jost'; 
+    font-size: 1.8em; 
+    text-align: center;
+}
 
 
 /* ============================================EDIT MODE========================================== */

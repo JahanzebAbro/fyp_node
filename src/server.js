@@ -77,6 +77,11 @@ const jobRouter = require("./routes/job");
 app.use("/user/job", jobRouter);
 
 
+// Analytics paths
+const analyticsRouter = require("./routes/analytics");
+app.use("/user/analytics", analyticsRouter);
+
+
 // Updates job status every 24 hours
 setInterval(async function(){ 
     await Job.checkDeadline(pool);

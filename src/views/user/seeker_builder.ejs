@@ -1,8 +1,12 @@
+<%- include('../partials/seeker_navbar.ejs') %>
 
+<div class="page_title">
+    <img src="/img/line.png" class="page_title_line">
+    <span class="page_title_text">PROFILE BUILDER</span>
+</div>
 
 <form action="/user/profile/builder/seeker" method="POST" id="seeker_builder_form" class="builder_form" enctype="multipart/form-data">
 
-    PERSONAL<br><br>
     <label for="f_name">First Name*:</label><br>
     <input type="text" id="f_name" name="f_name" maxlength="50"><br>
     <span  id="f_name_err" style="color: red;"></span><br>
@@ -38,8 +42,6 @@
     <span id="pic_err" style="color: red;"></span><br><br>
     
 
-    LOCATION<br><br>
-
     <label for="address">Address:</label><br>
     <input type="text" id="address" name="address"><br>
     <span  id="address_err" style="color: red;"></span><br>
@@ -51,7 +53,6 @@
 
 
 
-    CONTACT<br><br>
     <label for="ct_phone">Contact Number:</label><br>
     <input type="tel" id="ct_phone" name="ct_phone"><br>
     <span  id="ct_phone_err" style="color: red;"></span><br>
@@ -62,7 +63,6 @@
     <span  id="ct_email_err" style="color: red;"></span><br><br>
 
 
-    PREFERENCES<br><br>
     <label for="industry">Industry:</label><br>
     <select id="industry" name="industry">
         <option value="">None</option>
@@ -96,11 +96,11 @@
         <input type="radio" id="not_ready_to_work" name="work_status" value="false">
         <label for="not_ready_to_work">Not Ready to Work</label><br>
     </div><br>
-    <span  id="work_status_err" style="color: red;"></span><br><br>
+    <span  id="work_status_err" style="color: red;"></span><br>
 
 
     <button type="submit" value="Submit">Save Changes</button>
-    <a href="/user/profile"><button type="button">Cancel</button></a>
+    <a href="/user/profile"><button type="button">Cancel</button></a><br><br>
 </form>
 
 <script type="module" src="/scripts/seeker_build_utils.js"></script>

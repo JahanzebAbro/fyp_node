@@ -13,7 +13,9 @@
 
 <!-- Only displays buttons if user hasn't made a profile before -->
 <% if (!locals.profile) { %>
-    <a href="/user/profile/builder"><button type="button" class="builder_btn">Setup Profile</button></a>
+    <p class="builder_btn_container">Let's set up your profile!
+        <br><a href="/user/profile/builder"><button type="button" class="builder_btn">Setup Profile</button></a>
+    </p>
 <% } %>
 
 

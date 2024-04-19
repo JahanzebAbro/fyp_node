@@ -1,7 +1,13 @@
+<%- include('../partials/employer_navbar.ejs') %>
+
+<div class="page_title">
+    <img src="/img/line.png" class="page_title_line">
+    <span class="page_title_text">PROFILE BUILDER</span>
+</div>
+
 
 <form action="/user/profile/builder/employer" method="POST" id="employer_builder_form" class="builder_form" enctype="multipart/form-data">
 
-    COMPANY<br><br>
     <label for="comp_name">Company Name*:</label><br>
     <input type="text" id="comp_name" name="comp_name" maxlength="50"><br>
     <span  id="comp_name_err" style="color: red;"></span><br>
@@ -28,8 +34,6 @@
     <span id="pic_err" style="color: red;"></span><br><br>
     
 
-    LOCATION<br><br>
-
     <label for="address">Address:</label><br>
     <input type="text" id="address" name="address"><br>
     <span  id="address_err" style="color: red;"></span><br>
@@ -40,8 +44,6 @@
     <span  id="postcode_err" style="color: red;"></span><br><br>
 
 
-
-    CONTACT<br><br>
     <label for="ct_phone">Contact Number:</label><br>
     <input type="tel" id="ct_phone" name="ct_phone"><br>
     <span  id="ct_phone_err" style="color: red;"></span><br>
@@ -52,7 +54,6 @@
     <span  id="ct_email_err" style="color: red;"></span><br><br>
 
 
-    PREFERENCES<br><br>
     <label for="industry">Industry:</label><br>
     <select id="industry" name="industry">
         <option value="">None</option>
@@ -77,11 +78,11 @@
         <option value="TRV">Travel</option>
         <option value="ADV">Advertising</option>
     </select><br>
-    <span  id="industry_err" style="color: red;"></span><br><br>
+    <span  id="industry_err" style="color: red;"></span><br>
 
 
     <button type="submit" value="Submit">Save Changes</button>
-    <a href="/user/profile"><button type="button">Cancel</button></a>
+    <a href="/user/profile"><button type="button">Cancel</button></a><br><br>
 </form>
 
 <script type="module" src="/scripts/employer_build_utils.js"></script>
