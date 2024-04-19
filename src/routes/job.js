@@ -62,12 +62,13 @@ router.get("/search", isProfileBuilt, isNotAuthReq, isSeekerAuth, getUserIcon, a
             const job_id = job.id;
             const employer_id = job.user_id;
 
-            const [employer, job_types, job_benefits, job_skills, job_questions, has_applied] = await Promise.all([ // Grabbing job details
+            const [employer, job_types, job_benefits, job_skills, job_questions, has_saved, has_applied] = await Promise.all([ // Grabbing job details
                 Employer.getById(pool, employer_id),
                 Job.getTypesByJob(pool, job_id),
                 Job.getBenefitsByJob(pool, job_id),
                 Job.getSkillsByJob(pool, job_id),
                 Job.getQuestionsByJob(pool, job_id),
+                Job.hasSaved(pool, job_id, seeker_id),
                 Application.hasApplied(pool, seeker_id, job_id)
             ]);
 
@@ -87,7 +88,8 @@ router.get("/search", isProfileBuilt, isNotAuthReq, isSeekerAuth, getUserIcon, a
                 job_benefits,
                 job_skills,
                 job_questions,
-                has_applied
+                has_applied,
+                has_saved
             }; // return an array value of a complete combined job object
 
         }));
@@ -830,5 +832,97 @@ router.post("/applicants/status", isNotAuthReq, isEmployerAuth, getUserIcon, upl
 
 
 });
+
+
+// GET ALL SAVED JOBS FOR A SEEKER
+router.get("/saved", isNotAuthReq, isSeekerAuth, getUserIcon, async (req, res) => {
+
+    try{
+
+        const filters  = req.query;
+
+        filters.work_style = toArray(filters.work_style);
+        filters.job_type = toArray(filters.job_type);
+        
+        const seeker_id = req.user.id;
+        
+        // console.log(filters);
+
+        const all_jobs = await Job.getAllForView(pool, filters);
+
+        const postings = await Promise.all(all_jobs.map(async function(job){ 
+
+            const job_id = job.id;
+            const employer_id = job.user_id;
+
+            const [employer, job_types, job_benefits, job_skills, job_questions, has_applied] = await Promise.all([ // Grabbing job details
+                Employer.getById(pool, employer_id),
+                Job.getTypesByJob(pool, job_id),
+                Job.getBenefitsByJob(pool, job_id),
+                Job.getSkillsByJob(pool, job_id),
+                Job.getQuestionsByJob(pool, job_id),
+                Application.hasApplied(pool, seeker_id, job_id)
+            ]);
+
+            // Formatting dates
+            job.created_at = job.created_at ? formatDateForDisplay(job.created_at) : job.created_at;
+            job.start_date = job.start_date ? formatDateForDisplay(job.start_date) : job.start_date;
+            job.deadline = job.deadline ? formatDateForDisplay(job.deadline): job.deadline;
+
+            // Format industry
+            employer.industry = employer.industry ? findIndustryName(employer.industry) : employer.industry;
+ 
+
+            return {
+                ...job,
+                employer,
+                job_types,
+                job_benefits,
+                job_skills,
+                job_questions,
+                has_applied
+            }; // return an array value of a complete combined job object
+
+        }));
+
+
+        res.render('job/saved_jobs', { postings: postings, filters: filters, search_endpoint: 'saved', table_total: postings.length, search_placeholder: ""})
+
+
+    }catch(err){
+        console.error(err);
+        res.status(500).send("Internal Server Error");
+    }
+
+});
+
+
+
+// TOGGLE SAVE/UNSAVE JOB
+router.post("/search/save", isNotAuthReq, isSeekerAuth, getUserIcon, upload.none(), async (req, res) => {
+    try{
+        
+        const job_id = req.body.saved_job;
+
+        const seeker_id = req.user.id;
+        
+
+        const result = await Job.saveJob(pool, job_id, seeker_id);
+
+        if(result){
+            return res.json({ success: true, save_type: 'save', message: 'Job saved!'});
+        }
+        else{
+            return res.json({ success: true, save_type: 'unsave', message: 'Job Unsaved!'});
+        }
+
+    }
+    catch(err){
+        console.error(err);
+        res.status(500).send("Internal Server Error");
+    }
+});
+
+
 
 module.exports = router;

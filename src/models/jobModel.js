@@ -204,7 +204,7 @@ class Job {
     }
 
 
-    // Retrieve all jobs for a user id
+    // Retrieve all jobs for an employer id
     static async getJobsByUser(pool, user_id, filters) {
         try {
 
@@ -359,6 +359,90 @@ class Job {
             if(result){
                 // console.log('UPDATED STATUS FOR DEADLINE');
                 return result.rows;
+            }
+
+        }catch(err){
+
+            throw err;
+        }
+
+    }
+
+
+    // Save a job for a seeker
+    static async saveJob(pool, job_id, seeker_id){
+        try{
+
+            const params = [job_id, seeker_id]; 
+
+            // Check if seeker already saved this job.
+            const check_query = `
+                SELECT * FROM saved_jobs WHERE job_id = $1 AND seeker_id = $2
+            `;
+
+
+            const check_result = await pool.query(check_query, params);;
+
+
+            // Delete/Unsave if job is saved
+            if(check_result.rows.length > 0){
+
+                const query = `
+                    DELETE FROM saved_jobs 
+                    WHERE job_id = $1 AND seeker_id = $2 
+                    RETURNING job_id;
+                `;
+
+                const result = await pool.query(query, params);;
+                
+                if(result){
+                    
+                    return false;
+                }
+                
+            }
+            else{ // Save Job
+
+                const query = `
+                    INSERT INTO saved_jobs (job_id, seeker_id)
+                    VALUES ($1, $2)
+                    RETURNING job_id, seeker_id;
+                `;
+                
+                
+                const result = await pool.query(query, params);;
+                
+                if(result){
+                    
+                    return result.rows;
+                }
+            }
+
+        }catch(err){
+
+            throw err;
+        }
+    }
+
+
+    // Check to see if a seeker has saved a job
+    static async hasSaved(pool, job_id, seeker_id){
+
+        try{
+
+            const query = 
+            `SELECT job_id FROM saved_jobs WHERE job_id = ($1) AND seeker_id = ($2)`;
+            
+            const params =
+            [job_id, seeker_id];
+
+            let result = await pool.query(query, params);
+
+            if(result.rows.length > 0){
+                return true;
+            }
+            else{
+                return false;
             }
 
         }catch(err){

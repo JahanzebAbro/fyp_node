@@ -83,9 +83,19 @@
                     </div>
                     <div class="table_hidden_right_side">
                         <div class="table_hidden_btn">
-                        
-                            <button type="button" class="table_hidden_save_btn">Save</button>
                             
+                            <form class="job_save_form">
+                                <input type="hidden" name="saved_job" value="<%= post.id %>">
+                                <% if(post.has_saved) {%>
+                                    <button type="submit" class="table_hidden_saved_btn">Unsave</button>
+                                <% } else {%>
+                                    <% if (!locals.profile) { %>
+                                        <button onclick="profilePrompt()">Save</button>
+                                    <% } else { %>
+                                        <button type="submit" class="table_hidden_save_btn">Save</button>
+                                    <% } %>
+                                <% } %>
+                            </form>
                 
                             <% if( post.has_applied) {%>
                                 <button type="button" class="table_hidden_applied_btn">Applied</button>
@@ -120,8 +130,6 @@
 
 
 
-
-                    
 
 
 
@@ -191,10 +199,6 @@
 
                     </div>
                     <div class="modal_overlay"></div>
-
-
-
-
 
 
 

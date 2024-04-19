@@ -69,6 +69,15 @@ CREATE TABLE IF NOT EXISTS jobs (
 );
 
 
+CREATE TABLE IF NOT EXISTS saved_jobs (
+    job_id BIGINT NOT NULL,
+    seeker_id BIGINT NOT NULL,
+    FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE,
+    FOREIGN KEY (seeker_id) REFERENCES seekers(user_id) ON DELETE RESTRICT,
+    PRIMARY KEY (job_id, seeker_id)
+);
+
+
 CREATE TABLE IF NOT EXISTS applications (
     id BIGSERIAL PRIMARY KEY,
     seeker_id BIGINT NOT NULL,

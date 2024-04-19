@@ -711,7 +711,7 @@ table .hidden_row {
      overflow-y: auto;
 }
 
-.create_application_btn, .table_hidden_applied_btn {
+.create_application_btn, .table_hidden_applied_btn, .table_hidden_saved_btn {
     border: 2px solid var(--green);
     background-color: var(--green);
 }

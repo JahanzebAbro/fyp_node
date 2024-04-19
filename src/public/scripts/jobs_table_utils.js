@@ -93,6 +93,57 @@ $(document).ready(function(){
 });
 
 
+// SAVE/UNSAVE JOB 
+$(document).ready(function(){
+
+    
+    $(".job_save_form").submit(function(e){
+        
+        e.preventDefault(); // Prevent form submission
+
+        const form = new FormData(this);
+
+        // for (let [key, value] of form.entries()) {
+        //     console.log(`${key}: ${value}`);
+        // }
+
+
+        $.ajax({
+            url: "/user/job/search/save",
+            type: "POST",
+            data: form,
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                if(response){
+                    
+                    console.log(response.message);
+                    if(response.save_type === 'save'){
+                        jobSaved(); // Create saved button
+                    }
+                    else if(response.save_type === 'unsave'){
+                        jobUnsaved(); // Create unsaved button
+                    }
+                }
+            },
+            error: function(response) {
+
+                console.log(response);
+                
+
+            }
+        
+        });
+
+    });
+
+});
+
+
+
+
+
+
 function jobApplied(){
 
     $('.table_hidden_apply_btn:visible').text('Applied').removeClass('table_hidden_apply_btn').addClass('table_hidden_applied_btn'); 
@@ -104,4 +155,12 @@ function jobApplied(){
     $('.ct_email_err').text(''); 
     $('.response_err').text('');
 
+}
+
+function jobSaved(){
+    $('.table_hidden_save_btn:visible').text('Unsave').removeClass('table_hidden_save_btn').addClass('table_hidden_saved_btn'); 
+}
+
+function jobUnsaved(){
+    $('.table_hidden_saved_btn:visible').text('Save').removeClass('table_hidden_saved_btn').addClass('table_hidden_save_btn'); 
 }
