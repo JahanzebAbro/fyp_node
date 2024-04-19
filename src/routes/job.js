@@ -55,7 +55,7 @@ router.get("/search", isProfileBuilt, isNotAuthReq, isSeekerAuth, getUserIcon, a
         
         // console.log(filters);
 
-        const all_jobs = await Job.getAllForView(pool, filters);
+        const all_jobs = await Job.getAllForView(pool, seeker_id, filters);
 
         const postings = await Promise.all(all_jobs.map(async function(job){ 
 
@@ -835,7 +835,7 @@ router.post("/applicants/status", isNotAuthReq, isEmployerAuth, getUserIcon, upl
 
 
 // GET ALL SAVED JOBS FOR A SEEKER
-router.get("/saved", isNotAuthReq, isSeekerAuth, getUserIcon, async (req, res) => {
+router.get("/saved", isProfileBuilt, isNotAuthReq, isSeekerAuth, getUserIcon, async (req, res) => {
 
     try{
 
@@ -843,24 +843,26 @@ router.get("/saved", isNotAuthReq, isSeekerAuth, getUserIcon, async (req, res) =
 
         filters.work_style = toArray(filters.work_style);
         filters.job_type = toArray(filters.job_type);
+        filters.saved = true;
         
         const seeker_id = req.user.id;
         
         // console.log(filters);
 
-        const all_jobs = await Job.getAllForView(pool, filters);
+        const all_jobs = await Job.getAllForView(pool, seeker_id, filters);
 
         const postings = await Promise.all(all_jobs.map(async function(job){ 
 
             const job_id = job.id;
             const employer_id = job.user_id;
 
-            const [employer, job_types, job_benefits, job_skills, job_questions, has_applied] = await Promise.all([ // Grabbing job details
+            const [employer, job_types, job_benefits, job_skills, job_questions, has_saved, has_applied] = await Promise.all([ // Grabbing job details
                 Employer.getById(pool, employer_id),
                 Job.getTypesByJob(pool, job_id),
                 Job.getBenefitsByJob(pool, job_id),
                 Job.getSkillsByJob(pool, job_id),
                 Job.getQuestionsByJob(pool, job_id),
+                Job.hasSaved(pool, job_id, seeker_id),
                 Application.hasApplied(pool, seeker_id, job_id)
             ]);
 
@@ -880,13 +882,15 @@ router.get("/saved", isNotAuthReq, isSeekerAuth, getUserIcon, async (req, res) =
                 job_benefits,
                 job_skills,
                 job_questions,
-                has_applied
+                has_applied,
+                has_saved
             }; // return an array value of a complete combined job object
 
         }));
 
 
-        res.render('job/saved_jobs', { postings: postings, filters: filters, search_endpoint: 'saved', table_total: postings.length, search_placeholder: ""})
+        res.render("job/saved_jobs", { postings: postings, filters: filters, search_endpoint: 'saved', table_total: postings.length, search_placeholder: ""});
+
 
 
     }catch(err){

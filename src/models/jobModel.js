@@ -98,7 +98,7 @@ class Job {
 
 
     // Retrieve all jobs that are open and filter option
-    static async getAllForView(pool, filters){
+    static async getAllForView(pool, seeker_id, filters){
         try {
 
             // Possible filters:
@@ -109,10 +109,11 @@ class Job {
             let query = `
                 SELECT DISTINCT
                     j.*,
-                    ts_rank((j.search || js.search || e.search), plainto_tsquery('english', $1)) as rank
+                    ts_rank((j.search || js.search || e.search), plainto_tsquery('english', $2)) as rank
                 FROM jobs j
                 INNER JOIN employers e ON j.user_id = e.user_id
-                LEFT JOIN job_skills js ON j.id = js.job_id
+                LEFT JOIN saved_jobs svj ON svj.job_id = j.id AND svj.seeker_id = $1
+                LEFT JOIN job_skills js ON j.id = js.job_id 
                 LEFT JOIN (
                     SELECT jjt.job_id, STRING_AGG(name, ' ') AS types
                         FROM job_types t
@@ -124,8 +125,8 @@ class Job {
             `;
 
 
-            let params = [];
-            let params_index = 1; 
+            let params = [seeker_id];
+            let params_index = 2; 
 
             // Check SEARCH
             if (filters.search) {
@@ -172,6 +173,13 @@ class Job {
                 params_index += filters.job_type.length;
             }
            
+
+            // Check SAVED
+            if (filters.saved) {
+
+                query += ` AND svj IS NOT NULL`;
+
+            }
         
             
             // Rank by search or creation

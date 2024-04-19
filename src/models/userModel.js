@@ -30,7 +30,7 @@ class User {
             
                 let query_result = await pool.query(query, params);
 
-                return await query_result.rows[0].id; 
+                return query_result.rows[0].id; 
             }              
         }   
         catch(err){
