@@ -181,6 +181,131 @@ class Seeker {
         }
     }
 
+
+    static async getApplicationCount(pool, seeker_id){
+
+        try{
+            const query = `
+                SELECT COUNT(*)
+                FROM applications
+                WHERE seeker_id = $1
+            `;
+            
+            const params = [seeker_id];
+    
+            let result = await pool.query(query, params);
+            
+            if(result){
+                return result.rows[0].count;
+            }
+            else{
+                return 0;
+            }
+
+        }
+        catch(err){
+            throw err;
+        }
+    }
+
+
+    static async getApplicationRate(pool, seeker_id){
+
+        try{
+            const query = `
+                SELECT SUM(COUNT(*)) OVER (ORDER BY DATE(created_at)) as count, DATE(created_at) as date
+                FROM applications
+                WHERE seeker_id = $1
+                GROUP BY DATE(created_at)
+                ORDER BY DATE(created_at) ASC;
+            `;
+            
+            const params = [seeker_id];
+    
+            let result = await pool.query(query, params);
+            
+            if(result){
+                return result.rows;
+            }
+            else{
+                return [];
+            }
+
+        }
+        catch(err){
+            throw err;
+        }
+    }
+
+
+    static async getApplicationStatusCount(pool, seeker_id){
+
+        try{
+            const query = `
+                SELECT status, COUNT(status) AS count
+                FROM applications
+                WHERE seeker_id = $1
+                GROUP BY status
+                ORDER BY status ASC
+            `;
+            
+            const params = [seeker_id];
+    
+            let result = await pool.query(query, params);
+            
+            if(result){
+                return result.rows;
+            }
+            else{
+                return [];
+            }
+
+        }
+        catch(err){
+            throw err;
+        }
+        
+    }
+
+
+    static async getSavedApplyRatio(pool, seeker_id){
+
+        try{
+            const query = `
+                SELECT sj.job_id, a.id as application_id
+                from saved_jobs sj
+                INNER JOIN 
+                    jobs j ON j.id = sj.job_id
+                LEFT JOIN 
+                    applications a ON sj.job_id = a.job_id AND sj.seeker_id = a.seeker_id
+                WHERE sj.seeker_id = $1;
+            `;
+            
+            const params = [seeker_id];
+    
+            let result = await pool.query(query, params);
+
+            let applied_count = 0;
+            result.rows.forEach(function (item) {
+                applied_count += item.application_id ? 1 : 0; // Add one if not null
+            });
+
+            let not_applied_count = result.rows.length - applied_count;
+
+            if(result){
+                return {applied: applied_count, not_applied: not_applied_count};
+            }
+            else{
+                return [];
+            }
+
+        }
+        catch(err){
+            throw err;
+        }
+
+    }
+
 }
 
 module.exports = Seeker;

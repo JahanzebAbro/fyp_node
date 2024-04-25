@@ -1,0 +1,30 @@
+<%- include('../partials/seeker_navbar.ejs') %>
+
+<div class="page_title">
+    <img src="/img/line.png" class="page_title_line">
+    <span class="page_title_text">ANALYTICS</span>
+</div>
+
+<div>
+    Total Applications: <%= applicationCount %>
+</div>
+<div>
+    Acceptance Rate: <%= (applicationStatusCount[0].count/applicationCount) * 100 %>%
+</div>
+
+<div style="width: 500px; height:auto;">    
+    <canvas id="app_rate_chart" data-application-rate='<%- JSON.stringify(applicationRate) %>'></canvas>
+</div>
+<br>
+<div style="width: 500px; height:auto;">    
+    <canvas id="app_status_chart" data-application-status='<%- JSON.stringify(applicationStatusCount) %>'></canvas>
+</div>
+<br>
+<div style="width: 500px; height:auto;">    
+    <canvas id="app_saved_chart" data-application-saved='<%- JSON.stringify(savedApplyRatio) %>'></canvas>
+</div>
+<br>
+
+
+
+<script type="module" src="/scripts/analytics_seeker_utils.js"></script>

@@ -316,6 +316,7 @@ class Application {
 
     }
     
+
     // Delete an application and all its dependents.
     static async deleteById(pool, application_id){
 
@@ -365,6 +366,8 @@ class Application {
             throw err;
         }
     }
+
+    
 
 }
 

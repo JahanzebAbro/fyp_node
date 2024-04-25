@@ -15,12 +15,31 @@ const { isNotAuthReq, isProfileBuilt, getUserIcon, isEmployerAuth, isSeekerAuth 
 router.get("/", isProfileBuilt, isNotAuthReq, getUserIcon, async (req, res) => {
 
 
+    const user_type = req.user.user_type;
+    const user_id = req.user.id;
 
-    res.render('analytics/analytics_employer');
+    if(user_type === 'seeker'){
+
+        const applicationCount = await Seeker.getApplicationCount(pool, user_id);
+        const applicationRate = await Seeker.getApplicationRate(pool, user_id);
+        const applicationStatusCount = await Seeker.getApplicationStatusCount(pool, user_id);
+        const savedApplyRatio = await Seeker.getSavedApplyRatio(pool, user_id);
+
+        console.log(savedApplyRatio);
+
+        
+
+        res.render('analytics/analytics_seeker', { applicationCount : applicationCount, 
+                                                    applicationRate : applicationRate,
+                                                    applicationStatusCount : applicationStatusCount, 
+                                                    savedApplyRatio: savedApplyRatio });
+    }
+    if(user_type === 'employer'){
+
+        res.render('analytics/analytics_employer');
+    }
 
 });
-
-
 
 
 
