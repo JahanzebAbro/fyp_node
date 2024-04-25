@@ -136,6 +136,77 @@ $(document).ready(function(){
         type: 'doughnut',
         data: chart_data,
         options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true, 
+                    position: 'top', 
+                    align: 'center',
+                },
+                title: {
+                    display: true,
+                    text: 'Applying Ratio in Saved Jobs'
+                }
+            }
+        }
+    };
+
+    const chart = new Chart(ctx, config);
+
+});
+
+
+
+
+// FAVORITE INDUSTRIES RATIO
+$(document).ready(function(){
+    
+    const ctx = $('#app_industry_chart');
+    const data = JSON.parse(ctx.attr('data-application-industry'));
+    const labels = data[0];
+    const values = data[1]; 
+
+    const chart_data = {
+        labels: labels,
+          datasets: [{
+            label: 'Favorite Industries',
+            data: values,
+            tooltip: {
+                callbacks: {
+                    label: function(ctx) {
+                        let label = ctx.label;
+                        let value = ctx.formattedValue;
+
+                        let sum = 0;
+                        values.forEach(val => { // Add all values to sum
+                            sum += Number(val); 
+                        });
+        
+                        let percentage = (value * 100 / sum).toFixed(1) + '%';
+                        return label + ": " + percentage;
+                    }
+                }
+            },
+            hoverOffset: 4
+          }]
+    };
+
+    const config = {
+        type: 'pie',
+        data: chart_data,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true, 
+                    position: 'top', 
+                    align: 'center',
+                },
+                title: {
+                    display: true,
+                    text: 'Favorite Industries'
+                }
+            }
         }
     };
 

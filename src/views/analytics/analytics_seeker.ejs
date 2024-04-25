@@ -9,7 +9,7 @@
     Total Applications: <%= applicationCount %>
 </div>
 <div>
-    Acceptance Rate: <%= (applicationStatusCount[0].count/applicationCount) * 100 %>%
+    Acceptance Rate: <%= ((applicationStatusCount[0].count/applicationCount) * 100).toFixed(1) %>%
 </div>
 
 <div style="width: 500px; height:auto;">    
@@ -20,8 +20,12 @@
     <canvas id="app_status_chart" data-application-status='<%- JSON.stringify(applicationStatusCount) %>'></canvas>
 </div>
 <br>
-<div style="width: 500px; height:auto;">    
+<div style="width: 400px; height:auto;">    
     <canvas id="app_saved_chart" data-application-saved='<%- JSON.stringify(savedApplyRatio) %>'></canvas>
+</div>
+<br>
+<div style="width: 400px; height:auto;">    
+    <canvas id="app_industry_chart" data-application-industry='<%- JSON.stringify(industryRankings) %>'></canvas>
 </div>
 <br>
 

@@ -8,7 +8,7 @@ const Benefit = require('../models/benefitModel');
 const Application = require('../models/applicationModel');
 const Response = require('../models/responseModel');
 
-const { isNotAuthReq, isProfileBuilt, getUserIcon, isEmployerAuth, isSeekerAuth } = require('../utils');
+const { isNotAuthReq, isProfileBuilt, getUserIcon, isEmployerAuth, isSeekerAuth, findIndustryName } = require('../utils');
 
 
 
@@ -24,15 +24,21 @@ router.get("/", isProfileBuilt, isNotAuthReq, getUserIcon, async (req, res) => {
         const applicationRate = await Seeker.getApplicationRate(pool, user_id);
         const applicationStatusCount = await Seeker.getApplicationStatusCount(pool, user_id);
         const savedApplyRatio = await Seeker.getSavedApplyRatio(pool, user_id);
+        const favoriteIndustries = await Seeker.getFavoriteIndustries(pool, user_id);
 
-        console.log(savedApplyRatio);
+        // De-code names
+        const industryNames = favoriteIndustries.map(item => findIndustryName(item.industry));
+        const industryCounts = favoriteIndustries.map(item => item.count);
+        
+        const industryRankings = [industryNames, industryCounts];
 
         
 
         res.render('analytics/analytics_seeker', { applicationCount : applicationCount, 
                                                     applicationRate : applicationRate,
                                                     applicationStatusCount : applicationStatusCount, 
-                                                    savedApplyRatio: savedApplyRatio });
+                                                    savedApplyRatio : savedApplyRatio,
+                                                    industryRankings : industryRankings });
     }
     if(user_type === 'employer'){
 

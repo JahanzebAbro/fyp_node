@@ -306,6 +306,43 @@ class Seeker {
 
     }
 
+
+    static async getFavoriteIndustries(pool, seeker_id){
+
+        try{
+            const query = `
+                WITH interested_jobs AS (
+                    SELECT job_id FROM applications WHERE seeker_id = $1
+                    UNION
+                    SELECT job_id FROM saved_jobs WHERE seeker_id = $1
+                )
+                SELECT e.industry, COUNT(e.industry) as count
+                FROM interested_jobs ij
+                JOIN jobs j ON ij.job_id = j.id
+                JOIN employers e ON e.user_id = j.user_id
+                GROUP BY e.industry
+                ORDER BY count DESC;
+            `;
+            
+            const params = [seeker_id];
+    
+            let result = await pool.query(query, params);
+
+            // const industryNames = result.rows.map(row => row.industry);
+            
+            if(result){
+                return result.rows;
+            }
+            else{
+                return [];
+            }
+
+        }
+        catch(err){
+            throw err;
+        }
+
+    }
 }
 
 module.exports = Seeker;
