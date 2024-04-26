@@ -64,6 +64,9 @@ $(document).ready(function(){
 
     $('.app_rate_filters').click(function(){
 
+        $('.app_rate_filters').removeClass('filter_selected');
+        $(this).addClass('filter_selected');
+
         const filter_type = $(this).attr('data-filter-type');
 
         const data = JSON.parse($('#app_rate_chart').attr('data-application-rate'));
@@ -334,6 +337,9 @@ $(document).ready(function(){
 $(document).ready(function(){
 
     $('.job_views_filters').click(function(){
+
+        $('.job_views_filters').removeClass('filter_selected');
+        $(this).addClass('filter_selected');
 
         const filter_type = $(this).attr('data-filter-type');
         

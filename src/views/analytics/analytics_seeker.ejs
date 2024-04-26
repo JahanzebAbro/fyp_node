@@ -5,45 +5,127 @@
     <span class="page_title_text">ANALYTICS</span>
 </div>
 
-<div>
-    Total Applications: <%= applicationCount %>
-</div>
-<div>
-    Acceptance Rate: <%= ((applicationStatusCount[0].count/applicationCount) * 100).toFixed(1) %>%
+<div class="analytics_container">
+    
+    <div class="analytics_info stat_container">
+        <div class="analytics_stat_box">
+            <div class="analytics_stat_title">Total Applications</div>
+            <div class="analytics_stat_content"><%= applicationCount %></div>
+        </div>
+        <div class="analytics_stat_box">
+            <div class="analytics_stat_title">Acceptance Rate</div>
+            <div class="analytics_stat_content"><%= ((applicationStatusCount[0].count/applicationCount) * 100).toFixed(1) %>%</div>
+        </div>
+    </div>
+
+    <div class="analytics_info">
+        <div style="width: 500px; height:auto;">    
+            <canvas id="app_rate_chart" data-application-rate='<%- JSON.stringify(applicationRate) %>'></canvas>
+        </div>
+        <div class="chart_filters">
+            <button class="app_rate_filters filter_selected" data-filter-type="day">Day</button>
+            <button class="app_rate_filters" data-filter-type="week">Week</button>
+            <button class="app_rate_filters" data-filter-type="month">Month</button>
+            <button class="app_rate_filters" data-filter-type="year">Year</button>    
+        </div>
+    </div>
+
+    <div class="analytics_info">
+        <div style="width: 500px; height:auto;">    
+            <canvas id="app_status_chart" data-application-status='<%- JSON.stringify(applicationStatusCount) %>'></canvas>
+        </div>
+    </div>
+    
+    <div class="analytics_info">
+        <div style="width: 350px; height:auto;">    
+            <canvas id="app_saved_chart" data-application-saved='<%- JSON.stringify(savedApplyRatio) %>'></canvas>
+        </div>
+    </div>
+
+    <div class="analytics_info">
+        <div style="width: 350px; height:auto;">    
+            <canvas id="industry_chart" data-industry='<%- JSON.stringify(industryRankings) %>'></canvas>
+        </div>
+    </div>
+
+    <div class="analytics_info">
+        <div style="width: 500px; height:auto;">    
+            <canvas id="job_views_chart" data-job-views='<%- JSON.stringify(jobViews) %>'></canvas>
+        </div>
+        <div class="chart_filters">
+            <button class="job_views_filters filter_selected" data-filter-type="day">Day</button>
+            <button class="job_views_filters" data-filter-type="week">Week</button>
+            <button class="job_views_filters" data-filter-type="month">Month</button>
+            <button class="job_views_filters" data-filter-type="year">Year</button>    
+        </div>
+    </div>
+
 </div>
 
-<div style="width: 500px; height:auto;">    
-    <canvas id="app_rate_chart" data-application-rate='<%- JSON.stringify(applicationRate) %>'></canvas>
-</div>
-<div class="chart_filters">
-    <button class="app_rate_filters" data-filter-type="day">Day</button>
-    <button class="app_rate_filters" data-filter-type="week">Week</button>
-    <button class="app_rate_filters" data-filter-type="month">Month</button>
-    <button class="app_rate_filters" data-filter-type="year">Year</button>    
-</div>
-<br>
-<div style="width: 500px; height:auto;">    
-    <canvas id="app_status_chart" data-application-status='<%- JSON.stringify(applicationStatusCount) %>'></canvas>
-</div>
-<br>
-<div style="width: 400px; height:auto;">    
-    <canvas id="app_saved_chart" data-application-saved='<%- JSON.stringify(savedApplyRatio) %>'></canvas>
-</div>
-<br>
-<div style="width: 400px; height:auto;">    
-    <canvas id="industry_chart" data-industry='<%- JSON.stringify(industryRankings) %>'></canvas>
-</div>
-<br>
-<div style="width: 500px; height:auto;">    
-    <canvas id="job_views_chart" data-job-views='<%- JSON.stringify(jobViews) %>'></canvas>
-</div>
-<div class="chart_filters">
-    <button class="job_views_filters" data-filter-type="day">Day</button>
-    <button class="job_views_filters" data-filter-type="week">Week</button>
-    <button class="job_views_filters" data-filter-type="month">Month</button>
-    <button class="job_views_filters" data-filter-type="year">Year</button>    
-</div>
+
+<style>
+
+    .analytics_container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        width: 95%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .anaytics_info {
+        flex: 0 30%;
+        margin-bottom: 4%; 
+    }
 
 
+    .analytics_stat_box{
+        box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+        font-family: 'Jost';
+        border-radius: 5px;
+        padding: 20px;
+    }
+
+    .analytics_stat_title{
+        color: rgb(129, 129, 129);
+    }
+
+    .analytics_stat_content{
+        text-align: center;
+        font-size: 2em;
+    }
+    
+    .stat_container{
+        display:flex;
+        justify-content: center; 
+        align-items: center; 
+        gap: 20px;
+    }
+
+    .chart_filters{
+        margin-top: 10px;
+    }
+    
+
+    .chart_filters button{
+        background-color: rgb(255, 255, 255);
+        border: 2px solid #000000;
+        color: rgb(0, 0, 0);
+        border-radius: 5px;
+    }
+
+    .chart_filters button:hover {
+        background: #000000; 
+        color: #ffffff;
+    }
+
+    .chart_filters .filter_selected{
+        cursor: default;
+        background: #000000; 
+        color: #ffffff;
+    }
+
+</style>
 
 <script type="module" src="/scripts/analytics_seeker_utils.js"></script>
