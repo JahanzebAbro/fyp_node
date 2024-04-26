@@ -30,7 +30,8 @@ $(document).ready(function(){
                     time: {
                         displayFormats: {
                             day: 'MMM d'
-                        }
+                        },
+                        tooltipFormat: 'MMM d, yyyy'
                     }
                 },
 
@@ -161,8 +162,8 @@ $(document).ready(function(){
 // FAVORITE INDUSTRIES RATIO
 $(document).ready(function(){
     
-    const ctx = $('#app_industry_chart');
-    const data = JSON.parse(ctx.attr('data-application-industry'));
+    const ctx = $('#industry_chart');
+    const data = JSON.parse(ctx.attr('data-industry'));
     const labels = data[0];
     const values = data[1]; 
 
@@ -205,6 +206,58 @@ $(document).ready(function(){
                 title: {
                     display: true,
                     text: 'Favorite Industries'
+                }
+            }
+        }
+    };
+
+    const chart = new Chart(ctx, config);
+
+});
+
+
+
+
+// JOB VIEWS RATE CHART
+$(document).ready(function(){
+    
+    const ctx = $('#job_views_chart');
+    const data = JSON.parse(ctx.attr('data-job-views'));
+
+    const dates = data.map(date => date.view_date);
+    const counts = data.map(count => count.view_count);
+
+
+    const chart_data = {
+    labels: dates,
+    datasets: [{
+        label: 'Job Viewing',
+        data: counts,
+        fill: false,
+        backgroundColor: 'rgb(76, 204, 37)',
+    }]
+    };
+
+    const config = {
+        type: 'bar',
+        data: chart_data,
+        options: {
+            scales: {
+                x: {
+                    type: 'time',
+                    time: {
+                        displayFormats: {
+                            day: 'MMM d'
+                        },
+                        tooltipFormat: 'MMM d, yyyy'
+                    }
+                },
+
+                y: {
+                    suggestedMin: 0,
+                    ticks: {
+                        precision: 0
+                    }
                 }
             }
         }

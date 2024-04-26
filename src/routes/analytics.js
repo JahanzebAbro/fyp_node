@@ -25,6 +25,8 @@ router.get("/", isProfileBuilt, isNotAuthReq, getUserIcon, async (req, res) => {
         const applicationStatusCount = await Seeker.getApplicationStatusCount(pool, user_id);
         const savedApplyRatio = await Seeker.getSavedApplyRatio(pool, user_id);
         const favoriteIndustries = await Seeker.getFavoriteIndustries(pool, user_id);
+        const jobViews = await Seeker.getViews(pool, user_id);
+
 
         // De-code names
         const industryNames = favoriteIndustries.map(item => findIndustryName(item.industry));
@@ -38,7 +40,8 @@ router.get("/", isProfileBuilt, isNotAuthReq, getUserIcon, async (req, res) => {
                                                     applicationRate : applicationRate,
                                                     applicationStatusCount : applicationStatusCount, 
                                                     savedApplyRatio : savedApplyRatio,
-                                                    industryRankings : industryRankings });
+                                                    industryRankings : industryRankings,
+                                                    jobViews : jobViews });
     }
     if(user_type === 'employer'){
 

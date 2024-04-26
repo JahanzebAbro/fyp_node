@@ -928,5 +928,25 @@ router.post("/search/save", isNotAuthReq, isSeekerAuth, getUserIcon, upload.none
 });
 
 
+// ADD VIEW COUNT TO SEEKER
+router.post("/search/add_view", isNotAuthReq, isSeekerAuth, getUserIcon, upload.none(), async (req, res) => {
+    try{
+
+        const seeker_id = req.user.id;
+        
+
+        const result = await Seeker.addView(pool, seeker_id);
+
+        return res.json({ success: true, message: 'Added view!'});
+        
+
+    }
+    catch(err){
+        console.error(err);
+        res.status(500).send("Internal Server Error");
+    }
+});
+
+
 
 module.exports = router;

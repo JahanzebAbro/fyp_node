@@ -343,6 +343,64 @@ class Seeker {
         }
 
     }
+
+
+    // Increment view count everytime job is viewed
+    static async addView(pool, seeker_id){
+
+        try{
+            const query = `
+                INSERT INTO seeker_views (seeker_id, view_date, view_count)
+                VALUES ($1, CURRENT_DATE, 1)
+                ON CONFLICT (seeker_id, view_date) DO UPDATE
+                SET view_count = seeker_views.view_count + 1
+            `;
+            
+            const params = [seeker_id];
+    
+            let result = await pool.query(query, params);
+            
+            if(result){
+                return result.rows[0];
+            }
+            else{
+                return [];
+            }
+
+        }
+        catch(err){
+            throw err;
+        }
+
+    }
+
+
+    static async getViews(pool, seeker_id){
+
+        try{
+            const query = `
+                SELECT view_count, view_date 
+                FROM seeker_views 
+                WHERE seeker_id = $1
+            `;
+            
+            const params = [seeker_id];
+    
+            let result = await pool.query(query, params);
+            
+            if(result){
+                return result.rows;
+            }
+            else{
+                return [];
+            }
+
+        }
+        catch(err){
+            throw err;
+        }
+
+    }
 }
 
 module.exports = Seeker;

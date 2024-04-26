@@ -1,3 +1,4 @@
+// APPLY MODAL
 $(document).ready(function(){
 
     // DISPLAY
@@ -140,9 +141,49 @@ $(document).ready(function(){
 });
 
 
+// VIEW COUNTER
+$(document).ready(function(){
+
+    $('.table_expand_icon').click(function(){
+
+        const row = $(this).attr('data-row');
+        const is_row_hidden = $('#' + row).is(":hidden");
+
+        if(is_row_hidden){
+
+            $.ajax({
+                url: "/user/job/search/add_view",
+                type: "POST",
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    // console.log(response)
+                },
+                error: function(response) {
+
+                    console.log(response);
+    
+                }
+            
+            });
+
+        }
+
+        toggleRow(row);
+
+        
+
+    })
+
+});
 
 
 
+
+function toggleRow(row) { 
+    $(".hidden_row").not("#" + row).hide(); // hide all other other hidden rows
+    $("#" + row).toggle(); 
+} 
 
 function jobApplied(){
 

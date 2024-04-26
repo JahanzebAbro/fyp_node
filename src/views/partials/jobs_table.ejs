@@ -28,7 +28,7 @@
             </td>
 
             <td>£<%= post.min_pay || 'N/A'%> - £<%= post.max_pay || 'N/A' %> (per month)</td>
-            <td><div class="table_expand_icon" onclick="toggleRow('hidden_row_<%= index %>')"></div></td>
+            <td><div class="table_expand_icon" data-row="hidden_row_<%= index %>"></div></td>
         </tr>
         <tr id="hidden_row_<%= index %>" class="hidden_row">
             <td></td>
@@ -212,10 +212,6 @@
 
 
 <script type="text/javascript"> 
-    function toggleRow(row) { 
-        $(".hidden_row").not("#" + row).hide();
-        $("#" + row).toggle(); 
-    } 
 
     function profilePrompt() {
         alert("You need to set up your profile to apply. \n Click OK to go to the profile setup page.");

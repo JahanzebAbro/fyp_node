@@ -145,14 +145,6 @@ CREATE TABLE IF NOT EXISTS job_skills (
     FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE
 );
 
--- -- LINKING TABLE FOR SEEKERS AND THEIR SKILLS
--- CREATE TABLE IF NOT EXISTS seeker_skills (
---     id BIGSERIAL PRIMARY KEY,
---     seeker_id BIGINT NOT NULL,
---     name VARCHAR(50) NOT NULL,
---     FOREIGN KEY (seeker_id) REFERENCES seeker(user_id) ON DELETE CASCADE
--- );
-
 
 -- =======================================BENEFITS=====================================================
 
@@ -174,31 +166,16 @@ CREATE TABLE IF NOT EXISTS job_benefits (
 );
 
 
--- =======================================SEEKER EXPERIENCE===================================================
+-- =======================================ANALYTICS===================================================
 
-
-
--- DEFINING SEEKER WORK EXPERIENCE
--- CREATE TABLE IF NOT EXISTS work_exp (
---     id SERIAL PRIMARY KEY,
---     seeker_id BIGINT NOT NULL,
---     title VARCHAR(50) NOT NULL,
---     company VARCHAR(50) NOT NULL,
---     years INT,
---     FOREIGN KEY (seeker_id) REFERENCES seeker(user_id) ON DELETE CASCADE
--- );
-
-
--- -- DEFINING SEEKER EDUCATION
--- CREATE TABLE IF NOT EXISTS education (
---     id SERIAL PRIMARY KEY,
---     seeker_id BIGINT NOT NULL,
---     qualification VARCHAR(50) NOT NULL,
---     institution VARCHAR(50) NOT NULL,
---     FOREIGN KEY (seeker_id) REFERENCES seeker(user_id) ON DELETE CASCADE
--- );
-
-
+-- Recording total job views for seekers  
+CREATE TABLE IF NOT EXISTS seeker_views (
+    seeker_id BIGINT NOT NULL,
+    view_date DATE NOT NULL,
+    view_count INT NOT NULL DEFAULT 1,
+    FOREIGN KEY (seeker_id) REFERENCES seekers(user_id) ON DELETE CASCADE,
+    PRIMARY KEY (seeker_id, view_date)
+);
 
 -- =======================================FULL TEXT SEARCH===================================================
 
