@@ -15,6 +15,12 @@
 <div style="width: 500px; height:auto;">    
     <canvas id="app_rate_chart" data-application-rate='<%- JSON.stringify(applicationRate) %>'></canvas>
 </div>
+<div class="chart_filters">
+    <button class="app_rate_filters" data-filter-type="day">Day</button>
+    <button class="app_rate_filters" data-filter-type="week">Week</button>
+    <button class="app_rate_filters" data-filter-type="month">Month</button>
+    <button class="app_rate_filters" data-filter-type="year">Year</button>    
+</div>
 <br>
 <div style="width: 500px; height:auto;">    
     <canvas id="app_status_chart" data-application-status='<%- JSON.stringify(applicationStatusCount) %>'></canvas>
@@ -30,6 +36,12 @@
 <br>
 <div style="width: 500px; height:auto;">    
     <canvas id="job_views_chart" data-job-views='<%- JSON.stringify(jobViews) %>'></canvas>
+</div>
+<div class="chart_filters">
+    <button class="job_views_filters" data-filter-type="day">Day</button>
+    <button class="job_views_filters" data-filter-type="week">Week</button>
+    <button class="job_views_filters" data-filter-type="month">Month</button>
+    <button class="job_views_filters" data-filter-type="year">Year</button>    
 </div>
 
 
