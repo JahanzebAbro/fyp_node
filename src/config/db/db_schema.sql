@@ -186,6 +186,15 @@ CREATE TABLE IF NOT EXISTS job_views (
     PRIMARY KEY (job_id, view_date)
 );
 
+
+CREATE TABLE IF NOT EXISTS apply_starts (
+    job_id BIGINT NOT NULL,
+	start_date DATE NOT NULL,
+    count INT NOT NULL DEFAULT 1,
+    FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE,
+    PRIMARY KEY (job_id, start_date)
+);
+
 -- =======================================FULL TEXT SEARCH===================================================
 
 -- Creating search vector columns

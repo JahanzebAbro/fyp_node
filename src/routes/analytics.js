@@ -8,7 +8,13 @@ const Benefit = require('../models/benefitModel');
 const Application = require('../models/applicationModel');
 const Response = require('../models/responseModel');
 
-const { isNotAuthReq, isProfileBuilt, getUserIcon, isEmployerAuth, isSeekerAuth, findIndustryName } = require('../utils');
+const { isNotAuthReq, 
+        isProfileBuilt, 
+        getUserIcon, 
+        isEmployerAuth, 
+        isSeekerAuth, 
+        findIndustryName, 
+        formatDateForDisplay } = require('../utils');
 
 
 
@@ -52,13 +58,33 @@ router.get("/", isProfileBuilt, isNotAuthReq, getUserIcon, async (req, res) => {
         const applicationRate = await Employer.getApplicationRate(pool, user_id);
         const acceptedCount = await Employer.getAcceptedCount(pool, user_id);
         const jobViews = await Employer.getViews(pool, user_id);
+        const mostApplications = await Employer.getMostApplications(pool, user_id);
+        const leastApplications = await Employer.getLeastApplications(pool, user_id);
+        const mostViews = await Employer.getMostViews(pool, user_id);
+        const leastViews = await Employer.getLeastViews(pool, user_id);
+        const mostStarts = await Employer.getMostStarts(pool, user_id);
+        const leastStarts = await Employer.getLeastStarts(pool, user_id);
+
+        // Format Dates
+        mostApplications.created_at = formatDateForDisplay(mostApplications.created_at);
+        leastApplications.created_at = formatDateForDisplay(leastApplications.created_at);
+        mostViews.created_at = formatDateForDisplay(mostViews.created_at);
+        leastViews.created_at = formatDateForDisplay(leastViews.created_at);
+        mostStarts.created_at = formatDateForDisplay(mostStarts.created_at);
+        leastStarts.created_at = formatDateForDisplay(leastStarts.created_at);
 
         res.render('analytics/analytics_employer', { jobCount: jobCount,
                                                         jobSavedCount: jobSavedCount,
                                                         applicationCount: applicationCount,
                                                         applicationRate: applicationRate,
                                                         acceptedCount: acceptedCount,
-                                                        jobViews: jobViews
+                                                        jobViews: jobViews,
+                                                        mostApplications: mostApplications,
+                                                        leastApplications: leastApplications,
+                                                        mostViews: mostViews,
+                                                        leastViews: leastViews,
+                                                        mostStarts: mostStarts,
+                                                        leastStarts: leastStarts
                                                     });
     }
 

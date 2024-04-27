@@ -153,6 +153,9 @@ class Employer {
     }
 
 
+    // ===============================ANALYTICS===================================================//
+
+
     // Number of jobs created by user
     static async getJobCount(pool, user_id){
 
@@ -333,6 +336,203 @@ class Employer {
         }
 
     }
+
+
+     // Get best performing job in application count
+     static async getMostApplications(pool, user_id){
+
+        try{
+            const query = `
+                SELECT j.id, j.title, j.created_at, COUNT(*) as app_count
+                FROM applications a
+                INNER JOIN jobs j ON j.id = a.job_id
+                WHERE j.user_id = $1
+                GROUP BY j.id
+                ORDER BY app_count DESC
+                LIMIT 1;
+            `;
+            
+            const params = [user_id];
+    
+            let result = await pool.query(query, params);
+            
+            if(result){
+                return result.rows[0];
+            }
+            else{
+                return [];
+            }
+
+        }
+        catch(err){
+            throw err;
+        }
+
+    }
+
+    // Get worst performing job in application count
+    static async getLeastApplications(pool, user_id){
+
+        try{
+            const query = `
+                SELECT j.id, j.title, j.created_at, COUNT(*) as app_count
+                FROM applications a
+                INNER JOIN jobs j ON j.id = a.job_id
+                WHERE j.user_id = $1
+                GROUP BY j.id
+                ORDER BY app_count ASC
+                LIMIT 1;
+            `;
+            
+            const params = [user_id];
+    
+            let result = await pool.query(query, params);
+            
+            if(result){
+                return result.rows[0];
+            }
+            else{
+                return [];
+            }
+
+        }
+        catch(err){
+            throw err;
+        }
+
+    }
+
+
+    // Get best performing job in views
+    static async getMostViews(pool, user_id){
+
+        try{
+            const query = `
+                SELECT j.id, j.title, j.created_at, SUM(jv.view_count) AS total_views
+                FROM jobs j 
+                LEFT JOIN job_views jv ON jv.job_id = j.id
+                WHERE j.user_id = $1
+                GROUP BY j.id
+                ORDER BY total_views DESC
+                LIMIT 1;
+            `;
+            
+            const params = [user_id];
+    
+            let result = await pool.query(query, params);
+            
+            if(result){
+                return result.rows[0];
+            }
+            else{
+                return [];
+            }
+
+        }
+        catch(err){
+            throw err;
+        }
+
+    }
+
+    // Get worst performing job in views
+    static async getLeastViews(pool, user_id){
+
+        try{
+            const query = `
+                SELECT j.id, j.title, j.created_at, SUM(jv.view_count) AS total_views
+                FROM jobs j 
+                LEFT JOIN job_views jv ON jv.job_id = j.id
+                WHERE j.user_id = $1
+                GROUP BY j.id
+                ORDER BY total_views ASC
+                LIMIT 1;
+            `;
+            
+            const params = [user_id];
+    
+            let result = await pool.query(query, params);
+            
+            if(result){
+                return result.rows[0];
+            }
+            else{
+                return [];
+            }
+
+        }
+        catch(err){
+            throw err;
+        }
+
+    }
+
+
+    // Get best performing job in apply starts
+    static async getMostStarts(pool, user_id){
+
+        try{
+            const query = `
+                SELECT j.id, j.title, j.created_at, SUM(starts.count) AS total_starts
+                FROM jobs j 
+                LEFT JOIN apply_starts starts ON starts.job_id = j.id
+                WHERE j.user_id = $1
+                GROUP BY j.id
+                ORDER BY total_starts DESC
+                LIMIT 1;
+            `;
+            
+            const params = [user_id];
+    
+            let result = await pool.query(query, params);
+            
+            if(result){
+                return result.rows[0];
+            }
+            else{
+                return [];
+            }
+
+        }
+        catch(err){
+            throw err;
+        }
+
+    }
+
+    // Get worst performing job in apply starts
+    static async getLeastStarts(pool, user_id){
+
+        try{
+            const query = `
+                SELECT j.id, j.title, j.created_at, SUM(starts.count) AS total_starts
+                FROM jobs j 
+                LEFT JOIN apply_starts starts ON starts.job_id = j.id
+                WHERE j.user_id = $1
+                GROUP BY j.id
+                ORDER BY total_starts ASC
+                LIMIT 1;
+            `;
+            
+            const params = [user_id];
+    
+            let result = await pool.query(query, params);
+            
+            if(result){
+                return result.rows[0];
+            }
+            else{
+                return [];
+            }
+
+        }
+        catch(err){
+            throw err;
+        }
+
+    }
+    
+
 }
 
 module.exports = Employer;

@@ -4,7 +4,26 @@ $(document).ready(function(){
     // DISPLAY
     $('.table_hidden_apply_btn').click(function(){
 
+        const job_id = $(this).attr('data-row-job');
+        let data = new FormData();
+        data.append('job_id', job_id);
 
+        $.ajax({
+            url: "/user/job/search/add_start",
+            type: "POST",
+            data: data,
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                // console.log(response)
+            },
+            error: function(response) {
+
+                console.log(response);
+
+            }
+        
+        });
         $('.create_application_modal').show();
         $('.modal_overlay').addClass('modal_overlay_active');
 

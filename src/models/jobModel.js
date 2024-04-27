@@ -461,7 +461,7 @@ class Job {
     }
 
 
-    // Increment job view
+    // Increment job view counter
     static async addView(pool, job_id){
 
         try{
@@ -489,6 +489,37 @@ class Job {
         }
 
     }
+
+
+    // Increment apply start counter
+    static async addApplyStart(pool, job_id){
+
+        try{
+            const query = `
+                INSERT INTO apply_starts (job_id, start_date, count)
+                VALUES ($1, CURRENT_DATE, 1)
+                ON CONFLICT (job_id, start_date) DO UPDATE
+                SET count = apply_starts.count + 1
+            `;
+            
+            const params = [job_id];
+    
+            let result = await pool.query(query, params);
+            
+            if(result){
+                return result.rows[0];
+            }
+            else{
+                return [];
+            }
+
+        }
+        catch(err){
+            throw err;
+        }
+
+    }
+
 
     // Delete a job and its dependents with id
     static async deleteById(pool, id) {

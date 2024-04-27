@@ -949,5 +949,24 @@ router.post("/search/add_view", isNotAuthReq, isSeekerAuth, getUserIcon, upload.
 });
 
 
+// ADD APPLY START TO JOB
+router.post("/search/add_start", isNotAuthReq, isSeekerAuth, getUserIcon, upload.none(), async (req, res) => {
+    try{
+
+        const job_id = req.body.job_id;
+
+        await Job.addApplyStart(pool, job_id);
+
+        return res.json({ success: true, message: 'Added apply start!'});
+        
+
+    }
+    catch(err){
+        console.error(err);
+        res.status(500).send("Internal Server Error");
+    }
+});
+
+
 
 module.exports = router;

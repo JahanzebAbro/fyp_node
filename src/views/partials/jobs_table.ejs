@@ -103,7 +103,7 @@
                                 <% if (!locals.profile) { %>
                                     <button onclick="profilePrompt()">Apply</button>
                                 <% } else { %>
-                                    <button type="button" class="table_hidden_apply_btn">Apply</button>
+                                    <button type="button" class="table_hidden_apply_btn" data-row-job="<%= post.id %>">Apply</button>
                                 <% } %>
                             <% } %>
                             
