@@ -41,11 +41,23 @@ router.get("/", isProfileBuilt, isNotAuthReq, getUserIcon, async (req, res) => {
                                                     applicationStatusCount : applicationStatusCount, 
                                                     savedApplyRatio : savedApplyRatio,
                                                     industryRankings : industryRankings,
-                                                    jobViews : jobViews });
+                                                    jobViews : jobViews 
+                                                });
     }
     if(user_type === 'employer'){
 
-        res.render('analytics/analytics_employer');
+        const jobCount = await Employer.getJobCount(pool, user_id);
+        const jobSavedCount = await Employer.getSavedJobCount(pool, user_id);
+        const applicationCount = await Employer.getApplicationCount(pool, user_id);
+        const applicationRate = await Employer.getApplicationRate(pool, user_id);
+        const acceptedCount = await Employer.getAcceptedCount(pool, user_id);
+
+        res.render('analytics/analytics_employer', { jobCount: jobCount,
+                                                        jobSavedCount: jobSavedCount,
+                                                        applicationCount: applicationCount,
+                                                        applicationRate: applicationRate,
+                                                        acceptedCount: acceptedCount
+                                                    });
     }
 
 });

@@ -151,6 +151,160 @@ class Employer {
             throw err;
         }
     }
+
+
+    // Number of jobs created by user
+    static async getJobCount(pool, user_id){
+
+        try{
+            const query = `
+                SELECT COUNT(*)
+                FROM jobs
+                WHERE user_id = $1
+            `;
+            
+            const params = [user_id];
+    
+            let result = await pool.query(query, params);
+            
+            if(result){
+                return result.rows[0].count;
+            }
+            else{
+                return 0;
+            }
+
+        }
+        catch(err){
+            throw err;
+        }
+
+    }
+
+    // Number of jobs saved
+    static async getSavedJobCount(pool, user_id){
+
+        try{
+            const query = `
+                SELECT COUNT(sj.job_id)
+                from saved_jobs sj
+                INNER JOIN 
+                    jobs j ON j.id = sj.job_id 
+                WHERE j.user_id = $1;
+            `;
+            
+            const params = [user_id];
+    
+            let result = await pool.query(query, params);
+            
+            if(result){
+                return result.rows[0].count;
+            }
+            else{
+                return 0;
+            }
+
+        }
+        catch(err){
+            throw err;
+        }
+
+    }
+
+
+    // Number of applications for employer
+    static async getApplicationCount(pool, user_id){
+
+        try{
+            const query = `
+                SELECT COUNT(a.id)
+                from applications a
+                INNER JOIN 
+                    jobs j ON j.id = a.job_id 
+                WHERE j.user_id = $1;
+            `;
+            
+            const params = [user_id];
+    
+            let result = await pool.query(query, params);
+            
+            if(result){
+                return result.rows[0].count;
+            }
+            else{
+                return 0;
+            }
+
+        }
+        catch(err){
+            throw err;
+        }
+
+    }
+
+
+    // Track number of applications made over time
+    static async getApplicationRate(pool, user_id){
+
+        try{
+            const query = `
+                SELECT COUNT(*) as count, DATE(a.created_at) as date
+                from applications a
+                INNER JOIN 
+                    jobs j ON j.id = a.job_id 
+                WHERE j.user_id = $1
+                GROUP BY DATE(a.created_at)
+                ORDER BY DATE(a.created_at) ASC
+            `;
+            
+            const params = [user_id];
+    
+            let result = await pool.query(query, params);
+            
+            if(result){
+                return result.rows;
+            }
+            else{
+                return [];
+            }
+
+        }
+        catch(err){
+            throw err;
+        }
+    }
+
+
+    // Number of accepted applications
+    static async getAcceptedCount(pool, user_id){
+
+        try{
+            const query = `
+                SELECT COUNT(a.id)
+                from applications a
+                INNER JOIN 
+                    jobs j ON j.id = a.job_id 
+                WHERE j.user_id = $1 AND a.status='accepted';
+            `;
+            
+            const params = [user_id];
+    
+            let result = await pool.query(query, params);
+            
+            if(result){
+                return result.rows[0].count;
+            }
+            else{
+                return [];
+            }
+
+        }
+        catch(err){
+            throw err;
+        }
+    }
+
+
 }
 
 module.exports = Employer;

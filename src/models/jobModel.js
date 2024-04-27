@@ -212,7 +212,7 @@ class Job {
     }
 
 
-    // Retrieve all jobs for an employer id
+    // Retrieve all jobs for an employer id with filter
     static async getJobsByUser(pool, user_id, filters) {
         try {
 

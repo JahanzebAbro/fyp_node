@@ -1,5 +1,5 @@
-let job_views_chart = '';
 let app_rate_chart = '';
+let job_views_chart = '';
 
 // APPLICATION RATE CHART
 $(document).ready(function(){
@@ -13,14 +13,14 @@ $(document).ready(function(){
 
     const chart_data = {
     labels: dates,
-    datasets: [{
-        label: 'Application Rate',
-        data: counts,
-        fill: false,
-        backgroundColor: 'rgb(75, 192, 192)',
-        borderColor: 'rgb(75, 192, 192)',
-        tension: 0.1
-    }]
+        datasets: [{
+            label: 'Applying Rate',
+            data: counts,
+            fill: false,
+            backgroundColor: 'rgb(75, 192, 192)',
+            borderColor: 'rgb(75, 192, 192)',
+            tension: 0.1
+        }]
     };
 
     const config = {
@@ -30,6 +30,9 @@ $(document).ready(function(){
             scales: {
                 x: {
                     type: 'time',
+                    grid: {
+                        offset: false
+                    },
                     time: {
                         unit: 'day',
                         displayFormats: {
@@ -70,7 +73,7 @@ $(document).ready(function(){
         const filter_type = $(this).attr('data-filter-type');
 
         const data = JSON.parse($('#app_rate_chart').attr('data-application-rate'));
-        const dates = data.map(date => new Date(date.view_date));
+        const dates = data.map(date => new Date(date.date));
         
         let min_date;
         let max_date;
@@ -93,7 +96,7 @@ $(document).ready(function(){
 
         } else if (filter_type === 'year') {
 
-            min_date = new Date(dates[0].getFullYear(), 0, 1);
+            min_date = new Date(dates[0].getFullYear(), 0, 0);
             max_date = new Date(curr_date.getFullYear(), 11, 0);
 
         }
@@ -107,6 +110,9 @@ $(document).ready(function(){
     });
 
 });
+
+
+
 
 // APPLICATION STATUS COUNT CHART
 $(document).ready(function(){
@@ -367,8 +373,8 @@ $(document).ready(function(){
 
         } else if (filter_type === 'year') {
 
-            min_date = new Date(dates[0].getFullYear(), 0, 0);
-            max_date = new Date(curr_date.getFullYear(), 11, 0);
+            min_date = new Date(dates[0].getFullYear(), 0, 1);
+            max_date = new Date(curr_date.getFullYear(), 12, 0);
 
         }
 

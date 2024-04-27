@@ -5,8 +5,39 @@
     <span class="page_title_text">ANALYTICS</span>
 </div>
 
-<div style="width: 500px; height:500px;">    
-    <canvas id="myChart"></canvas>
+<div class="analytics_container">
+    
+    <div class="analytics_info stat_container">
+        <div class="analytics_stat_box">
+            <div class="analytics_stat_title">Total Jobs</div>
+            <div class="analytics_stat_content"><%= jobCount %></div>
+        </div>
+        <div class="analytics_stat_box">
+            <div class="analytics_stat_title">Job Saves</div>
+            <div class="analytics_stat_content"><%= jobSavedCount %></div>
+        </div>
+        <div class="analytics_stat_box">
+            <div class="analytics_stat_title">Total Applications</div>
+            <div class="analytics_stat_content"><%= applicationCount %></div>
+        </div>
+        <div class="analytics_stat_box">
+            <div class="analytics_stat_title">Acceptance Rate</div>
+            <div class="analytics_stat_content"><%= ((acceptedCount/applicationCount) * 100).toFixed(1) %>%</div>
+        </div>
+    </div>
+
+    <div class="analytics_info">
+        <div style="width: 500px; height:auto;">    
+            <canvas id="app_rate_chart" data-application-rate='<%- JSON.stringify(applicationRate) %>'></canvas>
+        </div>
+        <div class="chart_filters">
+            <button class="app_rate_filters filter_selected" data-filter-type="day">Day</button>
+            <button class="app_rate_filters" data-filter-type="week">Week</button>
+            <button class="app_rate_filters" data-filter-type="month">Month</button>
+            <button class="app_rate_filters" data-filter-type="year">Year</button>    
+        </div>
+    </div>
+
 </div>
 
 

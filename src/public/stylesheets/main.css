@@ -776,3 +776,68 @@ table .hidden_row {
 .modal_application_delete_btn {
     background-color: var(--red);
 }
+
+
+/* ===================================================ANALYTICS=================================== */
+
+
+.analytics_container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.anaytics_info {
+    flex: 0 30%;
+    margin-bottom: 4%; 
+}
+
+
+.analytics_stat_box{
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+    font-family: 'Jost';
+    border-radius: 5px;
+    padding: 20px;
+}
+
+.analytics_stat_title{
+    color: rgb(129, 129, 129);
+}
+
+.analytics_stat_content{
+    text-align: center;
+    font-size: 2em;
+}
+
+.stat_container{
+    display:flex;
+    justify-content: center; 
+    align-items: center; 
+    gap: 20px;
+}
+
+.chart_filters{
+    margin-top: 10px;
+}
+
+
+.chart_filters button{
+    background-color: rgb(255, 255, 255);
+    border: 2px solid #000000;
+    color: rgb(0, 0, 0);
+    border-radius: 5px;
+}
+
+.chart_filters button:hover {
+    background: #000000; 
+    color: #ffffff;
+}
+
+.chart_filters .filter_selected{
+    cursor: default;
+    background: #000000; 
+    color: #ffffff;
+}
