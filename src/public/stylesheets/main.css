@@ -1,5 +1,21 @@
 @import 'variables.css';
 
+html{
+    height: 100%;
+    margin: 0;
+}
+
+body{
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.content {
+    flex: 1;
+}
+
 select {
     min-width: 100px;
 }
@@ -58,6 +74,7 @@ button:hover {
     text-align: center; 
 }
 .page_title {
+    margin-top: 15vh;
     display: flex;
     align-items: center;
 }
@@ -72,6 +89,85 @@ button:hover {
 .full_page_line {
     width: 100%;
     height: 50px;
+}
+
+/* =======================================LOGIN/REGISTER=============================================== */
+
+nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 10vh;
+    display: flex;
+    background-color: white;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000;
+}
+
+nav .logo{
+    padding-left: 1.5rem;
+}
+
+.nav_leftside {
+    display:flex;
+    justify-content: flex-end;
+    width: 50%;
+    padding-right: 2rem;
+}
+
+.nav_leftside a{
+    font-family: "Jost";
+    font-weight: 300;
+    font-size: 1.3em;
+    padding-left: 2em;
+    text-decoration: none;
+    color: black;
+}
+
+.nav_leftside a:hover {
+    text-decoration: underline;
+}
+
+.index_form_box{
+    border: 2px solid black;
+    font-family: 'Jost';
+    background-color: white;
+    padding: 20px;
+    margin-bottom: 10%;
+}
+
+.index_form_box h2{
+    font-family: 'Almarai';
+    font-weight: 400;
+}
+
+.poster{
+    position: relative;
+}
+
+.poster img {
+    width: 100%; 
+    height: auto; 
+    margin: 0 auto;
+}
+
+.poster_content {
+    position: absolute;
+    top: 50%;         
+    left: 50%;         
+    transform: translate(-50%, -50%); 
+    display: flex;
+    flex-direction: column; 
+    align-items: center;   
+    width: 100%;
+}
+
+.poster_caption {
+    color: white; 
+    font-family: 'Jost';
+    font-size: 1.8em;
 }
 
 /* =======================================SEARCH BAR=============================================== */

@@ -1,42 +1,47 @@
+<%- include('../partials/index_navbar.ejs') %>  
 
-<nav>
-    <h4>DOMAIN</h4>
-    <ul>
-        REGISTER
-        <li><a href="/">About</a></li>
-        <li><a href="/login">Login</a></li>
-        <li><a href="/register">Register</a></li>
-    </ul>
-</nav>
+<div class="poster">
+    <div class="poster_content">
+        <div class="poster_caption">
+            <p>The place to find and hire the right people for the job.</p> 
+        </div>
 
+        <div class="index_form_box">
+            <h2>REGISTER</h2>
+            <form action="/register" method="post">
 
-<form action="/register" method="post">
+                <label for="email">Email:</label><br>
+                <input type="email" id="email" name="email" value="<%= form_data.email || '' %>" required><br>
+            
+                <label for="pwd">Password:</label><br>
+                <input type="password" id="pwd" name="pwd" required>
+                <input type="checkbox" onclick="togglePasswordVisibility()">Show Password<br>
+            
+                <label for="cf_pwd">Confirm Password:</label><br>
+                <input type="password" id="cf_pwd" name="cf_pwd" required><br>
+            
+                <p>Are you a...?</p>
+                <input type="radio" id="select_seeker" name="user_type" value="seeker" <% if (form_data.user_type === 'seeker') { %> checked <% } %> required>
+                <label for="select_seeker">Jobseeker</label><br>
+                <input type="radio" id="select_employer" name="user_type" value="employer" <% if (form_data.user_type === 'employer') { %> checked <% } %>required>
+                <label for="select_employer">Employer</label><br><br>
+            
+                <button type="submit">Continue</button>
+            
+            </form>
+            
+            <% if(messages.reg_auth) {%>
+            <pre><%= messages.reg_auth %><pre>
+            <% } %>
+        </div>
+    </div>
+    <img src="\img\factory_worker.png" alt="factory_worker">
+    
+</div>
 
-    <label for="email">Email:</label><br>
-    <input type="email" id="email" name="email" value="<%= form_data.email || '' %>" required><br>
-
-    <label for="pwd">Password:</label><br>
-    <input type="password" id="pwd" name="pwd" required>
-    <input type="checkbox" onclick="togglePasswordVisibility()">Show Password<br>
-
-    <label for="cf_pwd">Confirm Password:</label><br>
-    <input type="password" id="cf_pwd" name="cf_pwd" required><br>
-
-    <p>Are you a...?</p>
-    <input type="radio" id="select_seeker" name="user_type" value="seeker" <% if (form_data.user_type === 'seeker') { %> checked <% } %> required>
-    <label for="select_seeker">Jobseeker</label><br>
-    <input type="radio" id="select_employer" name="user_type" value="employer" <% if (form_data.user_type === 'employer') { %> checked <% } %>required>
-    <label for="select_employer">Employer</label><br><br>
-
-    <button type="submit">Continue</button>
-
-</form>
 
 <script src="scripts/password_utils.js"></script>
 
 
-<% if(messages.reg_auth) {%>
-<pre><%= messages.reg_auth %><pre>
-<% } %>
 
 

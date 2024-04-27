@@ -1,35 +1,36 @@
-<nav>
-    <h4>DOMAIN</h4>
-    <ul>
-        LOGIN
-        <li><a href="/">About</a></li>
-        <li><a href="/login">Login</a></li>
-        <li><a href="/register">Register</a></li>
-    </ul>
-</nav>
-
-<% if(messages.sucess_reg) {%>
-<%= messages.sucess_reg %>
-<% } %>
+<%- include('../partials/index_navbar.ejs') %>   
 
 
+<div class="poster">
+    <div class="poster_content">
+        <div class="poster_caption">
+            <p>The place to find and hire the right people for the job.</p> 
+        </div>
 
-
-<form action="/login" method="post">
-
-    <label for="email">Email:</label><br>
-    <input type="email" id="email" name="email" required><br>
-
-    <label for="pwd">Password:</label><br>
-    <input type="password" id="pwd" name="pwd" required><br>
-    <input type="checkbox">Show Password<br><br>
-
-    <button type="submit">Login</button>
-
-</form>
-
-<% if(messages.error) {%>
-<%= messages.error %>
-<% } %>
+        <div class="index_form_box">
+            <h2>LOGIN</h2>
+            <% if(messages.sucess_reg) {%>
+                <%= messages.sucess_reg %><br>
+            <% } %>
+            <form action="/login" method="post">
+        
+                <label for="email">Email:</label><br>
+                <input type="email" id="email" name="email" required><br>
+        
+                <label for="pwd">Password:</label><br>
+                <input type="password" id="pwd" name="pwd" required><br>
+                <input type="checkbox">Show Password<br><br>
+        
+                <button type="submit">Login</button>
+        
+            </form>
+            <% if(messages.error) {%>
+                <br><%= messages.error %>
+            <% } %>
+        </div>
+    </div>
+    <img src="\img\factory_worker.png" alt="factory_worker">
+    
+</div>
 
 <script src="/scripts/password_utils.js"></script>
