@@ -533,6 +533,36 @@ class Employer {
     }
     
 
+    // Get gender split for all applications made
+    static async getGenderSplit(pool, user_id){
+
+        try{
+            const query = `
+                SELECT s.gender, COUNT(a.id) AS count
+                FROM applications a 
+                INNER JOIN jobs j ON j.id = a.job_id
+                INNER JOIN seekers s ON s.user_id = a.seeker_id
+                WHERE j.user_id = $1 
+                GROUP BY s.gender;
+            `;
+            
+            const params = [user_id];
+    
+            let result = await pool.query(query, params);
+            
+            if(result){
+                return result.rows;
+            }
+            else{
+                return [];
+            }
+
+        }
+        catch(err){
+            throw err;
+        }
+    }
+
 }
 
 module.exports = Employer;

@@ -220,3 +220,67 @@ $(document).ready(function(){
     });
 
 });
+
+
+
+// APPLICATION GENDER SPLIT
+$(document).ready(function(){
+    
+    const ctx = $('#gender_chart');
+    const data = JSON.parse(ctx.attr('data-gender'));
+    const labels = data[0];
+    const values = data[1]; 
+
+    const chart_data = {
+        labels: labels,
+          datasets: [{
+            label: 'Applicant Gender Ratio',
+            data: values,
+            tooltip: {
+                callbacks: {
+                    label: function(ctx) {
+                        let label = ctx.label;
+                        let value = ctx.formattedValue;
+
+                        let sum = 0;
+                        values.forEach(val => { // Add all values to sum
+                            sum += Number(val); 
+                        });
+        
+                        let percentage = (value * 100 / sum).toFixed(1) + '%';
+                        return label + ": " + percentage;
+                    }
+                }
+            },
+            hoverOffset: 4,
+            backgroundColor: [
+                'rgb(255, 99, 132)',
+                'rgb(54, 162, 235)',
+                'rgb(255, 205, 86)'
+            ]
+            
+          }]
+    };
+
+    const config = {
+        type: 'pie',
+        data: chart_data,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true, 
+                    position: 'top', 
+                    align: 'center',
+                },
+                title: {
+                    display: true,
+                    text: 'Applicant Gender Ratio'
+                }
+            }
+        }
+    };
+
+    const chart = new Chart(ctx, config);
+
+});

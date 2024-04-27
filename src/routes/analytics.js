@@ -75,12 +75,20 @@ router.get("/", isProfileBuilt, isNotAuthReq, getUserIcon, async (req, res) => {
         leastStarts.created_at = formatDateForDisplay(leastStarts.created_at);
 
 
+        let genderSplit = await Employer.getGenderSplit(pool, user_id);
+        const genderNames = genderSplit.map(item => item.gender);
+        const genderCounts = genderSplit.map(item => item.count);
+
+        genderSplit = [genderNames, genderCounts];
+
+
         res.render('analytics/analytics_employer', { jobCount: jobCount,
                                                         jobSavedCount: jobSavedCount,
                                                         applicationCount: applicationCount,
                                                         applicationRate: applicationRate,
                                                         acceptedCount: acceptedCount,
                                                         jobViews: jobViews,
+                                                        genderSplit: genderSplit,
                                                         mostApplications: mostApplications,
                                                         leastApplications: leastApplications,
                                                         mostViews: mostViews,
