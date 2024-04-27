@@ -7,24 +7,30 @@
 
 <div class="analytics_container">
     
-    <div class="analytics_info stat_container">
-        <div class="analytics_stat_box">
-            <div class="analytics_stat_title">Total Jobs</div>
-            <div class="analytics_stat_content"><%= jobCount %></div>
+    <div class="analytics_multi_stat">
+        <div class="analytics_info stat_container">
+            <div class="analytics_stat_box">
+                <div class="analytics_stat_title">Total Jobs</div>
+                <div class="analytics_stat_content"><%= jobCount %></div>
+            </div>
+            <div class="analytics_stat_box">
+                <div class="analytics_stat_title">Job Saves</div>
+                <div class="analytics_stat_content"><%= jobSavedCount %></div>
+            </div>
         </div>
-        <div class="analytics_stat_box">
-            <div class="analytics_stat_title">Job Saves</div>
-            <div class="analytics_stat_content"><%= jobSavedCount %></div>
-        </div>
-        <div class="analytics_stat_box">
-            <div class="analytics_stat_title">Total Applications</div>
-            <div class="analytics_stat_content"><%= applicationCount %></div>
-        </div>
-        <div class="analytics_stat_box">
-            <div class="analytics_stat_title">Acceptance Rate</div>
-            <div class="analytics_stat_content"><%= ((acceptedCount/applicationCount) * 100).toFixed(1) %>%</div>
+        <div class="analytics_info stat_container">
+            <div class="analytics_stat_box">
+                <div class="analytics_stat_title">Applications</div>
+                <div class="analytics_stat_content"><%= applicationCount %></div>
+            </div>
+            <div class="analytics_stat_box">
+                <div class="analytics_stat_title">Acceptance Rate</div>
+                <div class="analytics_stat_content"><%= ((acceptedCount/applicationCount) * 100).toFixed(1) %>%</div>
+            </div>
         </div>
     </div>
+
+
 
     <div class="analytics_info">
         <div style="width: 500px; height:auto;">    
@@ -50,7 +56,68 @@
         </div>
     </div>
 
+
+
+    <div class="analytics_multi_stat" style="margin-top: 20px;">
+        <div class="analytics_info stat_container">
+            <div class="analytics_stat_box">
+                <div class="analytics_stat_title">Most Applications</div>
+                <div class="analytics_multi_stat_content">Title: <%=mostApplications.title%></div>
+                <div class="analytics_multi_stat_content">Created: <%=mostApplications.created_at%></div>
+                <div class="analytics_multi_stat_content">Applications: <%= mostApplications.app_count %></div>
+            </div>
+            <div class="analytics_stat_box">
+                <div class="analytics_stat_title">Most Views</div>
+                <div class="analytics_multi_stat_content">Title: <%= mostViews.title %></div>
+                <div class="analytics_multi_stat_content">Created: <%= mostViews.created_at %></div>
+                <div class="analytics_multi_stat_content">Views: <%= mostViews.total_views %></div>
+            </div>
+            <div class="analytics_stat_box">
+                <div class="analytics_stat_title">Most Apply Starts</div>
+                <div class="analytics_multi_stat_content">Title: <%= mostStarts.title %></div>
+                <div class="analytics_multi_stat_content">Created: <%= mostStarts.created_at %></div>
+                <div class="analytics_multi_stat_content">Starts: <%= mostStarts.total_starts %></div>
+            </div>
+        </div>
+        <div class="analytics_info stat_container">
+            <div class="analytics_stat_box">
+                <div class="analytics_stat_title">Least Applications</div>
+                <div class="analytics_multi_stat_content">Title: <%=leastApplications.title%></div>
+                <div class="analytics_multi_stat_content">Created: <%=leastApplications.created_at%></div>
+                <div class="analytics_multi_stat_content">Applications: <%=leastApplications.app_count%></div>
+            </div>
+            <div class="analytics_stat_box">
+                <div class="analytics_stat_title">Least Views</div>
+                <div class="analytics_multi_stat_content">Title: <%=leastViews.title%></div>
+                <div class="analytics_multi_stat_content">Created: <%=leastViews.created_at%></div>
+                <div class="analytics_multi_stat_content">Views: <%=leastViews.total_views%></div>
+            </div>
+            <div class="analytics_stat_box">
+                <div class="analytics_stat_title">Least Apply Starts</div>
+                <div class="analytics_multi_stat_content">Title: <%=leastStarts.title%></div>
+                <div class="analytics_multi_stat_content">Created: <%=leastStarts.created_at%></div>
+                <div class="analytics_multi_stat_content">Starts: <%=leastStarts.total_starts%></div>
+            </div>
+        </div>
+    </div>
+
 </div>
+
+<style>
+
+    .analytics_multi_stat_content {
+        text-align: left;
+        font-size: 1.3em;
+    }
+
+    .analytics_multi_stat {
+        display:flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center; 
+    }
+
+</style>
 
 
 

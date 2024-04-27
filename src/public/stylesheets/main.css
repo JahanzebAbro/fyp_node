@@ -795,6 +795,14 @@ table .hidden_row {
     margin-bottom: 4%; 
 }
 
+.stat_container{
+    display:flex;
+    justify-content: center; 
+    align-items: center; 
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
 
 .analytics_stat_box{
     box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
@@ -812,12 +820,6 @@ table .hidden_row {
     font-size: 2em;
 }
 
-.stat_container{
-    display:flex;
-    justify-content: center; 
-    align-items: center; 
-    gap: 20px;
-}
 
 .chart_filters{
     margin-top: 10px;

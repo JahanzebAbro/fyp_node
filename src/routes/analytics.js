@@ -58,6 +58,7 @@ router.get("/", isProfileBuilt, isNotAuthReq, getUserIcon, async (req, res) => {
         const applicationRate = await Employer.getApplicationRate(pool, user_id);
         const acceptedCount = await Employer.getAcceptedCount(pool, user_id);
         const jobViews = await Employer.getViews(pool, user_id);
+
         const mostApplications = await Employer.getMostApplications(pool, user_id);
         const leastApplications = await Employer.getLeastApplications(pool, user_id);
         const mostViews = await Employer.getMostViews(pool, user_id);
@@ -72,6 +73,7 @@ router.get("/", isProfileBuilt, isNotAuthReq, getUserIcon, async (req, res) => {
         leastViews.created_at = formatDateForDisplay(leastViews.created_at);
         mostStarts.created_at = formatDateForDisplay(mostStarts.created_at);
         leastStarts.created_at = formatDateForDisplay(leastStarts.created_at);
+
 
         res.render('analytics/analytics_employer', { jobCount: jobCount,
                                                         jobSavedCount: jobSavedCount,
