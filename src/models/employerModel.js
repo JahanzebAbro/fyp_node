@@ -305,6 +305,34 @@ class Employer {
     }
 
 
+    // Get all job view for employer
+    static async getViews(pool, user_id){
+
+        try{
+            const query = `
+                SELECT jv.view_count, jv.view_date 
+                FROM job_views jv
+                INNER JOIN jobs j ON j.id = jv.job_id 
+                WHERE j.user_id = $1;
+            `;
+            
+            const params = [user_id];
+    
+            let result = await pool.query(query, params);
+            
+            if(result){
+                return result.rows;
+            }
+            else{
+                return [];
+            }
+
+        }
+        catch(err){
+            throw err;
+        }
+
+    }
 }
 
 module.exports = Employer;

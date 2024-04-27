@@ -461,6 +461,35 @@ class Job {
     }
 
 
+    // Increment job view
+    static async addView(pool, job_id){
+
+        try{
+            const query = `
+                INSERT INTO job_views (job_id, view_date, view_count)
+                VALUES ($1, CURRENT_DATE, 1)
+                ON CONFLICT (job_id, view_date) DO UPDATE
+                SET view_count = job_views.view_count + 1
+            `;
+            
+            const params = [job_id];
+    
+            let result = await pool.query(query, params);
+            
+            if(result){
+                return result.rows[0];
+            }
+            else{
+                return [];
+            }
+
+        }
+        catch(err){
+            throw err;
+        }
+
+    }
+
     // Delete a job and its dependents with id
     static async deleteById(pool, id) {
         try {

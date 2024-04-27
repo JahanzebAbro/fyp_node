@@ -147,13 +147,18 @@ $(document).ready(function(){
     $('.table_expand_icon').click(function(){
 
         const row = $(this).attr('data-row');
+        const job_id = $(this).attr('data-row-job');
         const is_row_hidden = $('#' + row).is(":hidden");
 
         if(is_row_hidden){
 
+            let data = new FormData();
+            data.append('job_id', job_id);
+
             $.ajax({
                 url: "/user/job/search/add_view",
                 type: "POST",
+                data: data,
                 contentType: false,
                 processData: false,
                 success: function(response) {

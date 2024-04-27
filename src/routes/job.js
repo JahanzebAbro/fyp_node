@@ -933,9 +933,10 @@ router.post("/search/add_view", isNotAuthReq, isSeekerAuth, getUserIcon, upload.
     try{
 
         const seeker_id = req.user.id;
-        
+        const job_id = req.body.job_id;
 
-        const result = await Seeker.addView(pool, seeker_id);
+        await Seeker.addView(pool, seeker_id);
+        await Job.addView(pool, job_id);
 
         return res.json({ success: true, message: 'Added view!'});
         

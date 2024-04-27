@@ -51,12 +51,14 @@ router.get("/", isProfileBuilt, isNotAuthReq, getUserIcon, async (req, res) => {
         const applicationCount = await Employer.getApplicationCount(pool, user_id);
         const applicationRate = await Employer.getApplicationRate(pool, user_id);
         const acceptedCount = await Employer.getAcceptedCount(pool, user_id);
+        const jobViews = await Employer.getViews(pool, user_id);
 
         res.render('analytics/analytics_employer', { jobCount: jobCount,
                                                         jobSavedCount: jobSavedCount,
                                                         applicationCount: applicationCount,
                                                         applicationRate: applicationRate,
-                                                        acceptedCount: acceptedCount
+                                                        acceptedCount: acceptedCount,
+                                                        jobViews: jobViews
                                                     });
     }
 
